@@ -1,0 +1,90 @@
+<div class="p-6">
+  <h2 class="text-3xl font-bold mb-8 text-center text-primary">Habitaciones</h2>
+
+  <!-- button para elegir todos o disponibles-->
+  <div class="flex justify-center mb-8">
+    <button
+      class="btn btn-outline btn-sm mx-2"
+      [class.btn-primary]="!disposibles"
+      (click)="disposibles = false"
+    >
+      Todas
+    </button>
+    <button
+      class="btn btn-outline btn-sm mx-2"
+      [class.btn-primary]="disposibles"
+      (click)="disposibles = true"
+    >
+      Disponibles
+    </button>
+  </div>
+
+  <!-- Grid de cards -->
+  <div
+    class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto"
+  >
+    <!-- Card 1 -->
+    @for (room of roomsAux; track room.id) {
+
+    <div
+      class="card bg-base-100 shadow-md hover:shadow-xl transition rounded-xl"
+    >
+      <figure>
+        <img
+          [src]="room.urlImage"
+          alt="Shoes"
+          class="h-48 w-full object-cover rounded-t-xl"
+        />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title">
+          {{ room.roomNumber }}
+          <span class="badge badge-secondary text-sm">
+            capacidad: {{ room.capacity }}
+          </span>
+        </h2>
+        <p>
+          {{ room.description }}
+          <br />
+          Estado :
+          <span
+            class="badge"
+            [ngClass]="
+              room.state === 'disponible' ? 'badge-accent' : 'badge-warning'
+            "
+          >
+            {{ room.state }}
+          </span>
+        </p>
+        <div class="card-actions justify-end mt-2">
+          @if (room.state === 'disponible') {
+          <button
+            class="btn btn-primary btn-sm"
+            (click)="openModalReservation(room)"
+          >
+            Reservar
+          </button>
+          }
+          <button
+            class="btn btn-outline btn-sm"
+            (click)="clickGoOpinionsRoom(room.id)"
+          >
+            Ver Opiniones
+          </button>
+        </div>
+      </div>
+    </div>
+
+    }
+  </div>
+</div>
+
+<dialog #modalReservation id="my_modal_1" class="modal">
+  @if (room()) {
+  <app-modal-reservation
+    (close)="closeModalReservation()"
+    [roomId]="room()!.id"
+    [room]="room()"
+  />
+  }
+</dialog>

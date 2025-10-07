@@ -1,0 +1,107 @@
+<div class="p-6">
+  <h2 class="text-3xl font-bold mb-8 text-center text-primary">
+    Hoteles Recomendados
+  </h2>
+
+  <!-- Grid de cards -->
+  <div
+    class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto"
+  >
+    <!-- Card 1 -->
+    @for (hotel of hotels(); track hotel.id) {
+
+    <div
+      class="card bg-base-100 shadow-md hover:shadow-xl transition rounded-xl"
+    >
+      <figure>
+        <img
+          [src]="hotel.imageUrl"
+          alt="Shoes"
+          class="h-48 w-full object-cover rounded-t-xl"
+        />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title">
+          {{ hotel.name }}
+          <span class="badge badge-secondary text-sm">
+            tel:{{ hotel.phone }}
+          </span>
+        </h2>
+        <p>
+          {{ hotel.address }}
+          <br />
+          total habitaciones: {{ hotel.totalRooms }}
+        </p>
+        <div class="card-actions justify-end">
+          <button
+            class="btn btn-primary btn-sm"
+            (click)="goRooms(hotel.id)"
+          >
+            Reservar
+          </button>
+          <button
+            class="btn btn-outline btn-sm"
+            (click)="clickGoOpinionsHotel(hotel.id)"
+          >
+            Ver Opiniones
+          </button>
+        </div>
+      </div>
+    </div>
+
+    }
+  </div>
+
+  <h2 class="text-3xl font-bold mb-8 mt-12 text-center text-primary">
+    Restaurantes Recomendados
+  </h2>
+
+  <!-- Grid de cards -->
+  <div
+    class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto"
+  >
+    <!-- Card 1 -->
+    @for (restaurant of restaurants(); track restaurant.id) {
+
+    <div
+      class="card bg-base-100 shadow-md hover:shadow-xl transition rounded-xl"
+    >
+      <figure>
+        <img
+          [src]="restaurant.imageUrl"
+          alt="Shoes"
+          class="h-48 w-full object-cover rounded-t-xl"
+        />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title">
+          {{ restaurant.name }}
+          <span class="badge badge-accent text-sm">
+            tel:{{ restaurant.phone }}
+          </span>
+        </h2>
+        <p>
+          {{ restaurant.address }}
+          <br />
+          Capacidad: {{ restaurant.capacity }}
+        </p>
+        <div class="card-actions justify-end">
+          <button
+            class="btn btn-primary btn-sm"
+            (click)="clickGoOpinionsMenu(restaurant.id)"
+          >
+            Ver Menu
+          </button>
+          <button
+            class="btn btn-outline btn-sm"
+            (click)="clickGoOpinionsRestaurant(restaurant.id)"
+          >
+            Ver Opiniones
+          </button>
+        </div>
+      </div>
+    </div>
+
+    }
+  </div>
+</div>

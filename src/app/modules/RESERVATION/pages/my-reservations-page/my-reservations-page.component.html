@@ -1,0 +1,52 @@
+<div class="card bg-base-100 shadow-lg border border-gray-100 rounded-xl">
+  <div class="card-body">
+    <h3 class="card-title mb-4 text-accent">📋 Mis Reservaciones</h3>
+    <div class="overflow-x-auto rounded-lg border border-gray-200">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Final</th>
+            <th>Estado</th>
+            <th>Hotel</th>
+            <th>Habitacion</th>
+            <th>Precio por dia</th>
+            <th>Descuento %</th>
+            <th>Total a pagar</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (reservation of enrichedReservations(); track $index) {
+          <tr>
+            <th>{{ $index + 1 }}</th>
+            <td>{{ reservation.startDate | date : "dd/MM/yyyy" }}</td>
+            <td>{{ reservation.endDate | date : "dd/MM/yyyy" }}</td>
+            <td>
+              <span
+                class="badge badge-lg"
+                [ngClass]="{
+                  'badge-accent': reservation.state === 'Reservado',
+                  'badge-success': reservation.state === 'pagado',
+                }"
+                >{{ reservation.state }}</span
+              >
+            </td>
+            <td>{{ reservation.hotelName }}</td>
+            <td>{{ reservation.roomNumber }}</td>
+            <td>
+              {{
+                reservation.pricePerDay | currency : "GTQ" : "symbol" : "1.2-2"
+              }}
+            </td>
+            <td>% {{ reservation.discountPercentage }}</td>
+            <td class="text-primary font-bold">
+              {{ reservation.totalPrice | currency : "GTQ" : "symbol" : "1.2-2" }}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
