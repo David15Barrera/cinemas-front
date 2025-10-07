@@ -14,25 +14,47 @@ export const routes: Routes = [
       import('./modules/session/auth.routes').then((m) => m.routes),
   },
   {
-    path: 'reservations',
+    path: 'admin',
     canActivate: [authGuard],
     data: {
-      role: 'CLIENTE',
+      role: 'ADMIN',
     },
     loadChildren: () =>
-      import('./modules/RESERVATION/reservation.routes').then(
-        (m) => m.RESERVATION_ROUTES
+      import('./modules/ADMIN/admin.routes').then(
+        (m) => m.ADMIN_ROUTES
       ),
   },
   {
-    path: 'reviews',
+    path: 'adviertiser',
     canActivate: [authGuard],
     data: {
-      role: 'CLIENTE',
+      role: 'ADVERTISER',
     },
     loadChildren: () =>
-      import('./modules/REVIEWS/reviews.routes').then(
-        (m) => m.REVIEWS_ROUTES
+      import('./modules/ADVERTISER/advertiser.routes').then(
+        (m) => m.ADVERTISER_ROUTES
+      ),
+  },
+  {
+    path: 'cinema',
+    canActivate: [authGuard],
+    data: {
+      role: 'cinema',
+    },
+    loadChildren: () =>
+      import('./modules/CINEMA_ADMIN/cinema.routes').then(
+        (m) => m.CINEMA_ROUTES
+      ),
+  },
+    {
+    path: 'client',
+    canActivate: [authGuard],
+    data: {
+      role: 'user',
+    },
+    loadChildren: () =>
+      import('./modules/CLIENT/client.routes').then(
+        (m) => m.CLIENT_ROUTES
       ),
   },
 ];
