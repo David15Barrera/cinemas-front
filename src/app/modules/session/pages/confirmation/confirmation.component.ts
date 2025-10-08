@@ -24,7 +24,7 @@ export default class ConfirmationComponent {
 
   classSucces = 'text-purple-700 text-lg'
   titleModal = 'Confrimacion Exitosa'
-  contentModal = 'El administrador debera a aprobar su cuenta para que pueda acceder al sistema'
+  contentModal = 'Su cuenta ya fue creada exitosamente'
 
 
   errorMessage: string = '';
@@ -70,18 +70,30 @@ export default class ConfirmationComponent {
     })
   }
 
-  redirect(role: string) {
-    switch (role) {
-      case 'CLIENTE':
-        this.router.navigate(['/reservations'])
-        break;
+redirect(role: string) {
+  switch (role) {
+    case 'ADMIN_SIS':
+      this.router.navigate(['/admin']);
+      break;
 
-      default:
-        // defult to USER
-        this.router.navigate(['/session/login'])
-        break;
-    }
+    case 'ADMIN_CINE':
+      this.router.navigate(['/cinema']);
+      break;
+
+    case 'ANUNCIADOR':
+      this.router.navigate(['/adviertiser']);
+      break;
+
+    case 'CLIENTE':
+      this.router.navigate(['/client']);
+      break;
+
+    default:
+      this.router.navigate(['/session/login']);
+      break;
   }
+}
+
 
   handleErrorConfirmation(error: any) {
     const erroCode: number = error.error.status

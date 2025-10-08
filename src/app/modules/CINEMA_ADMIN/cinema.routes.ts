@@ -1,7 +1,11 @@
 import { Routes } from "@angular/router";
 
 const cinemaAdminRoutes: Routes = [
-    
+    {
+      path:'dashboard', loadComponent: () => import('./pages/dashboard-cinema/dashboard-cinema.component').then(
+        (m) => m.DashboardCinemaComponent
+      )
+    }
 ];
 
 export const CINEMA_ROUTES: Routes = [

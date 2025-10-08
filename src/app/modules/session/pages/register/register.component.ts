@@ -25,39 +25,40 @@ export default class RegisterComponent {
   errorMessage: string = '';
 
   registerForm: FormGroup = this.formBuilder.group({
-    cui: ['', [Validators.required, Validators.minLength(2)]],
+    fullName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     passwordConfirm: ['', [Validators.required, Validators.minLength(6)]],
+    role: ['CLIENTE', Validators.required]
   });
 
-  register() {
-    if (this.registerForm.invalid) {
-      this.errorMessage = 'Por favor, ingrese todos los campos';
-      return
-    }
 
-    if (this.registerForm.value.password !== this.registerForm.value.passwordConfirm) {
-      this.errorMessage = 'Las Contraseñas no coinciden';
-      return
-    }
-
-    const register: Register = this.registerForm.getRawValue();
-
-
-    this.authService.register(register).subscribe({
-      next: () => {
-        console.log('completado');
-
-        this.store.updateEmail(register.email)
-        this.router.navigate(['/session/confirmation']);
-      },
-      error: (error) => {
-        //console.log(error);
-        this.handlerErrorRegister(error);
-      }
-    })
+register() {
+  if (this.registerForm.invalid) {
+    this.errorMessage = 'Por favor, ingrese todos los campos';
+    return;
   }
+
+  if (this.registerForm.value.password !== this.registerForm.value.passwordConfirm) {
+    this.errorMessage = 'Las contraseñas no coinciden';
+    return;
+  }
+
+  const { email, password, fullName, role } = this.registerForm.value;
+  const register: Register = { email, password, fullName, role };
+
+  this.authService.register(register).subscribe({
+    next: () => {
+      console.log('Registro completado');
+      this.store.updateEmail(email);
+      this.router.navigate(['/session/confirmation']);
+    },
+    error: (error) => {
+      this.handlerErrorRegister(error);
+    },
+  });
+}
+
 
   handlerErrorRegister(error: any) {
     const erroCode: number = error.error.status

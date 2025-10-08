@@ -4,9 +4,10 @@ export interface Login {
 }
 
 export interface Register {
-  cui: string;
   email: string;
   password: string;
+  fullName: string;
+  role: Rol;
 }
 
 export interface Confirmation {

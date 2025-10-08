@@ -1,7 +1,11 @@
 import { Routes } from "@angular/router";
 
 const adminRoutes: Routes = [
-  
+  {
+    path:'dashboard', loadComponent: () => import('./pages/dashboard-admin/dashboard-admin.component').then(
+      (m) => m.DashboardAdminComponent
+    )
+  }
 
 ];
 

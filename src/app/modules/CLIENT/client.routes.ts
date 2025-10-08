@@ -1,7 +1,12 @@
 import { Routes } from "@angular/router";
 
 const clientRoutes: Routes = [
-    
+  {
+    path:'dashboard',
+    loadComponent: () => import('./pages/dashboard-client/dashboard-client.component').then(
+      (m) => m.DashboardClientComponent
+    )
+  }  
 ];
 
 

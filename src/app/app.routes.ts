@@ -16,9 +16,9 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [authGuard],
-    data: {
-      role: 'ADMIN',
-    },
+//    data: {
+//      role: 'ADMIN',
+ //   }   ,
     loadChildren: () =>
       import('./modules/ADMIN/admin.routes').then(
         (m) => m.ADMIN_ROUTES
@@ -27,9 +27,9 @@ export const routes: Routes = [
   {
     path: 'adviertiser',
     canActivate: [authGuard],
-    data: {
-      role: 'ADVERTISER',
-    },
+//    data: {
+//      role: 'ADVERTISER',
+//    },
     loadChildren: () =>
       import('./modules/ADVERTISER/advertiser.routes').then(
         (m) => m.ADVERTISER_ROUTES
@@ -38,9 +38,9 @@ export const routes: Routes = [
   {
     path: 'cinema',
     canActivate: [authGuard],
-    data: {
-      role: 'cinema',
-    },
+//    data: {
+//      role: 'cinema',
+//    },
     loadChildren: () =>
       import('./modules/CINEMA_ADMIN/cinema.routes').then(
         (m) => m.CINEMA_ROUTES
@@ -49,9 +49,9 @@ export const routes: Routes = [
     {
     path: 'client',
     canActivate: [authGuard],
-    data: {
-      role: 'user',
-    },
+//    data: {
+//      role: 'user',
+//    },
     loadChildren: () =>
       import('./modules/CLIENT/client.routes').then(
         (m) => m.CLIENT_ROUTES
