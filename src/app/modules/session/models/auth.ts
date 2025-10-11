@@ -32,5 +32,14 @@ export interface Session {
 }
 
 export enum Rol {
+  ADMIN_SIS = 'ADMIN_SIS',
+  ADMIN_CINE = 'ADMIN_CINE',
+  ANUNCIADOR = 'ANUNCIADOR',
   CLIENTE = 'CLIENTE',
+}
+
+export interface Role {
+  name: string;
+  id: number;
+  description: string;
 }

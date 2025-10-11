@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Register } from '../../models/auth';
+import { Register, Role } from '../../models/auth';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { AuthStore } from 'app/store/auth.store';
@@ -23,13 +23,18 @@ export default class RegisterComponent {
 
   showPassword = false;
   errorMessage: string = '';
+  roles: Role[] = [];
+  
+  ngOnInit() {
+    this.getRoles();
+  }
 
   registerForm: FormGroup = this.formBuilder.group({
     fullName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     passwordConfirm: ['', [Validators.required, Validators.minLength(6)]],
-    role: ['CLIENTE', Validators.required]
+    role: ['', Validators.required]
   });
 
 
@@ -85,6 +90,32 @@ register() {
 
   toLogin() {
     this.router.navigate(['/session/login']);
+  }
+
+  getRoles() {
+    this.authService.getRoles().subscribe({
+      next: (roles) => {
+        this.roles = roles;
+        this.addRoleDescription();
+      },
+      error: (error) => {
+        console.error('Error fetching roles:', error);
+      }
+    })
+  }
+
+  private addRoleDescription(){
+    this.roles.forEach(role => {
+      if (role.name === 'ADMIN_CINE') {
+        role.description = 'Administrador de Cine';
+      }
+      if (role.name === 'ANUNCIADOR') {
+        role.description = 'publicador de anuncios';
+      }
+      if (role.name === 'CLIENTE') {
+        role.description = 'Reservar y comprar entradas';
+      }
+    })
   }
 
 }

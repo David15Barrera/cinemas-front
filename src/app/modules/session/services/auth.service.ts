@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { ApiConfigService } from "@shared/services/api-config.service";
 import { Observable } from "rxjs";
-import { Confirmation, Login, Register, Session } from "../models/auth";
+import { Confirmation, Login, Register, Role, Session } from "../models/auth";
 
 @Injectable({
     providedIn: 'root'
@@ -24,6 +24,10 @@ export class AuthService {
 
     confirmation(confirmation: Confirmation): Observable<Session> {
         return this.http.put<Session>(`${this.apiConfigService.API_AUTH}/sign-up`, confirmation);
+    }
+
+    getRoles(): Observable<Role[]> {
+        return this.http.get<Role[]>(this.apiConfigService.API_ROLES);
     }
 
 }

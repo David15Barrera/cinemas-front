@@ -16,20 +16,18 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [authGuard],
-//    data: {
-//      role: 'ADMIN',
- //   }   ,
+    data: {
+      role: 'ADMIN_SIS',
+    },
     loadChildren: () =>
-      import('./modules/ADMIN/admin.routes').then(
-        (m) => m.ADMIN_ROUTES
-      ),
+      import('./modules/ADMIN/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
   {
     path: 'adviertiser',
     canActivate: [authGuard],
-//    data: {
-//      role: 'ADVERTISER',
-//    },
+    data: {
+      role: 'ANUNCIADOR',
+    },
     loadChildren: () =>
       import('./modules/ADVERTISER/advertiser.routes').then(
         (m) => m.ADVERTISER_ROUTES
@@ -38,23 +36,21 @@ export const routes: Routes = [
   {
     path: 'cinema',
     canActivate: [authGuard],
-//    data: {
-//      role: 'cinema',
-//    },
+    data: {
+      role: 'ADMIN_CINE',
+    },
     loadChildren: () =>
       import('./modules/CINEMA_ADMIN/cinema.routes').then(
         (m) => m.CINEMA_ROUTES
       ),
   },
-    {
+  {
     path: 'client',
     canActivate: [authGuard],
-//    data: {
-//      role: 'user',
-//    },
+    data: {
+      role: 'CLIENTE',
+    },
     loadChildren: () =>
-      import('./modules/CLIENT/client.routes').then(
-        (m) => m.CLIENT_ROUTES
-      ),
+      import('./modules/CLIENT/client.routes').then((m) => m.CLIENT_ROUTES),
   },
 ];
