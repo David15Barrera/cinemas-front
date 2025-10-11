@@ -1,0 +1,68 @@
+<aside class=" shadow-md transition-all duration-300 ease-in-out h-full py-4" [ngClass]="{
+    'w-[60px]': isCollapsed,
+    'w-[250px]': !isCollapsed
+  }">
+    <button class="btn btn-ghost btn-sm mt-1 mx-1 mb-3 text-white " (click)="toggleCollapsed()">
+        <i-lucide [img]="isCollapsed ? Menu : Close" class="text-white"></i-lucide>
+    </button>
+
+    <!-- Menú Administrativo -->
+    <ul class="px-0 flex flex-col items-stretch space-y-2 h-full pt-2 transition-all duration-300 ease-in-out">
+        <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Panel">
+            <a class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+                routerLink="/manager/dashboard">
+                <i-lucide [img]="AdminShield" class="text-blue-200"></i-lucide>
+                @if (!isCollapsed) {
+                <span class="truncate">Panel Admin</span>
+                }
+            </a>
+        </li>
+
+        <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Gestionar empleados">
+            <a class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+                routerLink="/manager/employees">
+                <i-lucide [img]="Users" class="text-blue-200"></i-lucide>
+                @if (!isCollapsed) {
+                <span class="truncate">Gestionar Empleados</span>
+                }
+            </a>
+        </li>
+
+        <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Gestionar hoteles">
+            <a class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800" routerLink="/manager/hotels">
+                <i-lucide [img]="Rooms" class="text-blue-200"></i-lucide>
+                @if (!isCollapsed) {
+                <span class="truncate">Gestionar Hoteles</span>
+                }
+            </a>
+        </li>
+
+        <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Gestionar Restaurantes">
+            <a class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800" routerLink="/manager/restaurants">
+                <i-lucide [img]="FileText" class="text-blue-200"></i-lucide>
+                @if (!isCollapsed) {
+                <span class="truncate">Gestionar Restaurantes</span>
+                }
+            </a>
+        </li>
+
+        <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Promociones">
+            <a class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+                routerLink="/manager/promotions">
+                <i-lucide [img]="Settings" class="text-blue-200"></i-lucide>
+                @if (!isCollapsed) {
+                <span class="truncate">Gestionar Promociones</span>
+                }
+            </a>
+        </li>
+
+        <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Reportes">
+            <a class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800" routerLink="/manager/reports">
+                <i-lucide [img]="Reports" class="text-blue-200"></i-lucide>
+                @if (!isCollapsed) {
+                <span class="truncate">Reportes</span>
+                }
+            </a>
+        </li>
+    </ul>
+</aside>
