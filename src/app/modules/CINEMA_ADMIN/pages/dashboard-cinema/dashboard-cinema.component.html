@@ -1,1 +1,128 @@
-<p>dashboard-cinema works!</p>
+<div class="space-y-8">
+  <!-- Encabezado -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold">Panel de Administración</h1>
+      <p class="text-sm opacity-70">Gestión general del Cinema GT</p>
+    </div>
+
+    <!-- <button class="btn btn-primary mt-4 sm:mt-0">
+      + Nueva promoción
+    </button> -->
+  </div>
+
+  <!-- Tarjetas resumen -->
+  <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="card bg-base-200 shadow-md">
+      <div class="card-body">
+        <h2 class="card-title">🎥 Película más vista</h2>
+        <p class="text-lg font-semibold">Avengers: Endgame</p>
+        <p class="text-sm opacity-70">3,240 visualizaciones</p>
+      </div>
+    </div>
+
+    <div class="card bg-base-200 shadow-md">
+      <div class="card-body">
+        <h2 class="card-title">🏛️ Sala más reservada</h2>
+        <p class="text-lg font-semibold">Sala Premium 2</p>
+        <p class="text-sm opacity-70">120 reservas esta semana</p>
+      </div>
+    </div>
+
+    <div class="card bg-base-200 shadow-md">
+      <div class="card-body">
+        <h2 class="card-title">📅 Reservaciones del día</h2>
+        <p class="text-lg font-semibold">58</p>
+        <p class="text-sm opacity-70">Última actualización: hace 2h</p>
+      </div>
+    </div>
+
+    <div class="card bg-base-200 shadow-md">
+      <div class="card-body">
+        <h2 class="card-title">💰 Ingresos del día</h2>
+        <p class="text-lg font-semibold">$2,340.00</p>
+        <p class="text-sm opacity-70">Incluye ventas y snacks</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accesos rápidos -->
+  <section>
+    <h2 class="text-2xl font-semibold mb-4">Administración del Cine</h2>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Tarjeta -->
+      <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
+        <div class="card-body items-center text-center">
+          <h3 class="card-title">🎞️ Salas y Asientos</h3>
+          <p class="text-sm opacity-70">
+            Crea, edita y gestiona las salas de proyección.
+          </p>
+          <div class="card-actions mt-4">
+            <button class="btn btn-outline btn-sm">Administrar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
+        <div class="card-body items-center text-center">
+          <h3 class="card-title">🕒 Horarios de Funciones</h3>
+          <p class="text-sm opacity-70">
+            Configura los horarios disponibles para las proyecciones.
+          </p>
+          <div class="card-actions mt-4">
+            <button class="btn btn-outline btn-sm">Ver horarios</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
+        <div class="card-body items-center text-center">
+          <h3 class="card-title">📣 Promociones</h3>
+          <p class="text-sm opacity-70">
+            Administra descuentos y promociones por cliente o sala.
+          </p>
+          <div class="card-actions mt-4">
+            <button class="btn btn-outline btn-sm">Gestionar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
+        <div class="card-body items-center text-center">
+          <h3 class="card-title">🍿 Snacks</h3>
+          <p class="text-sm opacity-70">
+            Controla los productos disponibles para venta.
+          </p>
+          <div class="card-actions mt-4">
+            <button class="btn btn-outline btn-sm">Inventario</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
+        <div class="card-body items-center text-center">
+          <h3 class="card-title">💳 Cartera Digital</h3>
+          <p class="text-sm opacity-70">
+            Gestiona los pagos, recargas y saldos de clientes.
+          </p>
+          <div class="card-actions mt-4">
+            <button class="btn btn-outline btn-sm">Revisar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
+        <div class="card-body items-center text-center">
+          <h3 class="card-title">📈 Reportes</h3>
+          <p class="text-sm opacity-70">
+            Visualiza estadísticas de rendimiento del cine.
+          </p>
+          <div class="card-actions mt-4">
+            <button class="btn btn-outline btn-sm">Ver reportes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

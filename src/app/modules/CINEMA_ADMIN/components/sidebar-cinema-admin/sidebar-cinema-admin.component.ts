@@ -2,31 +2,34 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
-  Users,
-  DoorOpen,
-  FileText,
-  Settings,
-  LucideAngularModule,
+  LayoutDashboard,
+  Armchair,
+  Clock,
+  Tag,
+  Popcorn,
+  Wallet,
+  ChartPie,
   Menu,
   X,
-  Shield,
-  ChartPie,
 } from 'lucide-angular';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-sidebar-cinema-admin',
+  standalone: true,
   imports: [CommonModule, RouterModule, LucideAngularModule],
   templateUrl: './sidebar-cinema-admin.component.html',
 })
 export class SidebarCinemaAdminComponent {
   readonly Menu = Menu;
   readonly Close = X;
-  readonly Users = Users;
-  readonly Rooms = DoorOpen;
+  readonly Dashboard = LayoutDashboard;
+  readonly Rooms = Armchair;
+  readonly Schedules = Clock;
+  readonly Promotions = Tag;
+  readonly Snacks = Popcorn;
+  readonly Wallet = Wallet;
   readonly Reports = ChartPie;
-  readonly Settings = Settings;
-  readonly AdminShield = Shield;
-  readonly FileText = FileText;
 
   isCollapsed = true;
 
