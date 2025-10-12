@@ -9,6 +9,9 @@ export class ApiConfigService {
     private readonly API_BASE = environment.API_ROOT;
     private readonly API_BASE_AUTH = `${this.API_BASE}/auth-identity/v1`;
     private readonly API_BASE_PROMOTION = `${this.API_BASE}/promotion/v1`;
+    public readonly API_IMAGES = `${this.API_BASE}/images/v1`
+    private readonly API_CINEMA_SERVICE = `${this.API_BASE}/cinema/v1`;
+
 
     
     // auth
@@ -18,10 +21,14 @@ export class ApiConfigService {
     //ENPOINTS
 
     // cines
+    public readonly API_CINEMA = `${this.API_CINEMA_SERVICE}/cinemas`;
 
     // Anuncios
 
     // promotions
     public readonly API_PROMOTION = `${this.API_BASE_PROMOTION}/promotions`
+
+    // Upload
+    public readonly API_UPLOAD = `${this.API_IMAGES}/images`
     
 }

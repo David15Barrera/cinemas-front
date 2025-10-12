@@ -22,12 +22,9 @@ export interface Recover {
 }
 export interface Session {
   token: string;
-  id: number;
+  id: string;
   email: string;
-  cui: string;
   active: boolean;
-  employeeId: string;
-  customerId: string;
   roleName: Rol;
 }
 

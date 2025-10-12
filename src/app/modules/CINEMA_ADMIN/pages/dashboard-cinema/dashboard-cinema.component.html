@@ -6,16 +6,19 @@
       <p class="text-sm opacity-70">Gestión general del Cinema GT</p>
     </div>
 
-    <!-- <button class="btn btn-primary mt-4 sm:mt-0">
+    <button class="btn btn-primary mt-4 sm:mt-0">
       + Nueva promoción
-    </button> -->
+    </button>
   </div>
 
   <!-- Tarjetas resumen -->
   <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
     <div class="card bg-base-200 shadow-md">
       <div class="card-body">
-        <h2 class="card-title">🎥 Película más vista</h2>
+        <h2 class="card-title">
+          <i-lucide [img]="Film" class="w-6 h-6"></i-lucide>
+          Película más vista
+        </h2>
         <p class="text-lg font-semibold">Avengers: Endgame</p>
         <p class="text-sm opacity-70">3,240 visualizaciones</p>
       </div>
@@ -23,7 +26,10 @@
 
     <div class="card bg-base-200 shadow-md">
       <div class="card-body">
-        <h2 class="card-title">🏛️ Sala más reservada</h2>
+        <h2 class="card-title">
+          <i-lucide [img]="Armchair" class="w-6 h-6"></i-lucide>
+          Sala más reservada
+        </h2>
         <p class="text-lg font-semibold">Sala Premium 2</p>
         <p class="text-sm opacity-70">120 reservas esta semana</p>
       </div>
@@ -31,7 +37,10 @@
 
     <div class="card bg-base-200 shadow-md">
       <div class="card-body">
-        <h2 class="card-title">📅 Reservaciones del día</h2>
+        <h2 class="card-title">
+          <i-lucide [img]="Calendar" class="w-6 h-6"></i-lucide>
+          Reservaciones del día
+        </h2>
         <p class="text-lg font-semibold">58</p>
         <p class="text-sm opacity-70">Última actualización: hace 2h</p>
       </div>
@@ -39,7 +48,10 @@
 
     <div class="card bg-base-200 shadow-md">
       <div class="card-body">
-        <h2 class="card-title">💰 Ingresos del día</h2>
+        <h2 class="card-title">
+          <i-lucide [img]="DollarSign" class="w-6 h-6"></i-lucide>
+          Ingresos del día
+        </h2>
         <p class="text-lg font-semibold">$2,340.00</p>
         <p class="text-sm opacity-70">Incluye ventas y snacks</p>
       </div>
@@ -51,10 +63,30 @@
     <h2 class="text-2xl font-semibold mb-4">Administración del Cine</h2>
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- Tarjeta -->
+      <!-- Datos del cine -->
       <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
         <div class="card-body items-center text-center">
-          <h3 class="card-title">🎞️ Salas y Asientos</h3>
+          <h3 class="card-title">
+            <i-lucide [img]="Building" class="w-6 h-6"></i-lucide>
+            Configuración del Cine
+          </h3>
+          <p class="text-sm opacity-70">
+            Edita la información general como nombre, descripción, dirección,
+            teléfono y contacto del cine.
+          </p>
+          <div class="card-actions mt-4">
+            <button class="btn btn-outline btn-sm" (click)="navigateTo('global-settings')">Configurar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Salas -->
+      <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
+        <div class="card-body items-center text-center">
+          <h3 class="card-title">
+            <i-lucide [img]="Armchair" class="w-6 h-6"></i-lucide>
+            Salas y Asientos
+          </h3>
           <p class="text-sm opacity-70">
             Crea, edita y gestiona las salas de proyección.
           </p>
@@ -64,9 +96,13 @@
         </div>
       </div>
 
+      <!-- Horarios -->
       <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
         <div class="card-body items-center text-center">
-          <h3 class="card-title">🕒 Horarios de Funciones</h3>
+          <h3 class="card-title">
+            <i-lucide [img]="Clock" class="w-6 h-6"></i-lucide>
+            Horarios de Funciones
+          </h3>
           <p class="text-sm opacity-70">
             Configura los horarios disponibles para las proyecciones.
           </p>
@@ -76,9 +112,13 @@
         </div>
       </div>
 
+      <!-- Promociones -->
       <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
         <div class="card-body items-center text-center">
-          <h3 class="card-title">📣 Promociones</h3>
+          <h3 class="card-title">
+            <i-lucide [img]="Tag" class="w-6 h-6"></i-lucide>
+            Promociones
+          </h3>
           <p class="text-sm opacity-70">
             Administra descuentos y promociones por cliente o sala.
           </p>
@@ -88,9 +128,13 @@
         </div>
       </div>
 
+      <!-- Snacks -->
       <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
         <div class="card-body items-center text-center">
-          <h3 class="card-title">🍿 Snacks</h3>
+          <h3 class="card-title">
+            <i-lucide [img]="Popcorn" class="w-6 h-6"></i-lucide>
+            Snacks
+          </h3>
           <p class="text-sm opacity-70">
             Controla los productos disponibles para venta.
           </p>
@@ -100,9 +144,13 @@
         </div>
       </div>
 
+      <!-- Cartera digital -->
       <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
         <div class="card-body items-center text-center">
-          <h3 class="card-title">💳 Cartera Digital</h3>
+          <h3 class="card-title">
+            <i-lucide [img]="Wallet" class="w-6 h-6"></i-lucide>
+            Cartera Digital
+          </h3>
           <p class="text-sm opacity-70">
             Gestiona los pagos, recargas y saldos de clientes.
           </p>
@@ -112,9 +160,29 @@
         </div>
       </div>
 
+      <!-- Opiniones y rankings -->
       <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
         <div class="card-body items-center text-center">
-          <h3 class="card-title">📈 Reportes</h3>
+          <h3 class="card-title">
+            <i-lucide [img]="Star" class="w-6 h-6"></i-lucide>
+            Opiniones y Rankings
+          </h3>
+          <p class="text-sm opacity-70">
+            Supervisa las valoraciones y comentarios de los clientes.
+          </p>
+          <div class="card-actions mt-4">
+            <button class="btn btn-outline btn-sm">Ver opiniones</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reportes -->
+      <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
+        <div class="card-body items-center text-center">
+          <h3 class="card-title">
+            <i-lucide [img]="ChartPie" class="w-6 h-6"></i-lucide>
+            Reportes
+          </h3>
           <p class="text-sm opacity-70">
             Visualiza estadísticas de rendimiento del cine.
           </p>

@@ -1,0 +1,184 @@
+<div class="space-y-10">
+  <!-- Encabezado -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold flex items-center gap-2">
+      <i-lucide [img]="Building" class="w-7 h-7"></i-lucide>
+      Datos del Cine
+    </h1>
+    <button
+      class="btn btn-primary flex items-center gap-2"
+      (click)="saveSettings()"
+    >
+      <i-lucide [img]="Save" class="w-5 h-5"></i-lucide>
+      Guardar cambios
+    </button>
+  </div>
+
+  <!-- Formulario -->
+  <div class="grid lg:grid-cols-3 gap-8">
+    <!-- Información del cine -->
+    <div class="lg:col-span-2">
+      <div class="card bg-base-200 shadow-md">
+        <div class="card-body space-y-4">
+          <h2 class="card-title flex items-center gap-2">
+            <i-lucide [img]="Info" class="w-5 h-5"></i-lucide>
+            Información general
+          </h2>
+
+          <!-- Nombre -->
+          <div>
+            <label class="label">
+              <span class="label-text">Nombre del Cine</span>
+            </label>
+            <input
+              [(ngModel)]="cinema().name"
+              type="text"
+              class="input input-bordered w-full"
+              placeholder="Ejemplo: Cinema GT"
+            />
+          </div>
+
+          <!-- Dirección -->
+          <div>
+            <label class="label">
+              <span class="label-text">Dirección</span>
+            </label>
+            <input
+              [(ngModel)]="cinema().address"
+              type="text"
+              class="input input-bordered w-full"
+              placeholder="Ejemplo: Avenida Reforma 123, Ciudad"
+            />
+          </div>
+
+          <!-- Costo diario -->
+          <div>
+            <label class="label">
+              <span class="label-text">Costo diario (Q)</span>
+            </label>
+            <input
+              [(ngModel)]="cinema().dailyCost"
+              type="number"
+              step="0.01"
+              class="input input-bordered w-full"
+              placeholder="Ejemplo: 250.00"
+            />
+          </div>
+
+          <!-- Admin user ID -->
+          <div>
+            <label class="label">
+              <span class="label-text">Administrador (email)</span>
+            </label>
+            <input
+              type="text"
+              class="input input-bordered w-full"
+              disabled
+              [value]="session.email"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Imagen del cine -->
+    <div>
+      <div class="card bg-base-200 shadow-md">
+        <div class="card-body space-y-4 items-center">
+          <h2 class="card-title flex items-center gap-2">
+            <i-lucide [img]="Image" class="w-5 h-5"></i-lucide>
+            Imagen del Cine
+          </h2>
+
+          <div
+            class="w-full aspect-video rounded-lg overflow-hidden bg-base-300 flex items-center justify-center"
+          >
+            <img
+              *ngIf="imageUrl"
+              [src]="imageUrl | image"
+              alt="Imagen del cine"
+              class="object-cover w-full h-full"
+            />
+            <div *ngIf="!imageUrl" class="text-sm opacity-70 text-center p-4">
+              <i-lucide
+                [img]="ImagePlus"
+                class="w-8 h-8 mx-auto mb-2"
+              ></i-lucide>
+              No hay imagen seleccionada
+            </div>
+          </div>
+
+          <div class="form-control w-full">
+            <input
+              type="file"
+              class="file-input file-input-bordered w-full"
+              accept="image/*"
+              required
+              (change)="onFileSelected($event)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listado de salas -->
+  <div class="card bg-base-200 shadow-md">
+    <div class="card-body">
+      <h2 class="card-title flex items-center gap-2">
+        <i-lucide [img]="Armchair" class="w-5 h-5"></i-lucide>
+        Salas del Cine
+      </h2>
+
+      <div class="overflow-x-auto mt-4">
+        <table class="table w-full">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Capacidad</th>
+              <th>Columnas</th>
+              <th>Filas</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>1</th>
+              <td>Sala Premium 1</td>
+              <td>120</td>
+              <td>12</td>
+              <td>10</td>
+              <td>
+                <button class="btn btn-outline btn-sm flex items-center gap-1">
+                  <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
+                  Editar
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <th>2</th>
+              <td>Sala Clásica</td>
+              <td>80</td>
+              <td>8</td>
+              <td>10</td>
+              <td>
+                <button class="btn btn-outline btn-sm flex items-center gap-1">
+                  <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
+                  Editar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-actions justify-end mt-4">
+        <button class="btn btn-primary flex items-center gap-2">
+          <i-lucide [img]="Plus" class="w-4 h-4"></i-lucide>
+          Agregar sala
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

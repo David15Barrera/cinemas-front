@@ -19,11 +19,26 @@
     <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Panel">
       <a
         class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
-        routerLink="/manager/dashboard"
+        routerLink="/cinema/dashboard"
       >
         <i-lucide [img]="Dashboard" class="text-blue-200"></i-lucide>
         @if (!isCollapsed) {
         <span class="truncate">Panel Administración</span>
+        }
+      </a>
+    </li>
+
+    <li
+      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
+      data-tip="Configuración del Cine"
+    >
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/cinema/global-settings"
+      >
+        <i-lucide [img]="Settings" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Configuración del Cine</span>
         }
       </a>
     </li>
@@ -69,6 +84,21 @@
         <i-lucide [img]="Promotions" class="text-blue-200"></i-lucide>
         @if (!isCollapsed) {
         <span class="truncate">Promociones</span>
+        }
+      </a>
+    </li>
+
+    <li
+      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
+      data-tip="Opiniones y Rankings"
+    >
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/manager/promotions"
+      >
+        <i-lucide [img]="Reviews" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Opiniones y Rankings</span>
         }
       </a>
     </li>

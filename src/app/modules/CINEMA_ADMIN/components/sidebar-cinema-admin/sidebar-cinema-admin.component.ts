@@ -11,6 +11,8 @@ import {
   ChartPie,
   Menu,
   X,
+  Settings,
+  Star
 } from 'lucide-angular';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -30,6 +32,8 @@ export class SidebarCinemaAdminComponent {
   readonly Snacks = Popcorn;
   readonly Wallet = Wallet;
   readonly Reports = ChartPie;
+  readonly Settings = Settings;
+  readonly Reviews = Star;
 
   isCollapsed = true;
 

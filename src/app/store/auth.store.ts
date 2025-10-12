@@ -8,12 +8,9 @@ import { Rol, Session } from 'app/modules/session/models/auth';
 export const INITIAL_STATE: Auth = {
     session: {
         token: "",
-        id: 0,
+        id: '',
         email: "",
-        cui:"",
         active:false,
-        employeeId: '',
-        customerId: '',
         roleName: Rol.CLIENTE,
     }
 };
