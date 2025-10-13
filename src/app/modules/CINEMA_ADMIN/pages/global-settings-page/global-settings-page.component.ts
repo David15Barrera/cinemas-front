@@ -63,7 +63,15 @@ export class GlobalSettingsPageComponent {
   }
 
   getCostGlobal() {
-    //TODO: get cost global from backend
+    this.cinemaService.getCostGlobal().subscribe({
+      next: (cost) => {
+        this.costGlobal.set(cost.cost);
+      },
+      error: (err) => {
+        this.costGlobal.set(0);
+        console.error('Error al obtener el costo global:', err);
+      },
+    });
   }
 
   loadCinema() {
@@ -75,6 +83,7 @@ export class GlobalSettingsPageComponent {
           this.imageUrl = cinema.imageUrl;
         } else {
           this.isUpdate.set(false);
+          this.cinema().dailyCost = this.costGlobal();
           console.warn('No se encontró el cine para este administrador.');
         }
       },
@@ -111,7 +120,50 @@ export class GlobalSettingsPageComponent {
       await this.uplogadImag();
     }
 
-    // TODO: guardar cinema en backend
+    if (this.isUpdate()) {
+      this.updateCinema();
+    } else {
+      this.createCinema();
+    }
+  }
+
+  createCinema() {
+    this.cinemaService.createCinema(this.cinema()).subscribe({
+      next: (cinema) => {
+        this.cinema.set(cinema);
+        this.isUpdate.set(true);
+        this.alertStore.addAlert({
+          message: `Cine creado correctamente.`,
+          type: 'success',
+        });
+      },
+      error: (err) => {
+        console.error('Error al crear el cine:', err);
+        this.alertStore.addAlert({
+          message: `Error al crear el cine. Inténtelo de nuevo más tarde.`,
+          type: 'error',
+        });
+      },
+    });
+  }
+
+  updateCinema() {
+    this.cinemaService.updateCinema(this.cinema()).subscribe({
+      next: (cinema) => {
+        this.cinema.set(cinema);
+        this.alertStore.addAlert({
+          message: `Cine actualizado correctamente.`,
+          type: 'success',
+        });
+      },
+      error: (err) => {
+        console.error('Error al actualizar el cine:', err);
+        this.alertStore.addAlert({
+          message: `Error al actualizar el cine. Inténtelo de nuevo más tarde.`,
+          type: 'error',
+        });
+      },
+    });
   }
 
   onFileSelected(event: Event) {

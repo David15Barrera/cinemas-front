@@ -11,7 +11,7 @@ export class ApiConfigService {
     private readonly API_BASE_PROMOTION = `${this.API_BASE}/promotion/v1`;
     public readonly API_IMAGES = `${this.API_BASE}/images/v1`
     private readonly API_CINEMA_SERVICE = `${this.API_BASE}/cinema/v1`;
-
+    private readonly API_FINANCE_SERVICE = `${this.API_BASE}/wallet-payments/v1`;
 
     
     // auth
@@ -30,5 +30,8 @@ export class ApiConfigService {
 
     // Upload
     public readonly API_UPLOAD = `${this.API_IMAGES}/images`
+
+    // Finance
+    public readonly API_GLOBAL_CONFIGS = `${this.API_FINANCE_SERVICE}/global-configs`
     
 }

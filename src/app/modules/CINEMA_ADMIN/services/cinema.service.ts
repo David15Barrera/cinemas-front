@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiConfigService } from '@shared/services/api-config.service';
 import { BehaviorSubject, catchError, map, Observable, of, tap, take } from 'rxjs';
-import { Cinema } from '../models/cinema.interface';
+import { Cinema, CostGlobal } from '../models/cinema.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +11,7 @@ export class CinemaService {
   private readonly _http = inject(HttpClient);
   private readonly apiConfig = inject(ApiConfigService);
   private readonly API_CINEMA = this.apiConfig.API_CINEMA;
+  private readonly API_GLOBAL_CONFIGS = this.apiConfig.API_GLOBAL_CONFIGS;
 
   private cinemaSubject = new BehaviorSubject<Cinema | null>(null);
 
@@ -49,7 +50,11 @@ export class CinemaService {
     return this._http.post<Cinema>(this.API_CINEMA, cinema);
   }
 
-  clearCinema() {
+  public getCostGlobal(): Observable<CostGlobal>{
+    return this._http.get<CostGlobal>(`${this.API_GLOBAL_CONFIGS}/cinema/cost-per-day`);
+  }
+
+  public clearCinema() {
     localStorage.removeItem('cinema');
     this.cinemaSubject.next(null);
   }
