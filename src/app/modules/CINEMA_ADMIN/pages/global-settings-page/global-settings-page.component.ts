@@ -19,6 +19,7 @@ import { UploadImgService } from '../../services/uploadImg.service';
 import { AlertStore } from 'app/store/alert.store';
 import { ImagePipe } from '@shared/pipes/image.pipe';
 import { CinemaService } from '../../services/cinema.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-global-settings-page',
@@ -40,6 +41,7 @@ export class GlobalSettingsPageComponent {
   private readonly uploadService = inject(UploadImgService);
   private readonly alertStore = inject(AlertStore);
   private readonly cinemaService = inject(CinemaService);
+  private readonly router = inject(Router);
 
   file!: File;
   formData!: FormData;
@@ -65,7 +67,7 @@ export class GlobalSettingsPageComponent {
   getCostGlobal() {
     this.cinemaService.getCostGlobal().subscribe({
       next: (cost) => {
-        this.costGlobal.set(cost.cost);
+        this.costGlobal.set(cost.cost);        
       },
       error: (err) => {
         this.costGlobal.set(0);
@@ -136,6 +138,8 @@ export class GlobalSettingsPageComponent {
           message: `Cine creado correctamente.`,
           type: 'success',
         });
+        this.loadCinema();
+        this.router.navigate(['/cinema/dashboard']);
       },
       error: (err) => {
         console.error('Error al crear el cine:', err);

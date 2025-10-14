@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthStore } from 'app/store/auth.store';
+import { CinemaService } from '../../services/cinema.service';
 
 @Component({
   selector: 'app-navbar-cinema-admin',
@@ -10,4 +11,10 @@ import { AuthStore } from 'app/store/auth.store';
 export class NavbarCinemaAdminComponent {
   private readonly router = inject(Router);
   readonly authStore = inject(AuthStore);
+  private readonly cinemService = inject(CinemaService);
+
+  logout(): void {
+    this.authStore.logout();
+    this.cinemService.clearCinema();
+  }
 }
