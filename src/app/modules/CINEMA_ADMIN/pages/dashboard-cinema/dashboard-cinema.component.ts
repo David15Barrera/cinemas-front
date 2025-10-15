@@ -61,7 +61,7 @@ export class DashboardCinemaComponent {
     this.route.navigate([`cinema/${path}`]);
   }
 
-    loadCinema() {
+  loadCinema() {
     this.cinemaService.getCinemaByAdminUserId(this.session.id).subscribe({
       next: (cinema) => {
         if (cinema) {

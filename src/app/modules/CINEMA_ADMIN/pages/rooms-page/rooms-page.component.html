@@ -37,15 +37,36 @@
             </tr>
           </thead>
           <tbody>
+            <!-- for -->
+            @for (room of rooms(); track room.id; let i = $index) {
             <tr>
-              <th>1</th>
-              <td>Sala Premium 1</td>
-              <td>120</td>
-              <td>12</td>
-              <td>10</td>
-              <td>DESHABILITADO</td>
-              <td>BLOQUEADO</td>
+              <th>{{ i + 1 }}</th>
+              <td>{{ room.name }}</td>
+              <td>{{ room.capacity }}</td>
+              <td>{{ room.columns }}</td>
+              <td>{{ room.rows }}</td>
               <td>
+                <span
+                  class="badge badge-lg"
+                  [ngClass]="{
+                  'badge-success': room.commentsEnabled === true,
+                  'badge-warning': room.commentsEnabled === false,
+                }"
+                  >{{ room.commentsEnabled ? "HABILITADO" : "DESHABILITADO" }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="badge badge-lg"
+                  [ngClass]="{
+                  'badge-success': room.blocked === true,
+                  'badge-warning': room.blocked === false,
+                }"
+                  >{{ room.blocked ? "BLOQUEADO" : "HABILITADO" }}
+                </span>
+              </td>
+              <td>
+                RoomService
                 <div class="flex gap-2">
                   <button
                     class="btn btn-outline btn-info btn-sm flex items-center gap-1"
@@ -62,31 +83,15 @@
                 </div>
               </td>
             </tr>
+            }
+            <!-- empty -->
+            @empty {
             <tr>
-              <th>2</th>
-              <td>Sala Clásica</td>
-              <td>80</td>
-              <td>8</td>
-              <td>10</td>
-              <td>HABILITADO</td>
-              <td>DISPONIBLE</td>
-              <td>
-                <div class="flex gap-2">
-                  <button
-                    class="btn btn-outline btn-info btn-sm flex items-center gap-1"
-                  >
-                    <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
-                    Editar
-                  </button>
-                  <button
-                    class="btn btn-outline btn-accent btn-sm flex items-center gap-1"
-                  >
-                    <i-lucide [img]="Eye" class="w-4 h-4"></i-lucide>
-                    Asientos
-                  </button>
-                </div>
+              <td colspan="8" class="text-center">
+                No hay salas registradas en este cine.
               </td>
             </tr>
+            }
           </tbody>
         </table>
       </div>

@@ -20,6 +20,7 @@ import { AlertStore } from 'app/store/alert.store';
 import { ImagePipe } from '@shared/pipes/image.pipe';
 import { CinemaService } from '../../services/cinema.service';
 import { Router } from '@angular/router';
+import { HandlerError } from '@shared/utils/handlerError';
 
 @Component({
   selector: 'app-global-settings-page',
@@ -42,6 +43,7 @@ export class GlobalSettingsPageComponent {
   private readonly alertStore = inject(AlertStore);
   private readonly cinemaService = inject(CinemaService);
   private readonly router = inject(Router);
+  private HandlerError = HandlerError;
 
   file!: File;
   formData!: FormData;
@@ -67,7 +69,7 @@ export class GlobalSettingsPageComponent {
   getCostGlobal() {
     this.cinemaService.getCostGlobal().subscribe({
       next: (cost) => {
-        this.costGlobal.set(cost.cost);        
+        this.costGlobal.set(cost.cost);
       },
       error: (err) => {
         this.costGlobal.set(0);
@@ -143,10 +145,8 @@ export class GlobalSettingsPageComponent {
       },
       error: (err) => {
         console.error('Error al crear el cine:', err);
-        this.alertStore.addAlert({
-          message: `Error al crear el cine. Inténtelo de nuevo más tarde.`,
-          type: 'error',
-        });
+        const msgDefault = `Error al crear el cine. Inténtelo de nuevo más tarde.`;
+        this.HandlerError.handleError(err, this.alertStore, msgDefault);
       },
     });
   }
@@ -162,10 +162,8 @@ export class GlobalSettingsPageComponent {
       },
       error: (err) => {
         console.error('Error al actualizar el cine:', err);
-        this.alertStore.addAlert({
-          message: `Error al actualizar el cine. Inténtelo de nuevo más tarde.`,
-          type: 'error',
-        });
+        const msgDefault = `Error al actualizar el cine. Inténtelo de nuevo más tarde.`;
+        this.HandlerError.handleError(err, this.alertStore, msgDefault);
       },
     });
   }
