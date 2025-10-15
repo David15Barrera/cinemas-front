@@ -1,0 +1,102 @@
+<div class="space-y-10">
+  <!-- Encabezado -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold flex items-center gap-2">
+      <i-lucide [img]="Armchair" class="w-7 h-7"></i-lucide>
+      Administración de salas de proyecciones
+    </h1>
+    <button
+      class="btn btn-outline btn-primary flex items-center gap-2"
+      (click)="openModalFormRoom()"
+    >
+      <i-lucide [img]="Plus" class="w-5 h-5"></i-lucide>
+      Agregar sala
+    </button>
+  </div>
+
+  <!-- Listado de salas -->
+  <div class="card bg-base-200 shadow-md">
+    <div class="card-body">
+      <h2 class="card-title flex items-center gap-2">
+        <i-lucide [img]="Armchair" class="w-5 h-5"></i-lucide>
+        Salas del Cine
+      </h2>
+
+      <div class="overflow-x-auto mt-4">
+        <table class="table w-full">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Capacidad</th>
+              <th>Columnas</th>
+              <th>Filas</th>
+              <th>Opiniones</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>1</th>
+              <td>Sala Premium 1</td>
+              <td>120</td>
+              <td>12</td>
+              <td>10</td>
+              <td>DESHABILITADO</td>
+              <td>BLOQUEADO</td>
+              <td>
+                <div class="flex gap-2">
+                  <button
+                    class="btn btn-outline btn-info btn-sm flex items-center gap-1"
+                  >
+                    <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
+                    Editar
+                  </button>
+                  <button
+                    class="btn btn-outline btn-accent btn-sm flex items-center gap-1"
+                  >
+                    <i-lucide [img]="Eye" class="w-4 h-4"></i-lucide>
+                    Asientos
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th>2</th>
+              <td>Sala Clásica</td>
+              <td>80</td>
+              <td>8</td>
+              <td>10</td>
+              <td>HABILITADO</td>
+              <td>DISPONIBLE</td>
+              <td>
+                <div class="flex gap-2">
+                  <button
+                    class="btn btn-outline btn-info btn-sm flex items-center gap-1"
+                  >
+                    <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
+                    Editar
+                  </button>
+                  <button
+                    class="btn btn-outline btn-accent btn-sm flex items-center gap-1"
+                  >
+                    <i-lucide [img]="Eye" class="w-4 h-4"></i-lucide>
+                    Asientos
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!--  -->
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear sala de proyección -->
+
+<dialog #modalFormRoom id="my_modal_1" class="modal">
+  <app-form-room-modal (close)="closeModalFormRoom()" />
+</dialog>

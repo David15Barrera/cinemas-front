@@ -17,6 +17,14 @@ const cinemaAdminRoutes: Routes = [
         './pages/global-settings-page/global-settings-page.component'
       ).then((m) => m.GlobalSettingsPageComponent),
   },
+  {
+    path: 'rooms',
+    canActivate: [hasCinemaGuard],
+    loadComponent: () =>
+      import('./pages/rooms-page/rooms-page.component').then(
+        (m) => m.RoomsPageComponent
+      ),
+  },
 ];
 
 export const CINEMA_ROUTES: Routes = [

@@ -1,0 +1,90 @@
+<input type="checkbox" id="create-room-modal" class="modal-toggle" />
+
+<div class="modal-box max-w-2xl">
+  <h3 class="text-lg font-bold mb-4">Crear nueva sala de proyección</h3>
+
+  <!-- Formulario -->
+  <form class="space-y-4">
+    <!-- Nombre -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Nombre de la sala</span>
+      </label>
+      <input
+        type="text"
+        placeholder="Ej. Sala Premium"
+        class="input input-bordered w-full"
+      />
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Descripción</span>
+      </label>
+      <textarea
+        class="textarea textarea-bordered w-full"
+        placeholder="Breve descripción de la sala"
+      ></textarea>
+    </div>
+
+    <!-- Capacidad -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Filas de asientos</span>
+        </label>
+        <input
+          type="number"
+          placeholder="10"
+          class="input input-bordered w-full"
+        />
+      </div>
+
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Columnas de asientos</span>
+        </label>
+        <input
+          type="number"
+          placeholder="10"
+          class="input input-bordered w-full"
+        />
+      </div>
+    </div>
+
+    <!-- Imagen -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Imagen de la sala</span>
+      </label>
+      <input
+        type="file"
+        accept="image/*"
+        class="file-input file-input-bordered w-full"
+      />
+    </div>
+
+    <!-- Vista previa de imagen -->
+    <div class="mt-4">
+      <figure
+        class="w-full h-48 bg-base-200 flex items-center justify-center rounded-lg overflow-hidden"
+      >
+        <img
+          src="https://placehold.co/400x200?text=Vista+previa"
+          alt="Vista previa"
+          class="object-cover w-full h-full"
+        />
+      </figure>
+    </div>
+
+    <!-- Botones -->
+    <div class="modal-action">
+      <label for="create-room-modal" class="btn btn-ghost" (click)="onClose()"
+        >Cancelar</label
+      >
+      <button type="submit" class="btn btn-primary">Guardar sala</button>
+    </div>
+  </form>
+</div>
