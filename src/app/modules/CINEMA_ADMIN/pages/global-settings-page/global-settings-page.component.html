@@ -144,38 +144,44 @@
             </tr>
           </thead>
           <tbody>
+            <!-- for -->
+            @for (room of rooms(); track room.id; let i = $index) {
             <tr>
-              <th>1</th>
-              <td>Sala Premium 1</td>
-              <td>120</td>
-              <td>12</td>
-              <td>10</td>
+              <th>{{ i + 1 }}</th>
+              <td>{{ room.name }}</td>
+              <td>{{ room.capacity }}</td>
+              <td>{{ room.columns }}</td>
+              <td>{{ room.rows }}</td>
               <td>
-                <button class="btn btn-outline btn-sm flex items-center gap-1">
-                  <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
-                  Editar
-                </button>
+                <div class="flex gap-1">
+                  <button
+                    class="btn btn-outline btn-info btn-sm flex items-center gap-1"
+                    (click)="openModalFormRoom(room)"
+                  >
+                    <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
+                    Editar
+                  </button>
+                </div>
               </td>
             </tr>
+            }
+            <!-- empty -->
+            @empty {
             <tr>
-              <th>2</th>
-              <td>Sala Clásica</td>
-              <td>80</td>
-              <td>8</td>
-              <td>10</td>
-              <td>
-                <button class="btn btn-outline btn-sm flex items-center gap-1">
-                  <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
-                  Editar
-                </button>
+              <td colspan="8" class="text-center">
+                No hay salas registradas en este cine.
               </td>
             </tr>
+            }
           </tbody>
         </table>
       </div>
 
       <div class="card-actions justify-end mt-4">
-        <button class="btn btn-primary flex items-center gap-2">
+        <button
+          class="btn btn-primary flex items-center gap-2"
+          (click)="openModalFormRoom()"
+        >
           <i-lucide [img]="Plus" class="w-4 h-4"></i-lucide>
           Agregar sala
         </button>
@@ -183,3 +189,12 @@
     </div>
   </div>
 </div>
+
+<!-- Modal para crear sala de proyección -->
+<dialog #modalFormRoom id="my_modal_1" class="modal">
+  <app-form-room-modal
+    [roomUpdate]="roomUpdate()"
+    (close)="closeModalFormRoom()"
+    (saveSucces)="eventOnSaveSucces()"
+  />
+</dialog>

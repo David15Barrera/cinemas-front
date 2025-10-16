@@ -38,6 +38,7 @@
         </label>
         <input
           [(ngModel)]="newRoom().rows"
+          [disabled]="roomUpdate() ? true : false"
           type="number"
           placeholder="10"
           class="input input-bordered w-full"
@@ -50,6 +51,7 @@
         </label>
         <input
           [(ngModel)]="newRoom().columns"
+          [disabled]="roomUpdate() ? true : false"
           type="number"
           placeholder="10"
           class="input input-bordered w-full"
@@ -124,7 +126,7 @@
         >Cancelar</label
       >
       <button type="submit" class="btn btn-primary" (click)="saveRoom()">
-        Guardar sala
+        Guardar
       </button>
     </div>
   </div>

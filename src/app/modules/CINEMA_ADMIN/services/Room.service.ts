@@ -14,7 +14,7 @@ export class RoomService {
 
   constructor() {}
 
-  createRoom(createRoom: CreateRoom): Observable<Room>{
+  createRoom(createRoom: CreateRoom): Observable<Room> {
     return this._http.post<Room>(`${this.API_ROOMS}`, createRoom);
   }
 

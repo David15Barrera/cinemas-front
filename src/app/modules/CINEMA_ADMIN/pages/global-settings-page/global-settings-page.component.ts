@@ -1,4 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import {
@@ -21,11 +27,20 @@ import { ImagePipe } from '@shared/pipes/image.pipe';
 import { CinemaService } from '../../services/cinema.service';
 import { Router } from '@angular/router';
 import { HandlerError } from '@shared/utils/handlerError';
+import { Room } from '../../models/room.interface';
+import { RoomService } from '../../services/Room.service';
+import { FormRoomModalComponent } from '../../components/form-room-modal/form-room-modal.component';
 
 @Component({
   selector: 'app-global-settings-page',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, FormsModule, ImagePipe],
+  imports: [
+    CommonModule,
+    LucideAngularModule,
+    FormsModule,
+    ImagePipe,
+    FormRoomModalComponent,
+  ],
   templateUrl: './global-settings-page.component.html',
 })
 export class GlobalSettingsPageComponent {
@@ -38,10 +53,15 @@ export class GlobalSettingsPageComponent {
   readonly Plus = Plus;
   readonly Save = Save;
 
+  // modal
+  @ViewChild('modalFormRoom')
+  modalFromRoom!: ElementRef<HTMLDialogElement>;
+
   private readonly localStorageService = inject(LocalStorageService);
   private readonly uploadService = inject(UploadImgService);
   private readonly alertStore = inject(AlertStore);
   private readonly cinemaService = inject(CinemaService);
+  private readonly roomService = inject(RoomService);
   private readonly router = inject(Router);
   private HandlerError = HandlerError;
 
@@ -52,6 +72,8 @@ export class GlobalSettingsPageComponent {
   imageUrl: string | null = null;
   session: Session = this.localStorageService.getState().session;
   costGlobal = signal(0);
+  rooms = signal<Room[]>([]);
+  roomUpdate = signal<Room | null>(null);
   cinema = signal<Cinema>({
     address: '',
     adminUserId: this.session.id,
@@ -85,6 +107,7 @@ export class GlobalSettingsPageComponent {
           this.cinema.set(cinema);
           this.isUpdate.set(true);
           this.imageUrl = cinema.imageUrl;
+          this.getRoomsByCinemaId(cinema.id);
         } else {
           this.isUpdate.set(false);
           this.cinema().dailyCost = this.costGlobal();
@@ -166,6 +189,32 @@ export class GlobalSettingsPageComponent {
         this.HandlerError.handleError(err, this.alertStore, msgDefault);
       },
     });
+  }
+
+  getRoomsByCinemaId(cinemaId: string) {
+    this.roomService.getRoomsByCinemaId(cinemaId).subscribe({
+      next: (rooms) => {
+        this.rooms.set(rooms);
+      },
+      error: (err) => {
+        this.rooms.set([]);
+        console.error('Error al obtener el cine:', err);
+      },
+    });
+  }
+
+  openModalFormRoom(roomUpdate: Room | null = null) {
+    this.roomUpdate.set(roomUpdate);
+    this.modalFromRoom.nativeElement.showModal();
+  }
+
+  eventOnSaveSucces() {
+    this.loadCinema();
+  }
+
+  closeModalFormRoom() {
+    this.roomUpdate.set(null);
+    this.modalFromRoom.nativeElement.close();
   }
 
   onFileSelected(event: Event) {
