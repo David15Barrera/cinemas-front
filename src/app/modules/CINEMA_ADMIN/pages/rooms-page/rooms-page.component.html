@@ -59,17 +59,17 @@
                 <span
                   class="badge badge-lg"
                   [ngClass]="{
-                  'badge-success': room.blocked === true,
-                  'badge-warning': room.blocked === false,
+                  'badge-warning': room.blocked === true,
+                  'badge-info': room.blocked === false,
                 }"
                   >{{ room.blocked ? "BLOQUEADO" : "HABILITADO" }}
                 </span>
               </td>
               <td>
-                RoomService
                 <div class="flex gap-2">
                   <button
                     class="btn btn-outline btn-info btn-sm flex items-center gap-1"
+                    (click)="openModalFormRoom(room)"
                   >
                     <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
                     Editar
@@ -103,5 +103,9 @@
 <!-- Modal para crear sala de proyección -->
 
 <dialog #modalFormRoom id="my_modal_1" class="modal">
-  <app-form-room-modal (close)="closeModalFormRoom()" />
+  <app-form-room-modal
+    [roomUpdate]="roomUpdate()"
+    (close)="closeModalFormRoom()"
+    (saveSucces)="eventOnSaveSucces()"
+  />
 </dialog>

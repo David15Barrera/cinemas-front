@@ -37,9 +37,14 @@ export class RoomsPageComponent {
 
   // datos
   rooms = signal<Room[]>([]);
+  roomUpdate = signal<Room | null>(null);
   session: Session = this.localStorageService.getState().session;
 
   ngOnInit(): void {
+    this.loadCinema();
+  }
+
+  eventOnSaveSucces() {
     this.loadCinema();
   }
 
@@ -55,11 +60,13 @@ export class RoomsPageComponent {
     });
   }
 
-  openModalFormRoom() {
+  openModalFormRoom(roomUpdate: Room | null = null) {
+    this.roomUpdate.set(roomUpdate);
     this.modalFromRoom.nativeElement.showModal();
   }
 
   closeModalFormRoom() {
+    this.roomUpdate.set(null);
     this.modalFromRoom.nativeElement.close();
   }
 

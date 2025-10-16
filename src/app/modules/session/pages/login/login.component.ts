@@ -41,7 +41,7 @@ export default class LoginComponent {
 
     this.authService.login(login).subscribe({
       next: (value: Session) => {
-        console.log(value);
+        // console.log(value);
         
         this.store.updateSession(value)
         this.redirect(value.roleName)

@@ -1,9 +1,17 @@
-import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  input,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
 import { LocalStorageService } from '@shared/services/local-storage.service';
 import { CinemaService } from '../../services/cinema.service';
 import { RoomService } from '../../services/Room.service';
 import { Session } from 'app/modules/session/models/auth';
-import { CreateRoom } from '../../models/room.interface';
+import { CreateRoom, Room } from '../../models/room.interface';
 import { AlertStore } from 'app/store/alert.store';
 import { UploadImgService } from '../../services/uploadImg.service';
 import { HandlerError } from '@shared/utils/handlerError';
@@ -22,6 +30,8 @@ export class FormRoomModalComponent {
 
   // evento para cerrar el modal
   @Output() close = new EventEmitter<void>();
+  @Output() saveSucces = new EventEmitter<void>();
+  roomUpdate = input<Room | null>(null);
 
   // injección de servicios
   private readonly roomService = inject(RoomService);
@@ -38,7 +48,7 @@ export class FormRoomModalComponent {
 
   // datos
   session: Session = this.localStorageService.getState().session;
-  newRoom = signal<CreateRoom>({
+  newRoom = signal<CreateRoom | Room>({
     name: '',
     cinemaId: '',
     columns: 0,
@@ -50,6 +60,26 @@ export class FormRoomModalComponent {
 
   ngOnInit(): void {
     this.loadCinema();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['roomUpdate']) {
+      if (changes['roomUpdate'].currentValue && this.roomUpdate()) {
+        this.newRoom.set({ ...this.roomUpdate()! });
+        this.imageUrl = this.roomUpdate()!.imageUrl;
+      } else {
+        this.newRoom.set({
+          name: '',
+          cinemaId: '',
+          columns: 0,
+          rows: 0,
+          description: '',
+          imageUrl: '',
+        });
+        this.loadCinema();
+        this.imageUrl = null;
+      }
+    }
   }
 
   async saveRoom() {
@@ -69,8 +99,21 @@ export class FormRoomModalComponent {
       return;
     }
 
-    if (this.file) {
+    if (this.newRoom().description.length <= 10) {
+      this.alertStore.addAlert({
+        message: `La descripcion debe tener 10 caracteres como minimo.`,
+        type: 'info',
+      });
+      return;
+    }
+
+    if (this.file && !this.roomUpdate()) {
       await this.uplogadImag();
+    }
+
+    if (this.roomUpdate()) {
+      this.updateRoom();
+      return;
     }
 
     this.createRoom();
@@ -79,19 +122,7 @@ export class FormRoomModalComponent {
   createRoom() {
     this.roomService.createRoom(this.newRoom()).subscribe({
       next: (room) => {
-        this.newRoom.set({
-          name: '',
-          cinemaId: this.cinemaId(),
-          columns: 0,
-          rows: 0,
-          description: '',
-          imageUrl: '',
-        });
-        this.alertStore.addAlert({
-          message: `Sala ${room.name} creada con éxito.`,
-          type: 'success',
-        });
-        this.onClose();
+        this.onSaveSucces('Sala creada con éxito.');
       },
       error: (err) => {
         console.error('Error al crear la sala:', err);
@@ -99,6 +130,21 @@ export class FormRoomModalComponent {
         this.HandlerError.handleError(err, this.alertStore, msgDefault);
       },
     });
+  }
+
+  updateRoom() {
+    this.roomService
+      .updateRoom(this.roomUpdate()!.id, this.newRoom())
+      .subscribe({
+        next: (room) => {
+          this.onSaveSucces('Sala actualizada con éxito.');
+        },
+        error: (err) => {
+          console.error('Error al actualizar la sala:', err);
+          const msgDefault = `Error al actualizar la sala. Inténtelo de nuevo más tarde.`;
+          this.HandlerError.handleError(err, this.alertStore, msgDefault);
+        },
+      });
   }
 
   onFileSelected(event: Event) {
@@ -133,6 +179,24 @@ export class FormRoomModalComponent {
 
   onClose() {
     this.close.emit();
+  }
+
+  onSaveSucces(message: string) {
+    this.alertStore.addAlert({
+      message: message,
+      type: 'success',
+    });
+    this.newRoom.set({
+      name: '',
+      cinemaId: this.cinemaId(),
+      columns: 0,
+      rows: 0,
+      description: '',
+      imageUrl: '',
+    });
+    this.imageUrl = null;
+    this.onClose();
+    this.saveSucces.emit();
   }
 
   loadCinema() {

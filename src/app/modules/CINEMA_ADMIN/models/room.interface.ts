@@ -5,6 +5,8 @@ export interface CreateRoom {
     rows: number;
     columns: number;
     imageUrl: string;
+    commentsEnabled?: boolean;
+    blocked?: boolean;
 }
 
 export interface Room {

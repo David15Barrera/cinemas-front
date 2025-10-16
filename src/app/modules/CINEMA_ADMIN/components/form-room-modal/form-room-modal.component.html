@@ -58,6 +58,7 @@
     </div>
 
     <!-- Imagen -->
+    @if (!roomUpdate()) {
     <div class="form-control">
       <label class="label">
         <span class="label-text">Imagen de la sala</span>
@@ -70,6 +71,34 @@
         (change)="onFileSelected($event)"
       />
     </div>
+    }
+
+    <!-- Opciones: Permitir opiniones y Bloquear sala -->
+    @if (roomUpdate()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <input
+            type="checkbox"
+            class="toggle"
+            [(ngModel)]="newRoom().commentsEnabled"
+          />
+          <span class="label-text ml-2">Permitir opiniones</span>
+        </label>
+      </div>
+
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <input
+            type="checkbox"
+            class="toggle"
+            [(ngModel)]="newRoom().blocked"
+          />
+          <span class="label-text ml-2">Bloquear sala</span>
+        </label>
+      </div>
+    </div>
+    }
 
     <!-- Vista previa de imagen -->
     <div class="mt-4">
@@ -94,7 +123,9 @@
       <label for="create-room-modal" class="btn btn-ghost" (click)="onClose()"
         >Cancelar</label
       >
-      <button type="submit" class="btn btn-primary" (click)="saveRoom()">Guardar sala</button>
+      <button type="submit" class="btn btn-primary" (click)="saveRoom()">
+        Guardar sala
+      </button>
     </div>
   </div>
 </div>
