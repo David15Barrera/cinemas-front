@@ -12,7 +12,6 @@ import { Seat } from '../../models/seat.interface';
 import { Room } from '../../models/room.interface';
 import { SeatService } from '../../services/seat.service';
 import { AlertStore } from 'app/store/alert.store';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-seats-modal',
