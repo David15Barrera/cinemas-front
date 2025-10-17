@@ -84,7 +84,7 @@ redirect(role: string) {
       break;
 
     case 'ANUNCIADOR':
-      this.router.navigate(['/adviertiser']);
+      this.router.navigate(['/advertiser']);
       break;
 
     case 'CLIENTE':

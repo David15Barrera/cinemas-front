@@ -10,7 +10,7 @@ import { ClientService } from '../../services/client.service';
   styleUrl: './navbar-client.component.css'
 })
 export class NavbarClientComponent {
- private readonly router = inject(Router);
+  private readonly router = inject(Router);
   readonly authStore = inject(AuthStore);
   private readonly clientService = inject(ClientService);
 

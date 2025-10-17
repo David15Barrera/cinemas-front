@@ -9,7 +9,7 @@ import { Client } from '../models/client.interface';
 })
 export class ClientService {
 
-private readonly _http = inject(HttpClient);
+  private readonly _http = inject(HttpClient);
   private readonly apiConfig = inject(ApiConfigService);
   private readonly API_CLIENT = this.apiConfig.API_AUTH;
   private readonly API_GLOBAL_CONFIGS = this.apiConfig.API_GLOBAL_CONFIGS;
