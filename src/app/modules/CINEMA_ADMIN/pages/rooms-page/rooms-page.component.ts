@@ -13,10 +13,16 @@ import { LocalStorageService } from '@shared/services/local-storage.service';
 import { Session } from 'app/modules/session/models/auth';
 import { CinemaService } from '../../services/cinema.service';
 import { NgClass } from '@angular/common';
+import { SeatsModalComponent } from '../../components/seats-modal/seats-modal.component';
 
 @Component({
   selector: 'app-rooms-page',
-  imports: [LucideAngularModule, FormRoomModalComponent, NgClass],
+  imports: [
+    LucideAngularModule,
+    FormRoomModalComponent,
+    NgClass,
+    SeatsModalComponent,
+  ],
   templateUrl: './rooms-page.component.html',
 })
 export class RoomsPageComponent {
@@ -29,6 +35,8 @@ export class RoomsPageComponent {
   // modal
   @ViewChild('modalFormRoom')
   modalFromRoom!: ElementRef<HTMLDialogElement>;
+  @ViewChild('modalSeats')
+  modalSeats!: ElementRef<HTMLDialogElement>;
 
   // injección de servicios
   private readonly roomService = inject(RoomService);
@@ -68,6 +76,15 @@ export class RoomsPageComponent {
   closeModalFormRoom() {
     this.roomUpdate.set(null);
     this.modalFromRoom.nativeElement.close();
+  }
+
+  openModalSeats(room: Room) {
+    this.roomUpdate.set(room);
+    this.modalSeats.nativeElement.showModal();
+  }
+
+  closeModalSeat(){
+    this.modalSeats.nativeElement.close();
   }
 
   loadCinema() {

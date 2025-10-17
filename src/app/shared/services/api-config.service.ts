@@ -20,9 +20,10 @@ export class ApiConfigService {
     
     //ENPOINTS
 
-    // cines, rooms
+    // cines, rooms, seats
     public readonly API_CINEMA = `${this.API_CINEMA_SERVICE}/cinemas`;
     public readonly API_ROOMS = `${this.API_CINEMA_SERVICE}/rooms`;
+    public readonly API_SEATS = `${this.API_CINEMA_SERVICE}/seats`;
 
     // Anuncios
 

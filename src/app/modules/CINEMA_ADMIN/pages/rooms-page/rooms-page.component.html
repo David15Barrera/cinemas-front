@@ -76,6 +76,7 @@
                   </button>
                   <button
                     class="btn btn-outline btn-accent btn-sm flex items-center gap-1"
+                    (click)="openModalSeats(room)"
                   >
                     <i-lucide [img]="Eye" class="w-4 h-4"></i-lucide>
                     Asientos
@@ -107,4 +108,9 @@
     (close)="closeModalFormRoom()"
     (saveSucces)="eventOnSaveSucces()"
   />
+</dialog>
+
+<!-- Modal para crear sala de proyección -->
+<dialog #modalSeats id="my_modal_2" class="modal">
+  <app-seats-modal (close)="closeModalSeat()" [room]="roomUpdate()" />
 </dialog>
