@@ -1,1 +1,12 @@
-<p>layouts works!</p>
+<div class="layout flex flex-col h-screen px-2">
+  <app-navbar-admin class="w-full h-10"></app-navbar-admin>
+
+  <div class="flex flex-1 overflow-hidden">
+    <app-sidebar-admin></app-sidebar-admin>
+    <div class="flex-1 p-4 overflow-auto">
+        <main class="flex-1 p-6 mx-auto">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+</div>
