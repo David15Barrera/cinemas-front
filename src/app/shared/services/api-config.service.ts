@@ -17,9 +17,13 @@ export class ApiConfigService {
     // auth
     public readonly API_AUTH = `${this.API_BASE_AUTH}/auth`;
     public readonly API_ROLES = `${this.API_BASE_AUTH}/roles`;
+
     
     //ENPOINTS
 
+    // clientes
+    public readonly API_CLIENTS = `${this.API_BASE_AUTH}/clients`;
+    
     // cines, rooms
     public readonly API_CINEMA = `${this.API_CINEMA_SERVICE}/cinemas`;
     public readonly API_ROOMS = `${this.API_CINEMA_SERVICE}/rooms`;

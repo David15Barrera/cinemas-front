@@ -1,1 +1,17 @@
-<p>layouts works!</p>
+<div class="layout flex flex-col h-screen px-2">
+  <!-- Navbar -->
+  <app-navbar-client class="w-full h-10"></app-navbar-client>
+
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    <app-sidebar-client class="flex-none h-full"></app-sidebar-client>
+
+    <!-- Contenido dinámico (Lazy Loaded) -->
+    <div class="flex-1 p-4 overflow-auto">
+      <main class="flex-1 p-6 mx-auto">
+        <router-outlet></router-outlet>
+
+      </main>
+    </div>
+  </div>
+</div>
