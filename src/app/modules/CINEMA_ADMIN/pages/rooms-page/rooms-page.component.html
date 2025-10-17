@@ -1,9 +1,9 @@
 <div class="space-y-10">
   <!-- Encabezado -->
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between flex-wrap gap-4">
     <h1 class="text-3xl font-bold flex items-center gap-2">
-      <i-lucide [img]="Armchair" class="w-7 h-7"></i-lucide>
-      Administración de salas de proyecciones
+      <i-lucide [img]="Armchair" class="w-7 h-7 text-primary"></i-lucide>
+      Administración de salas de proyección
     </h1>
     <button
       class="btn btn-outline btn-primary flex items-center gap-2"
@@ -15,88 +15,90 @@
   </div>
 
   <!-- Listado de salas -->
-  <div class="card bg-base-200 shadow-md">
-    <div class="card-body">
-      <h2 class="card-title flex items-center gap-2">
-        <i-lucide [img]="Armchair" class="w-5 h-5"></i-lucide>
-        Salas del Cine
-      </h2>
+  <div class="mt-6">
+    <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+      <i-lucide [img]="Armchair" class="w-5 h-5 text-secondary"></i-lucide>
+      Salas del Cine
+    </h2>
 
-      <div class="overflow-x-auto mt-4">
-        <table class="table w-full">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nombre</th>
-              <th>Capacidad</th>
-              <th>Columnas</th>
-              <th>Filas</th>
-              <th>Opiniones</th>
-              <th>Estado</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- for -->
-            @for (room of rooms(); track room.id; let i = $index) {
-            <tr>
-              <th>{{ i + 1 }}</th>
-              <td>{{ room.name }}</td>
-              <td>{{ room.capacity }}</td>
-              <td>{{ room.columns }}</td>
-              <td>{{ room.rows }}</td>
-              <td>
-                <span
-                  class="badge badge-lg"
-                  [ngClass]="{
-                  'badge-success': room.commentsEnabled === true,
-                  'badge-warning': room.commentsEnabled === false,
-                }"
-                  >{{ room.commentsEnabled ? "HABILITADO" : "DESHABILITADO" }}
-                </span>
-              </td>
-              <td>
-                <span
-                  class="badge badge-lg"
-                  [ngClass]="{
-                  'badge-warning': room.blocked === true,
-                  'badge-info': room.blocked === false,
-                }"
-                  >{{ room.blocked ? "BLOQUEADO" : "HABILITADO" }}
-                </span>
-              </td>
-              <td>
-                <div class="flex gap-2">
-                  <button
-                    class="btn btn-outline btn-info btn-sm flex items-center gap-1"
-                    (click)="openModalFormRoom(room)"
-                  >
-                    <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
-                    Editar
-                  </button>
-                  <button
-                    class="btn btn-outline btn-accent btn-sm flex items-center gap-1"
-                    (click)="openModalSeats(room)"
-                  >
-                    <i-lucide [img]="Eye" class="w-4 h-4"></i-lucide>
-                    Asientos
-                  </button>
-                </div>
-              </td>
-            </tr>
-            }
-            <!-- empty -->
-            @empty {
-            <tr>
-              <td colspan="8" class="text-center">
-                No hay salas registradas en este cine.
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
+    <!-- Grid de Cards -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      @for (room of rooms(); track room.id) {
+      <div
+        class="card bg-base-200 shadow-md hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden"
+      >
+        <figure class="relative">
+          <img
+            [src]="room.imageUrl | image"
+            alt="{{ room.name }}"
+            class="w-full h-48 object-cover"
+          />
+          <div class="absolute top-2 right-2 flex gap-2">
+            <span
+              class="badge badge-sm"
+              [ngClass]="{
+                'badge-success': room.commentsEnabled,
+                'badge-warning': !room.commentsEnabled
+              }"
+              >{{ room.commentsEnabled ? 'Comentarios ON' : 'Comentarios OFF' }}</span>
+            <span
+              class="badge badge-sm"
+              [ngClass]="{
+                'badge-warning': room.blocked,
+                'badge-info': !room.blocked
+              }"
+              >{{ room.blocked ? 'Bloqueado' : 'Activo' }}</span>
+          </div>
+        </figure>
+
+        <div class="card-body space-y-2">
+          <h3 class="card-title text-lg font-bold text-primary">
+            {{ room.name }}
+          </h3>
+          <p class="text-sm opacity-80 line-clamp-3">
+            {{ room.description || 'Sin descripción disponible.' }}
+          </p>
+
+          <div class="flex flex-wrap gap-3 mt-2 text-sm">
+            <span class="badge badge-outline">
+              <i-lucide [img]="Armchair" class="w-4 h-4 mr-1"></i-lucide>
+              {{ room.capacity }} capacidad
+            </span>
+            <span class="badge badge-outline">
+              <i-lucide [img]="Rows" class="w-4 h-4 mr-1"></i-lucide>
+              {{ room.rows }} filas
+            </span>
+            <span class="badge badge-outline">
+              <i-lucide [img]="Columns" class="w-4 h-4 mr-1"></i-lucide>
+              {{ room.columns }} columnas
+            </span>
+          </div>
+
+          <div class="card-actions justify-end mt-4">
+            <button
+              class="btn btn-outline btn-info btn-sm flex items-center gap-1"
+              (click)="openModalFormRoom(room)"
+            >
+              <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
+              Editar
+            </button>
+            <button
+              class="btn btn-outline btn-accent btn-sm flex items-center gap-1"
+              (click)="openModalSeats(room)"
+            >
+              <i-lucide [img]="Eye" class="w-4 h-4"></i-lucide>
+              Asientos
+            </button>
+          </div>
+        </div>
       </div>
-      <!--  -->
+      }
+      <!-- Si no hay salas -->
+      @empty {
+      <div class="col-span-full text-center py-10 text-base-content/70 italic">
+        No hay salas registradas en este cine.
+      </div>
+      }
     </div>
   </div>
 </div>
@@ -110,7 +112,7 @@
   />
 </dialog>
 
-<!-- Modal para crear sala de proyección -->
+<!-- Modal para mostrar asientos -->
 <dialog #modalSeats id="my_modal_2" class="modal">
   <app-seats-modal (close)="closeModalSeat()" [room]="roomUpdate()" />
 </dialog>

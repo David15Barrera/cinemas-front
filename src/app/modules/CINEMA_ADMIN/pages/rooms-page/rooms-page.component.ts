@@ -5,7 +5,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { Armchair, Edit, Plus, Eye, LucideAngularModule } from 'lucide-angular';
+import { Armchair, Edit, Plus, Eye, LucideAngularModule, Columns, Rows } from 'lucide-angular';
 import { FormRoomModalComponent } from '../../components/form-room-modal/form-room-modal.component';
 import { Room } from '../../models/room.interface';
 import { RoomService } from '../../services/Room.service';
@@ -14,6 +14,7 @@ import { Session } from 'app/modules/session/models/auth';
 import { CinemaService } from '../../services/cinema.service';
 import { NgClass } from '@angular/common';
 import { SeatsModalComponent } from '../../components/seats-modal/seats-modal.component';
+import { ImagePipe } from '@shared/pipes/image.pipe';
 
 @Component({
   selector: 'app-rooms-page',
@@ -22,6 +23,7 @@ import { SeatsModalComponent } from '../../components/seats-modal/seats-modal.co
     FormRoomModalComponent,
     NgClass,
     SeatsModalComponent,
+    ImagePipe,
   ],
   templateUrl: './rooms-page.component.html',
 })
@@ -31,6 +33,8 @@ export class RoomsPageComponent {
   readonly Edit = Edit;
   readonly Plus = Plus;
   readonly Eye = Eye;
+  readonly Rows = Rows;
+  readonly Columns = Columns;
 
   // modal
   @ViewChild('modalFormRoom')
@@ -83,7 +87,7 @@ export class RoomsPageComponent {
     this.modalSeats.nativeElement.showModal();
   }
 
-  closeModalSeat(){
+  closeModalSeat() {
     this.modalSeats.nativeElement.close();
   }
 
