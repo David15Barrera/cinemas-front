@@ -17,6 +17,7 @@ export class ApiConfigService {
     // auth
     public readonly API_AUTH = `${this.API_BASE_AUTH}/auth`;
     public readonly API_ROLES = `${this.API_BASE_AUTH}/roles`;
+    public readonly API_USER = `${this.API_BASE_AUTH}/users`;
     
     //ENPOINTS
 

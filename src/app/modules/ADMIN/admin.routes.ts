@@ -5,6 +5,31 @@ const adminRoutes: Routes = [
     path:'dashboard', loadComponent: () => import('./pages/dashboard-admin/dashboard-admin.component').then(
       (m) => m.DashboardAdminComponent
     )
+  },
+  {
+    path:'employees', loadComponent: () => import('./pages/employees/employees/employees.component').then(
+      (m) => m.EmployeesComponent
+    )
+  },
+  {
+    path:'movies-admin', loadComponent: () => import('./pages/movies/movies-admin/movies-admin.component').then(
+      (m) => m.MoviesAdminComponent
+    )
+  },
+  {
+    path:'cinemas-admin', loadComponent: () => import('./pages/cinemas/cinema-admin/cinema-admin.component').then(
+      (m) => m.CinemaAdminComponent
+    )
+  },
+  {
+    path:'ads-admin', loadComponent: () => import('./pages/ads/ads-admin/ads-admin.component').then(
+      (m) => m.AdsAdminComponent
+    )
+  },
+  {
+    path:'setting-general', loadComponent: () => import('./pages/setting-general/setting-general.component').then(
+      (m) => m.SettingGeneralComponent
+    )
   }
 
 ];

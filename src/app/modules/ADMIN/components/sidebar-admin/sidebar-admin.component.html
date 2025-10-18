@@ -27,17 +27,53 @@
       </a>
     </li>
 
-    <li
+<li
       [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
-      data-tip="Gestión de Usuarios"
+      data-tip="Empleados del Sistema"
     >
       <a
         class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
-        routerLink="/admin/users"
+        routerLink="/admin/employees"
       >
         <i-lucide [img]="Users" class="text-blue-200"></i-lucide>
         @if (!isCollapsed) {
-        <span class="truncate">Gestión de Usuarios</span>
+        <span class="truncate">Empleados del Sistema</span>
+        }
+      </a>
+    </li>
+
+    <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Cines">
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/admin/cinemas-admin"
+      >
+        <i-lucide [img]="Home" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Cines</span>
+        }
+      </a>
+    </li>
+
+    <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Películas">
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/admin/movies-admin"
+      >
+        <i-lucide [img]="Video" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Peliculas</span>
+        }
+      </a>
+    </li>
+
+    <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Anuncios">
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/admin/ads-admin"
+      >
+        <i-lucide [img]="DollarSign" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Anuncios</span>
         }
       </a>
     </li>
@@ -48,7 +84,7 @@
     >
       <a
         class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
-        routerLink="/admin/settings"
+        routerLink="/admin/setting-general"
       >
         <i-lucide [img]="Settings" class="text-blue-200"></i-lucide>
         @if (!isCollapsed) {

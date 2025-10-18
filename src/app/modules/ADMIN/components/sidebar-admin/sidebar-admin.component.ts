@@ -3,11 +3,10 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {
   LayoutDashboard,
-  Armchair,
-  Clock,
-  Tag,
-  Popcorn,
-  Wallet,
+  Users,
+  Video,
+  Home,
+  DollarSign,
   ChartPie,
   Menu,
   X,
@@ -24,17 +23,18 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class SidebarAdminComponent {
 
-    readonly Menu = Menu;
-  readonly Close = X;
-  readonly Dashboard = LayoutDashboard;
-  readonly Rooms = Armchair;
-  readonly Schedules = Clock;
-  readonly Promotions = Tag;
-  readonly Snacks = Popcorn;
-  readonly Wallet = Wallet;
-  readonly Users = ChartPie;
-  readonly Settings = Settings;
-  readonly Reviews = Star;
+// Iconos iniciales
+  readonly Menu = Menu;
+  public readonly Close = X;
+  public readonly Dashboard = LayoutDashboard;
+  public readonly Users = Users; 
+  public readonly Settings = Settings;
+
+  // --- MIs iconos ---
+  public readonly Video = Video;
+  public readonly Home = Home;
+  public readonly DollarSign = DollarSign;
+  public readonly PieChart = ChartPie;
 
   isCollapsed = true;
 
