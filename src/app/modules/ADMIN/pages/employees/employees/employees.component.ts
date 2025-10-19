@@ -39,7 +39,7 @@ loadUsers(): void {
   this.adminService.getUsers().subscribe({
     next: (data) => {
       this.users = data
-        .filter(u => u.id !== this.currentUserId)
+        .filter(u => u.id !== this.currentUserId && u.roleId !== 1)
         .map(u => ({
           ...u,
           roleId: u.roleId,
@@ -50,7 +50,6 @@ loadUsers(): void {
     error: () => (this.loading = false),
   });
 }
-
 
   loadRoles(): void {
     this.adminService.getRoles().subscribe({
@@ -81,13 +80,20 @@ startCreate(): void {
 saveUser(): void {
   if (!this.selectedUser) return;
 
+  if (!this.isCreating) {
+    const selectedRole = this.roles.find(r => r.name === this.selectedUser!.roleName);
+    if (selectedRole) {
+      this.selectedUser.roleId = selectedRole.id;
+    }
+  }
+
   if (this.isCreating) {
     this.adminService.createUser(this.selectedUser).subscribe({
       next: () => {
-        this.loadUsers();
         this.selectedUser = null;
         this.isCreating = false;
         alert('Usuario creado correctamente');
+        this.loadUsers();
       },
       error: (err) => {
         console.error(err);
@@ -95,11 +101,19 @@ saveUser(): void {
       },
     });
   } else {
-    this.adminService.updateUser(this.selectedUser.id!, this.selectedUser).subscribe({
+    const userToUpdate = {
+      email: this.selectedUser.email,
+      password: this.selectedUser.password,
+      fullName: this.selectedUser.fullName,
+      roleId: this.selectedUser.roleId,
+      status: this.selectedUser.status
+    };
+
+    this.adminService.updateUser(this.selectedUser.id!, userToUpdate).subscribe({
       next: () => {
-        this.loadUsers();
         this.selectedUser = null;
         alert('Usuario actualizado correctamente');
+        window.location.reload();
       },
       error: (err) => {
         console.error(err);
@@ -108,8 +122,6 @@ saveUser(): void {
     });
   }
 }
-
-
 
   deleteUser(id: string): void {
     if (confirm('¿Seguro que deseas eliminar este usuario?')) {

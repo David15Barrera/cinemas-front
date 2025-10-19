@@ -4,7 +4,7 @@ export interface User {
   password?: string;
   fullName: string;
   roleId?: number;
-  roleName: string;
+  roleName?: string;
   status: boolean;
   createdAt?: string;
   updatedAt?: string;
