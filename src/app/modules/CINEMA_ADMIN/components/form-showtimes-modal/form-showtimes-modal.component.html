@@ -1,0 +1,119 @@
+<input type="checkbox" id="create-showtime-modal" class="modal-toggle" />
+@if (movie()) {
+<div class="modal-box max-w-2xl">
+  <!-- Título -->
+  <h3 class="font-bold text-lg text-center mb-4">Crear nueva función</h3>
+
+  <!-- Información de la película -->
+  <div class="flex flex-col md:flex-row items-center gap-4 mb-6">
+    <div
+      class="w-32 h-44 bg-base-200 rounded-lg overflow-hidden flex items-center justify-center"
+    >
+      <img
+        [src]="movie()?.posterUrl | image"
+        alt="{{ movie()?.title }}"
+        class="object-cover w-full h-full"
+      />
+    </div>
+    <div class="flex-1 space-y-3 w-full">
+      <div>
+        <label class="label">
+          <span class="label-text">Película</span>
+        </label>
+        <input
+          type="text"
+          placeholder="Ej: El Gran Estreno"
+          class="input input-bordered w-full"
+          name="title"
+          [value]="movie()?.title"
+          disabled
+        />
+      </div>
+
+      <div>
+        <label class="label">
+          <span class="label-text">Tiempo de duración (minutos)</span>
+        </label>
+        <input
+          type="number"
+          placeholder="Ej: 120"
+          class="input input-bordered w-full"
+          name="durationMinutes"
+          [value]="movie()?.durationMinutes"
+          disabled
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Campos de la función -->
+  <form class="space-y-4">
+    <div>
+      <label class="label">
+        <span class="label-text">Sala de proyección</span>
+      </label>
+      <select
+        class="select select-bordered w-full"
+        name="idRoom"
+        [ngModel]="idRoom()"
+        (change)="idRoom.set($any($event.target).value)"
+      >
+        <option disabled [value]="''">Selecciona una sala</option>
+        @for (room of rooms(); track $index) {
+        <option [value]="room.id">{{ room.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="label">
+          <span class="label-text">Fecha de la función</span>
+        </label>
+        <input
+          type="date"
+          name="startDate"
+          class="input input-bordered w-full"
+          [(ngModel)]="createShowtime().startDate"
+        />
+      </div>
+      <div>
+        <label class="label">
+          <span class="label-text">Hora de inicio</span>
+        </label>
+        <input
+          type="time"
+          class="input input-bordered w-full"
+          name="startTime"
+          [(ngModel)]="createShowtime().startTime"
+          step="60"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label class="label">
+        <span class="label-text">Precio de la función</span>
+      </label>
+      <input
+        type="number"
+        step="0.01"
+        placeholder="Ej: 45.00"
+        class="input input-bordered w-full"
+        name="price"
+        [(ngModel)]="createShowtime().price"
+      />
+    </div>
+
+    <!-- Botones -->
+    <div class="modal-action">
+      <button type="button" class="btn" (click)="onClose()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" (click)="saveNewShowtime()">
+        Guardar
+      </button>
+    </div>
+  </form>
+</div>
+}
