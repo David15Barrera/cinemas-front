@@ -17,4 +17,10 @@ export class ShowtimesService {
   createShowtime(createShowtime: CreateShowtime): Observable<void> {
     return this._http.post<void>(this.API_SHOWTIMES, createShowtime);
   }
+
+  getShowTimesByCinemaId(cinemaId: string): Observable<ShowTime[]> {
+    return this._http.get<ShowTime[]>(
+      `${this.API_SHOWTIMES}/cinema/${cinemaId}`
+    );
+  }
 }

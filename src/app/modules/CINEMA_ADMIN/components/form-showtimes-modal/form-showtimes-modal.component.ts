@@ -84,16 +84,13 @@ export class FormShowtimesModalComponent {
       return;
     }
 
-    console.log(this.createShowtime());
-    return;
-    
-
     this.showtimeService.createShowtime(this.createShowtime()).subscribe({
       next: (response) => {
         this.alertStore.addAlert({
           message: 'Función creada correctamente.',
           type: 'success',
         });
+        this.initializeForm();
         this.onClose();
       },
       error: (error) => {

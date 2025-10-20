@@ -130,7 +130,7 @@
           class="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
         >
           <!-- cards movies -->
-          @for (movie of movies() | FilterMovieTitle: filterMovieTitle() |
+          @for (movie of moviesActive() | FilterMovieTitle: filterMovieTitle() |
           FilterCategory: filterCategory() | FilterClassification:
           filterClassification(); track movie.id; let i = $index) {
           <div
@@ -249,6 +249,7 @@
         role="tab"
         class="tab"
         aria-label="Funciones Programadas"
+        (click)="changeTab()"
       />
       <div
         role="tabpanel"
@@ -296,26 +297,34 @@
               <label class="label">
                 <span class="label-text font-medium">Sala</span>
               </label>
-              <select class="select select-bordered select-sm w-full">
+              <select
+                class="select select-bordered select-sm w-full"
+                name="roomFilter"
+                [ngModel]="filterRoom()"
+                (change)="filterRoom.set($any($event.target).value)"
+              >
                 <option value="">Todas las salas</option>
-                <option value="1">🎭 Sala 1 - Premium</option>
-                <option value="2">🎬 Sala 2 - Estándar</option>
-                <option value="3">🍿 Sala 3 - VIP</option>
-                <option value="4">📽️ Sala 4 - IMAX</option>
+                @for (item of rooms(); track $index) {
+                <option [value]="item.id">{{ item.name }}</option>
+                }
               </select>
             </div>
 
-            <!-- Filtro por Estado -->
+            <!-- Filtro por peliculas -->
             <div class="form-control w-full sm:w-auto min-w-[200px]">
               <label class="label">
-                <span class="label-text font-medium">Estado</span>
+                <span class="label-text font-medium">Película</span>
               </label>
-              <select class="select select-bordered select-sm w-full">
-                <option value="">Todos</option>
-                <option value="activa">✅ Activas</option>
-                <option value="proxima">🕐 Próximas</option>
-                <option value="finalizada">✔️ Finalizadas</option>
-                <option value="cancelada">❌ Canceladas</option>
+              <select
+                class="select select-bordered select-sm w-full"
+                name="roomFilter"
+                [ngModel]="filterMovie()"
+                (change)="filterMovie.set($any($event.target).value)"
+              >
+                <option value="">Todas las películas</option>
+                @for (item of movies(); track $index) {
+                <option [value]="item.id">{{ item.title }}</option>
+                }
               </select>
             </div>
 
@@ -323,7 +332,10 @@
               <label class="label">
                 <span class="label-text opacity-0">.</span>
               </label>
-              <button class="btn btn-ghost btn-sm gap-2">
+              <button
+                class="btn btn-ghost btn-sm gap-2"
+                (click)="clearFiltersShowTimes()"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="h-4 w-4"
@@ -362,22 +374,34 @@
               </tr>
             </thead>
             <tbody>
+              @for (showtime of showtimes() | FilterMovie: filterMovie() |
+              FilterRoom: filterRoom(); track $index) {
               <tr class="hover">
                 <td>
                   <div class="flex items-center gap-3">
                     <div class="avatar">
                       <div class="mask mask-squircle w-12 h-12">
-                        <img src="https://placehold.co/100x100" alt="Poster" />
+                        <img
+                          [src]="showtime.movie?.posterUrl | image"
+                          alt="{{ showtime.movie?.title }}"
+                          alt="Poster"
+                        />
                       </div>
                     </div>
                     <div>
-                      <div class="font-semibold">Película Ejemplo</div>
-                      <div class="text-xs opacity-50">Acción, Aventura</div>
+                      <div class="font-semibold">
+                        {{ showtime.movie?.title }}
+                      </div>
+                      <div class="text-xs opacity-50">
+                        {{ getCategoriesNames(showtime.movie) }}
+                      </div>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <span class="badge badge-ghost badge-sm">120 min</span>
+                  <span class="badge badge-ghost badge-sm"
+                    >{{ showtime.durationMinutes }} min</span
+                  >
                 </td>
                 <td>
                   <div class="flex items-center gap-2">
@@ -395,7 +419,7 @@
                         d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                       />
                     </svg>
-                    <span class="font-medium">Sala 1</span>
+                    <span class="font-medium">{{ showtime.nameRoom }}</span>
                   </div>
                 </td>
                 <td>
@@ -414,7 +438,7 @@
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                       />
                     </svg>
-                    <span>17 Oct 2025</span>
+                    <span>{{ showtime.startTime | date : "shortDate" }}</span>
                   </div>
                 </td>
                 <td>
@@ -433,29 +457,25 @@
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    <span class="font-mono">18:00</span>
+                    <span class="font-mono">{{
+                      showtime.startTime | date : "shortTime"
+                    }}</span>
                   </div>
                 </td>
                 <td>
-                  <span class="font-semibold text-success">Q45.00</span>
+                  <span class="font-semibold text-success">{{
+                    showtime.price | currency : "GTQ" : "symbol" : "1.2-2"
+                  }}</span>
                 </td>
                 <td>
-                  <span class="badge badge-success badge-sm gap-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3 w-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Activa
+                  <span
+                    class="badge badge-sm gap-1"
+                    [ngClass]="{
+                      'badge-success': showtime.active,
+                      'badge-warning': !showtime.active
+                    }"
+                  >
+                    {{ showtime.active ? "Activo" : "Inactivo" }}
                   </span>
                 </td>
                 <td>
@@ -501,29 +521,10 @@
                         />
                       </svg>
                     </button>
-                    <button
-                      class="btn btn-ghost btn-xs text-error"
-                      title="Eliminar"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
                   </div>
                 </td>
               </tr>
-              <!-- Más filas -->
+              }
             </tbody>
           </table>
         </div>

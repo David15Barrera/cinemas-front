@@ -1,3 +1,5 @@
+import { Movie } from './movie.interface';
+
 export interface CreateShowtime {
   movieId: string;
   roomId: string;
@@ -6,13 +8,15 @@ export interface CreateShowtime {
   price: number;
 }
 
-// TODO: validar que campos faltantes
 export interface ShowTime {
   id: string;
-  movieId: string;
   roomId: string;
-  startDate: string;
-  startTime: string;
   price: number;
-  isActive: boolean;
+  movieId: string;
+  startTime: string;
+  endTime: string;
+  active: boolean;
+  durationMinutes: number;
+  nameRoom: string;
+  movie?: Movie;
 }
