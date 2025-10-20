@@ -23,6 +23,7 @@ import { ShowtimesService } from '../../services/showtimes.service';
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
 import { FilterRoomPipe } from '../../pipes/filterRoom.pipe';
 import { FilterMoviePipe } from '../../pipes/filterMovie.pipe';
+import { AlertStore } from 'app/store/alert.store';
 
 @Component({
   selector: 'app-schedules-page',
@@ -51,6 +52,8 @@ export class SchedulesPageComponent {
   private readonly cinemaService = inject(CinemaService);
   private readonly localStorageService = inject(LocalStorageService);
   private readonly showtimeService = inject(ShowtimesService);
+  private readonly alertStore = inject(AlertStore);
+  
 
   //data
   rooms = signal<Room[]>([]);
@@ -188,5 +191,25 @@ export class SchedulesPageComponent {
 
   getCategoriesNames(movie: Movie | undefined): string {
     return movie?.categories.map((c) => c.name).join(', ') || '';
+  }
+
+  toggleShowtimeStatus(showtime: ShowTime) {
+    const newStatus = !showtime.active;
+
+    this.showtimeService
+      .updateShowtimeStatus(showtime.id, newStatus)
+      .subscribe({
+        next: (updatedShowtime) => {
+          // Actualizar el estado local
+          showtime.active = newStatus;
+         this.alertStore.addAlert({
+          message: 'Estado de la función actualizada correctamente.',
+          type: 'success',
+        });
+        },
+        error: (error) => {
+          console.error('Error al actualizar el estado de la función:', error);
+        },
+      });
   }
 }

@@ -23,4 +23,13 @@ export class ShowtimesService {
       `${this.API_SHOWTIMES}/cinema/${cinemaId}`
     );
   }
+
+  updateShowtimeStatus(
+    showtimeId: string,
+    active: boolean
+  ): Observable<void> {
+    return this._http.patch<void>(`${this.API_SHOWTIMES}/${showtimeId}`, {
+      active,
+    });
+  }
 }

@@ -173,7 +173,7 @@
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    <span>{{ movie.durationMinutes }}</span>
+                    <span>{{ movie.durationMinutes }} min</span>
                   </div>
 
                   <div class="flex items-center gap-2 opacity-70">
@@ -469,12 +469,39 @@
                 </td>
                 <td>
                   <span
-                    class="badge badge-sm gap-1"
+                    class="badge badge-sm gap-1 cursor-pointer hover:scale-105 transition-transform"
                     [ngClass]="{
                       'badge-success': showtime.active,
                       'badge-warning': !showtime.active
                     }"
+                    (click)="toggleShowtimeStatus(showtime)"
+                    title="Click para {{
+                      showtime.active ? 'desactivar' : 'activar'
+                    }}"
                   >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-3 w-3"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      @if (showtime.active) {
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                      } @else {
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                      }
+                    </svg>
                     {{ showtime.active ? "Activo" : "Inactivo" }}
                   </span>
                 </td>
