@@ -33,6 +33,14 @@ const cinemaAdminRoutes: Routes = [
         (m) => m.SchedulesPageComponent
       ),
   },
+  {
+    path: 'snacks',
+    canActivate: [hasCinemaGuard],
+    loadComponent: () =>
+      import('./pages/snacks-page/snacks-page.component').then(
+        (m) => m.SnacksPageComponent
+      ),
+  },
 ];
 
 export const CINEMA_ROUTES: Routes = [
