@@ -1,0 +1,251 @@
+<input type="checkbox" id="create-snack-modal" class="modal-toggle" />
+
+<div class="modal-box max-w-3xl">
+  <!-- Header del modal -->
+  <div class="flex items-center gap-3 mb-6">
+    <div class="bg-primary/10 p-3 rounded-lg">
+      <i-lucide [img]="Popcorn" class="w-6 h-6 text-primary"></i-lucide>
+    </div>
+    <div>
+      <h3 class="text-xl font-bold">
+        {{ snackUpdate() ? "Editar Snack" : "Agregar Nuevo Snack" }}
+      </h3>
+      <p class="text-sm opacity-70">
+        {{
+          snackUpdate()
+            ? "Actualiza la información del producto"
+            : "Completa los datos del nuevo producto"
+        }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <div class="space-y-5">
+    <!-- Nombre -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium flex items-center gap-2">
+          <i-lucide [img]="Package" class="w-4 h-4"></i-lucide>
+          Nombre del producto
+        </span>
+        <span class="label-text-alt text-error">*Requerido</span>
+      </label>
+      <input
+        [(ngModel)]="newSnack().name"
+        type="text"
+        placeholder="Ej. Palomitas Grandes"
+        class="input input-bordered w-full focus:input-primary"
+      />
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium flex items-center gap-2">
+          <i-lucide [img]="FileText" class="w-4 h-4"></i-lucide>
+          Descripción
+        </span>
+        <span class="label-text-alt">Mínimo 10 caracteres</span>
+      </label>
+      <textarea
+        [(ngModel)]="newSnack().description"
+        class="textarea textarea-bordered w-full focus:textarea-primary h-24"
+        placeholder="Describe el producto, tamaño, ingredientes, etc."
+      ></textarea>
+      <label class="label">
+        <span class="label-text-alt opacity-70">
+          {{ newSnack().description.length || 0 }} caracteres
+        </span>
+      </label>
+    </div>
+
+    <!-- Precios: Costo y Precio de Venta -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Costo -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium flex items-center gap-2">
+            <i-lucide
+              [img]="TrendingDown"
+              class="w-4 h-4 text-warning"
+            ></i-lucide>
+            Costo (lo que pagaste)
+          </span>
+          <span class="label-text-alt text-error">*</span>
+        </label>
+        <label class="input-group">
+          <span class="bg-base-200">
+            <i-lucide [img]="DollarSign" class="w-4 h-4"></i-lucide>
+          </span>
+          <input
+            [(ngModel)]="newSnack().cost"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+            class="input input-bordered w-full focus:input-primary"
+          />
+          <span class="bg-base-200">GTQ</span>
+        </label>
+      </div>
+
+      <!-- Precio de Venta -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium flex items-center gap-2">
+            <i-lucide
+              [img]="TrendingUp"
+              class="w-4 h-4 text-success"
+            ></i-lucide>
+            Precio de venta
+          </span>
+          <span class="label-text-alt text-error">*</span>
+        </label>
+        <label class="input-group">
+          <span class="bg-base-200">
+            <i-lucide [img]="DollarSign" class="w-4 h-4"></i-lucide>
+          </span>
+          <input
+            [(ngModel)]="newSnack().price"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+            class="input input-bordered w-full focus:input-primary"
+          />
+          <span class="bg-base-200">GTQ</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Ganancia calculada (informativo) -->
+    @if (newSnack().price > 0 && newSnack().cost > 0) {
+    <div
+      class="alert"
+      [ngClass]="{
+        'alert-success': newSnack().price > newSnack().cost,
+        'alert-warning': newSnack().price <= newSnack().cost
+      }"
+    >
+      <i-lucide [img]="Calculator" class="w-5 h-5"></i-lucide>
+      <div>
+        <div class="font-semibold">
+          Ganancia estimada: Q{{
+            (newSnack().price - newSnack().cost).toFixed(2)
+          }}
+        </div>
+        <div class="text-sm opacity-80">
+          Margen:
+          {{
+            (
+              ((newSnack().price - newSnack().cost) / newSnack().price) *
+              100
+            ).toFixed(1)
+          }}%
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- Imagen -->
+    @if (!snackUpdate()) {
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium flex items-center gap-2">
+          <i-lucide [img]="Image" class="w-4 h-4"></i-lucide>
+          Imagen del producto
+        </span>
+        <span class="label-text-alt text-error">*Requerido</span>
+      </label>
+      <input
+        type="file"
+        accept="image/*"
+        class="file-input file-input-bordered w-full focus:file-input-primary"
+        (change)="onFileSelected($event)"
+      />
+      <label class="label">
+        <span class="label-text-alt opacity-70"
+          >Formatos: JPG, PNG, WEBP (Max: 5MB)</span
+        >
+      </label>
+    </div>
+    }
+
+    <!-- Vista previa de imagen -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium">Vista previa</span>
+      </label>
+      <div
+        class="relative rounded-lg overflow-hidden border-2 border-dashed border-base-300 bg-base-200 hover:border-primary transition-colors"
+      >
+        @if (imageUrl) {
+        <figure class="w-full h-64">
+          <img
+            [src]="imageUrl | image"
+            alt="Vista previa del snack"
+            class="object-cover w-full h-full"
+          />
+        </figure>
+        } @else {
+        <div class="flex flex-col items-center justify-center py-12">
+          <div class="bg-base-300 p-4 rounded-full mb-3">
+            <i-lucide [img]="ImagePlus" class="w-10 h-10 opacity-50"></i-lucide>
+          </div>
+          <p class="text-sm font-medium opacity-70">
+            No hay imagen seleccionada
+          </p>
+          <p class="text-xs opacity-50 mt-1">La imagen se mostrará aquí</p>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Toggle de estado (solo en edición) -->
+    @if (snackUpdate() && 'active' in newSnack()) {
+    <div class="form-control">
+      <label
+        class="label cursor-pointer justify-start gap-4 p-4 bg-base-200 rounded-lg"
+      >
+        <input
+          type="checkbox"
+          class="toggle toggle-success"
+          [(ngModel)]="$any(newSnack()).active"
+        />
+        <div class="flex-1">
+          <span class="label-text font-medium flex items-center gap-2">
+            <i-lucide [img]="CheckCircle" class="w-4 h-4"></i-lucide>
+            Estado del producto
+          </span>
+          <p class="text-xs opacity-70 mt-1">
+            {{
+              $any(newSnack()).active
+                ? "El producto está visible para la venta"
+                : "El producto está oculto"
+            }}
+          </p>
+        </div>
+      </label>
+    </div>
+    }
+
+    <div class="divider"></div>
+
+    <!-- Botones de acción -->
+    <div class="flex gap-3 justify-end">
+      <label
+        for="create-snack-modal"
+        class="btn btn-ghost gap-2"
+        (click)="onClose()"
+      >
+        <i-lucide [img]="X" class="w-4 h-4"></i-lucide>
+        Cancelar
+      </label>
+      <button type="submit" class="btn btn-primary gap-2" (click)="saveSnack()">
+        <i-lucide [img]="Save" class="w-4 h-4"></i-lucide>
+        {{ snackUpdate() ? "Actualizar" : "Guardar" }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -373,3 +373,12 @@
     </div>
   </div>
 </div>
+
+
+<dialog #modalFormSnack id="my_modal_5" class="modal">
+  <app-form-snack-modal
+    [snackUpdate]="snackUpdate()"
+    (close)="closeModalFormSnack()"
+    (saveSucces)="eventOnSaveSucces()"
+  />
+</dialog> 
