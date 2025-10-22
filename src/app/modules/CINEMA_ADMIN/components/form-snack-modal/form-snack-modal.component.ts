@@ -138,9 +138,16 @@ export class FormSnackModal {
     if (this.file && !this.snackUpdate()) {
       await this.uplogadImag();
     }
+
+    if (this.snackUpdate()) {
+      this.updateSnack();
+      return;
+    }
+    this.createSnack();
+
   }
 
-  createSanck() {
+  createSnack() {
     this.snackService.createSnack(this.newSnack()).subscribe({
       next: (snack) => {
         this.onSaveSucces('Snack creado correctamente.');

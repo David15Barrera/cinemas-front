@@ -16,4 +16,5 @@ export interface Snack {
     cost: number;
     description: string;
     active: boolean;
+    icon?: any;
 }

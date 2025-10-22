@@ -19,7 +19,7 @@ export class SnackService {
   }
 
   getSnacksByCinemaId(cinemaId: string): Observable<Snack[]> {
-    return this._http.get<Snack[]>(`${this.API_SNACKS}?cinemaId=${cinemaId}`);
+    return this._http.get<Snack[]>(`${this.API_SNACKS}/cinema/${cinemaId}`);
   }
 
   getSnackById(id: string): Observable<Snack> {
