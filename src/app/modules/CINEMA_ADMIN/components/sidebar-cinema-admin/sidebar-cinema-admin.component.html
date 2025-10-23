@@ -88,21 +88,6 @@
       </a>
     </li>
 
-    <li
-      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
-      data-tip="Opiniones y Rankings"
-    >
-      <a
-        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
-        routerLink="/cinema/promotions"
-      >
-        <i-lucide [img]="Reviews" class="text-blue-200"></i-lucide>
-        @if (!isCollapsed) {
-        <span class="truncate">Opiniones</span>
-        }
-      </a>
-    </li>
-
     <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Snacks">
       <a
         class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"

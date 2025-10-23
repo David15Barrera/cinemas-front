@@ -13,6 +13,7 @@ export class ApiConfigService {
   private readonly API_MOVIE_SERVICE = `${this.API_BASE}/movie/v1`;
   private readonly API_FINANCE_SERVICE = `${this.API_BASE}/wallet-payments/v1`;
   private readonly API_SNACK_TICKETS_SERVICE = `${this.API_BASE}/snacks-tickets/v1`;
+  private readonly API_REVIEWS_SERVICE = `${this.API_BASE}/reviews/v1`;
 
   // auth
   public readonly API_AUTH = `${this.API_BASE_AUTH}/auth`;
@@ -41,4 +42,7 @@ export class ApiConfigService {
 
   // Snacks
   public readonly API_SNACKS = `${this.API_SNACK_TICKETS_SERVICE}/snacks`;
+
+  // Reviews
+  public readonly API_REVIEWS = `${this.API_REVIEWS_SERVICE}/reviews`;
 }
