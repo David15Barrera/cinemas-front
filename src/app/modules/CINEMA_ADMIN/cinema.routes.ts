@@ -25,6 +25,22 @@ const cinemaAdminRoutes: Routes = [
         (m) => m.RoomsPageComponent
       ),
   },
+  {
+    path: 'schedules',
+    canActivate: [hasCinemaGuard],
+    loadComponent: () =>
+      import('./pages/schedules-page/schedules-page.component').then(
+        (m) => m.SchedulesPageComponent
+      ),
+  },
+  {
+    path: 'snacks',
+    canActivate: [hasCinemaGuard],
+    loadComponent: () =>
+      import('./pages/snacks-page/snacks-page.component').then(
+        (m) => m.SnacksPageComponent
+      ),
+  },
 ];
 
 export const CINEMA_ROUTES: Routes = [
