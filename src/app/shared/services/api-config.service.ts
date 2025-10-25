@@ -14,10 +14,12 @@ export class ApiConfigService {
   private readonly API_FINANCE_SERVICE = `${this.API_BASE}/wallet-payments/v1`;
   private readonly API_SNACK_TICKETS_SERVICE = `${this.API_BASE}/snacks-tickets/v1`;
   private readonly API_REVIEWS_SERVICE = `${this.API_BASE}/reviews/v1`;
+  private readonly API_PROMOTION_SERVICE = `${this.API_BASE}/promotion/v1`;
 
   // auth
   public readonly API_AUTH = `${this.API_BASE_AUTH}/auth`;
   public readonly API_ROLES = `${this.API_BASE_AUTH}/roles`;
+  public readonly API_USERS = `${this.API_BASE_AUTH}/users`;
 
   // movies, categories, showtimes
   public readonly API_MOVIES = `${this.API_MOVIE_SERVICE}/movies`;
@@ -45,4 +47,7 @@ export class ApiConfigService {
 
   // Reviews
   public readonly API_REVIEWS = `${this.API_REVIEWS_SERVICE}/reviews`;
+
+  // promotions
+  public readonly API_PROMOTIONS = `${this.API_PROMOTION_SERVICE}/promotions`;
 }
