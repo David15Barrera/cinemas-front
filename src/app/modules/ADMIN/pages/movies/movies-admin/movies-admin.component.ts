@@ -1,10 +1,17 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router'; // Importar Router
 import { MovieService } from 'app/modules/CINEMA_ADMIN/services/movie.service';
 import { Movie, Category, MovieCategory } from 'app/modules/CINEMA_ADMIN/models/movie.interface';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UploadImgService } from 'app/modules/CINEMA_ADMIN/services/uploadImg.service';
 import { ImagePipe } from '@shared/pipes/image.pipe';
+import { forkJoin, map, switchMap, Observable } from 'rxjs';
+
+// Interfaz extendida para la tabla
+interface MovieExtended extends Movie {
+  categoryNames: string[];
+}
 
 interface NewMovieForm extends Partial<Movie> {
   selectedCategories?: string[];
@@ -17,31 +24,74 @@ interface NewMovieForm extends Partial<Movie> {
   styleUrl: './movies-admin.component.css'
 })
 export class MoviesAdminComponent implements OnInit{
-  activeTab: 'movies' | 'categories' | 'assign' = 'movies';
-
+ activeTab: 'movies' | 'categories' = 'movies';
+  
+  moviesWithCategories: MovieExtended[] = [];
   movies: Movie[] = [];
   categories: Category[] = [];
   movieCategories: MovieCategory[] = [];
+ 
   selectedFile?: File;
-  newMovies: NewMovieForm = {};
+    newMovies: NewMovieForm = {
+      selectedCategories: [] 
+    };
   showMovieModal = false;
   showCategoryModal = false;
-  showAssignModal = false;
 
-  newMovie: Partial<Movie> = {};
+  newMovie: NewMovieForm = {
+      active: true,
+      selectedCategories: []
+  };
+
   newCategory: Partial<Category> = {};
-  assignData: Partial<MovieCategory> = {};
 
-  constructor(private movieService: MovieService, private uploadImgService: UploadImgService) {}
+  constructor(
+    private movieService: MovieService, 
+    private uploadImgService: UploadImgService,
+    private router: Router
+    ) {}
 
   ngOnInit(): void {
-    this.loadMovies();
-    this.loadCategories();
-    this.loadMovieCategories();
+    forkJoin({
+      movies: this.movieService.getAllMovies(),
+      categories: this.movieService.getAllCategories(),
+      movieCategories: this.movieService.getAllMovieCategory()
+    }).subscribe(({ movies, categories, movieCategories }) => {
+      this.movies = movies;
+      this.categories = categories;
+      this.movieCategories = movieCategories;
+      this.buildMovieTableData();
+    });
+  }
+
+  private buildMovieTableData(): void {
+    this.moviesWithCategories = this.movies.map(movie => {
+      const assignedCategoryIds = this.movieCategories
+        .filter(mc => mc.movieId === movie.id)
+        .map(mc => mc.categoryId);
+      
+      const categoryNames = this.categories
+        .filter(cat => assignedCategoryIds.includes(cat.id))
+        .map(cat => cat.name);
+
+      return {
+        ...movie,
+        categoryNames: categoryNames
+      } as MovieExtended;
+    });
   }
 
   loadMovies() {
-    this.movieService.getAllMovies().subscribe(data => (this.movies = data));
+    forkJoin({
+      movies: this.movieService.getAllMovies(),
+      categories: this.movieService.getAllCategories(),
+      movieCategories: this.movieService.getAllMovieCategory()
+    }).subscribe(({ movies, categories, movieCategories }) => {
+      this.movies = movies;
+      this.categories = categories;
+      this.movieCategories = movieCategories;
+      this.buildMovieTableData();
+    });
   }
 
   onFileSelected(event: Event): void {
@@ -62,33 +112,75 @@ export class MoviesAdminComponent implements OnInit{
     }
   }
 
+  createMovie() {
+    if (!this.newMovie.title || !this.newMovie.director || !this.newMovie.releaseDate) {
+        alert('Por favor, complete los campos requeridos.');
+        return;
+    }
+    
+    const moviePayload: Partial<Movie> = { ...this.newMovie };
+    const categoriesToAssign = this.newMovie.selectedCategories || [];
+    delete moviePayload.categories;
 
-
- createMovie() {
-    if (!this.newMovies.selectedCategories) this.newMovies.selectedCategories = [];
-
-    this.movieService.createMovie(this.newMovie as Movie).subscribe((createdMovie) => {
-      const assignments = this.newMovies.selectedCategories!.map(catId => ({
-        movieId: createdMovie.id,
-        categoryId: catId
-      }));
-      assignments.forEach(mc => {
-        this.movieService.createMovieCategory(mc as MovieCategory).subscribe();
+    this.movieService.createMovie(moviePayload as Movie).subscribe((createdMovie) => {
+      
+      const assignmentObservables: Observable<any>[] = categoriesToAssign.map(catId => {
+        const mc: MovieCategory = { movieId: createdMovie.id, categoryId: catId } as MovieCategory;
+        return this.movieService.createMovieCategory(mc);
       });
-      this.loadMovies();
-      this.loadMovieCategories();
-      this.newMovie = {};
-      this.showMovieModal = false;
+
+      if (assignmentObservables.length > 0) {
+          forkJoin(assignmentObservables).subscribe({
+              next: () => {
+                  this.loadMovies();
+                  this.resetMovieForm();
+              },
+              error: err => console.error('Error al asignar categorías:', err)
+          });
+      } else {
+          this.loadMovies();
+          this.resetMovieForm();
+      }
     });
+  }
+  
+  private resetMovieForm(): void {
+    this.newMovie = { active: true, selectedCategories: [] };
+    this.showMovieModal = false;
   }
 
   deleteMovie(id: string) {
-    this.movieService.deleteMovie(id).subscribe(() => this.loadMovies());
+    if (!confirm('¿Seguro que deseas eliminar esta película? Esto eliminará también todas sus asignaciones de categorías.')) {
+        return;
+    }
+
+    const assignmentsToDelete = this.movieCategories.filter(mc => mc.movieId === id);
+    
+    const deleteAssignments$ = assignmentsToDelete
+        .filter(mc => mc.id)
+        .map(mc => this.movieService.deleteMovieCategory(mc.id!));
+    
+    forkJoin(deleteAssignments$).pipe(
+        switchMap(() => this.movieService.deleteMovie(id))
+    ).subscribe({
+        next: () => {
+            this.loadMovies();
+            alert('Película eliminada correctamente.');
+        },
+        error: err => console.error('Error durante la eliminación en cascada:', err)
+    });
+  }
+
+  editMovie(movieId: string): void {
+    this.router.navigate(['/admin/movie-detail', movieId]);
   }
 
   // --- Categorías ---
   loadCategories() {
-    this.movieService.getAllCategories().subscribe(data => (this.categories = data));
+    this.movieService.getAllCategories().subscribe(data => {
+      this.categories = data;
+      this.buildMovieTableData();
+    });
   }
 
   createCategory() {
@@ -103,30 +195,4 @@ export class MoviesAdminComponent implements OnInit{
     this.movieService.deleteCategory(id).subscribe(() => this.loadCategories());
   }
 
-  // --- Asignación de categorías ---
-  loadMovieCategories() {
-    this.movieService.getAllMovieCategory().subscribe(data => (this.movieCategories = data));
-  }
-
-  assignCategory() {
-    this.movieService.createMovieCategory(this.assignData as MovieCategory).subscribe(() => {
-      this.loadMovieCategories();
-      this.assignData = {};
-      this.showAssignModal = false;
-    });
-  }
-
-  deleteAssignment(id: string) {
-    this.movieService.deleteMovieCategory(id).subscribe(() => this.loadMovieCategories());
-  }
-
-  getMovieName(movieId: string): string {
-  const movie = this.movies.find(m => m.id === movieId);
-  return movie ? movie.title : 'Desconocido';
-}
-
-getCategoryName(categoryId: string): string {
-  const category = this.categories.find(c => c.id === categoryId);
-  return category ? category.name : 'Desconocido';
-}
 }

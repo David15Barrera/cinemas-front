@@ -15,6 +15,10 @@ const adminRoutes: Routes = [
     path:'movies-admin', loadComponent: () => import('./pages/movies/movies-admin/movies-admin.component').then(
       (m) => m.MoviesAdminComponent
     )
+  },{
+    path:'movie-detail/:id', loadComponent: () => import('./pages/movies/movies-detail/movies-detail.component').then(
+      (m) => m.MoviesDetailComponent
+    )
   },
   {
     path:'cinemas-admin', loadComponent: () => import('./pages/cinemas/cinema-admin/cinema-admin.component').then(
