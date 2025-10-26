@@ -175,6 +175,7 @@ export class PromotionsPageComponent {
           message: 'Promoción eliminada correctamente.',
           type: 'warning',
         });
+        this.closeDeleteModal();
         this.getPromotionsByCinemaId(this.cinemaId());
       },
       error: (err) => {
