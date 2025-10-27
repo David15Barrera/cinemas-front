@@ -8,6 +8,7 @@ export class ApiConfigService {
   private readonly API_BASE = environment.API_ROOT;
   private readonly API_BASE_AUTH = `${this.API_BASE}/auth-identity/v1`;
   private readonly API_BASE_PROMOTION = `${this.API_BASE}/promotion/v1`;
+  public readonly API_BASE_AD = `${this.API_BASE}/ads/v1`;
   public readonly API_IMAGES = `${this.API_BASE}/images/v1`;
   private readonly API_CINEMA_SERVICE = `${this.API_BASE}/cinema/v1`;
   private readonly API_MOVIE_SERVICE = `${this.API_BASE}/movie/v1`;
@@ -32,6 +33,7 @@ export class ApiConfigService {
   public readonly API_SHOWTIMES = `${this.API_CINEMA_SERVICE}/show-times`;
 
   // Anuncios
+  public readonly API_ADS = `${this.API_BASE_AD}/ads`;
 
   // promotions
   public readonly API_PROMOTION = `${this.API_BASE_PROMOTION}/promotions`;

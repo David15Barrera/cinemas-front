@@ -81,6 +81,34 @@ export default class LoginComponent {
         this.router.navigate(['/admin']);
         break;
 
+redirect(role: string) {
+  switch (role) {
+    case 'ADMIN_SIS':
+      this.router.navigate(['/admin']);
+      break;
+
+    case 'ADMIN_CINE':
+      this.router.navigate(['/cinema']);
+      break;
+
+    case 'ANUNCIADOR':
+      this.router.navigate(['/advertiser']);
+      break;
+
+    case 'CLIENTE':
+      this.router.navigate(['/client']);
+      break;
+
+    default:
+      this.store.logout();
+      this.alertStore.addAlert({
+        message: 'Rol no reconocido. Por favor inicie sesión nuevamente.',
+        type: 'error',
+      });
+      this.router.navigate(['/session/login']);
+      break;
+  }
+}
       case 'ADMIN_CINE':
         this.cinemaService.clearCinema();
         this.router.navigate(['/cinema']);

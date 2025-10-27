@@ -1,0 +1,73 @@
+<aside
+  class="shadow-md transition-all duration-300 ease-in-out h-full py-4"
+  [ngClass]="{
+    'w-[60px]': isCollapsed,
+    'w-[250px]': !isCollapsed
+  }"
+>
+  <button
+    class="btn btn-ghost btn-sm mt-1 mx-1 mb-3 text-white"
+    (click)="toggleCollapsed()"
+  >
+    <i-lucide [img]="isCollapsed ? Menu : Close" class="text-white"></i-lucide>
+  </button>
+
+  <!-- Menú Compras -->
+  <ul
+    class="px-0 flex flex-col items-stretch space-y-2 h-full pt-2 transition-all duration-300 ease-in-out"
+  >
+    <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Cines">
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/client/catalog"
+      >
+        <i-lucide [img]="Dashboard" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Cines</span>
+        }
+      </a>
+    </li>
+
+    <li
+      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
+      data-tip="Opiniones y Rankings"
+    >
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/cinema/promotions"
+      >
+        <i-lucide [img]="Reviews" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Opiniones y Rankings</span>
+        }
+      </a>
+    </li>
+
+    <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Snacks">
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/cinema/snacks"
+      >
+        <i-lucide [img]="Snacks" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Snacks</span>
+        }
+      </a>
+    </li>
+
+    <li
+      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
+      data-tip="Cartera Digital"
+    >
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/client/wallet"
+      >
+        <i-lucide [img]="Wallet" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Cartera Digital</span>
+        }
+      </a>
+    </li>
+  </ul>
+</aside>
