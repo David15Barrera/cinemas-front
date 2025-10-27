@@ -13,14 +13,16 @@ import {
   Menu,
   X,
   Settings,
-  Star
+  Star,
+  Megaphone
 } from 'lucide-angular';
 
 @Component({
   selector: 'app-sidebar-client',
+  standalone: true,
   imports: [CommonModule, RouterModule, LucideAngularModule],
   templateUrl: './sidebar-client.component.html',
-  styleUrl: './sidebar-client.component.css'
+  styleUrls: ['./sidebar-client.component.css']
 })
 export class SidebarClientComponent {
   readonly Menu = Menu;
@@ -34,6 +36,7 @@ export class SidebarClientComponent {
   readonly Reports = ChartPie;
   readonly Settings = Settings;
   readonly Reviews = Star;
+  readonly Megaphone = Megaphone;
 
   isCollapsed = true;
 

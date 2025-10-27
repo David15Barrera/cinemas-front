@@ -26,6 +26,20 @@
         <span class="truncate">Mis Anuncios</span>
         }
       </a>
+
+    <li
+      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
+      data-tip="Crear Nuevo Anuncio"
+    >
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/advertiser/newads"
+      >
+        <i-lucide [img]="Settings" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+          <span class="truncate">Crear Nuevo Anuncio</span>
+        }
+      </a>
     </li>
 
     <li
