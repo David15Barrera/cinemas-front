@@ -1,8 +1,8 @@
 <aside
   class="shadow-md transition-all duration-300 ease-in-out h-full py-4"
   [ngClass]="{
-    'w-[60px]': isCollapsed,
-    'w-[250px]': !isCollapsed
+    'w-[50px]': isCollapsed,
+    'w-[175px]': !isCollapsed
   }"
 >
   <button
@@ -23,7 +23,7 @@
       >
         <i-lucide [img]="Dashboard" class="text-blue-200"></i-lucide>
         @if (!isCollapsed) {
-        <span class="truncate">Panel Administración</span>
+        <span class="truncate">Panel</span>
         }
       </a>
     </li>
@@ -38,7 +38,7 @@
       >
         <i-lucide [img]="Settings" class="text-blue-200"></i-lucide>
         @if (!isCollapsed) {
-        <span class="truncate">Configuración del Cine</span>
+        <span class="truncate">Configuración</span>
         }
       </a>
     </li>
@@ -68,7 +68,7 @@
       >
         <i-lucide [img]="Schedules" class="text-blue-200"></i-lucide>
         @if (!isCollapsed) {
-        <span class="truncate">Horarios de Funciones</span>
+        <span class="truncate">Funciones</span>
         }
       </a>
     </li>
@@ -84,21 +84,6 @@
         <i-lucide [img]="Promotions" class="text-blue-200"></i-lucide>
         @if (!isCollapsed) {
         <span class="truncate">Promociones</span>
-        }
-      </a>
-    </li>
-
-    <li
-      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
-      data-tip="Opiniones y Rankings"
-    >
-      <a
-        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
-        routerLink="/cinema/promotions"
-      >
-        <i-lucide [img]="Reviews" class="text-blue-200"></i-lucide>
-        @if (!isCollapsed) {
-        <span class="truncate">Opiniones y Rankings</span>
         }
       </a>
     </li>
@@ -125,7 +110,7 @@
       >
         <i-lucide [img]="Wallet" class="text-blue-200"></i-lucide>
         @if (!isCollapsed) {
-        <span class="truncate">Cartera Digital</span>
+        <span class="truncate">Cartera</span>
         }
       </a>
     </li>

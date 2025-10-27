@@ -11,6 +11,7 @@ import { AuthService } from '../../services/auth.service';
 import { AuthStore } from 'app/store/auth.store';
 import { AlertStore } from 'app/store/alert.store';
 import { ModalMsgComponent } from '@shared/components/modal-msg/modal-msg.component';
+import { CinemaService } from 'app/modules/CINEMA_ADMIN/services/cinema.service';
 
 @Component({
   selector: 'app-confirmation',
@@ -25,6 +26,7 @@ export default class ConfirmationComponent {
   private readonly authService = inject(AuthService);
   private readonly store = inject(AuthStore);
   private readonly alertStore = inject(AlertStore);
+  private readonly cinemaService = inject(CinemaService);
 
   classSucces = 'text-purple-700 text-lg';
   titleModal = 'Confrimacion Exitosa';
@@ -83,6 +85,7 @@ export default class ConfirmationComponent {
         break;
 
       case 'ADMIN_CINE':
+        this.cinemaService.clearCinema();
         this.router.navigate(['/cinema']);
         break;
 

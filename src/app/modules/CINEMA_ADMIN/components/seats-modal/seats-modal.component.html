@@ -1,0 +1,38 @@
+<!-- Modal para mostrar asientos de una sala -->
+<input type="checkbox" id="room-seats-modal" class="modal-toggle" />
+
+<div class="modal-box max-w-7xl w-full">
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-bold">Asientos de la sala</h3>
+    <button class="btn btn-accent btn-outline btn-sm flex items-center gap-2">
+      <i-lucide [img]="Armchair" class="w-4 h-4"></i-lucide>
+      Agregar
+    </button>
+  </div>
+
+  <div
+    class="border rounded-lg p-4 bg-base-200 max-h-[70vh] overflow-y-auto w-full"
+  >
+    <div
+      class="grid gap-4 justify-items-center"
+      [style.gridTemplateColumns]="'repeat(' + room()?.columns + ', 3rem)'"
+    >
+      @for (seat of seats(); track $index) {
+      <div
+        class="flex flex-col items-center cursor-pointer transition-transform transform hover:scale-110 hover:text-accent"
+      >
+        <i-lucide [img]="Armchair" class="w-8 h-8"></i-lucide>
+        <span class="text-sm font-medium mt-1">{{ seat.name }}</span>
+      </div>
+      }
+    </div>
+  </div>
+
+  <div class="mt-4 text-center text-sm opacity-70">
+    <p>Filas y columnas se muestran según la configuración de la sala</p>
+  </div>
+
+  <div class="modal-action">
+    <label for="room-seats-modal" class="btn" (click)="onClose()">Cerrar</label>
+  </div>
+</div>
