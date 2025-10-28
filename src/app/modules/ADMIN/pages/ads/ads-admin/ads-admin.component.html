@@ -1,1 +1,212 @@
-<p>ads-admin works!</p>
+<div class="p-4 sm:p-8 max-w-6xl mx-auto">
+  
+  <h1 class="text-4xl font-extrabold mb-8 text-base-content text-center pb-2">
+    Configuración de Precios de Anuncios
+  </h1>
+  
+  <p class="text-center text-lg text-base-content opacity-70 mb-10">
+    Actualice el costo y la duración mínima en días para cada tipo de anuncio. Los valores están en Quetzales (Q).
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <!-- TEXT ADS -->
+    <div class="card bg-base-100 shadow-xl border border-primary/50">
+      <!-- Formulario para TEXTO -->
+      <form class="card-body p-6" (ngSubmit)="saveCharge(ADS_TYPES.TEXT)">
+        
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="card-title text-2xl text-primary font-extrabold">Texto Simple</h2>
+          <div class="badge badge-lg badge-primary text-primary-content font-bold shadow-md">
+              {{ ADS_TYPES.TEXT }} 
+          </div>
+        </div>
+
+        <!-- Display Actual Cost & Days -->
+        <div class="mt-4 mb-6 text-center bg-primary text-primary-content p-4 rounded-xl shadow-lg">
+          <p class="text-sm">Costo Actual (Q): <span class="text-3xl font-black">{{ textCharge?.cost | number:'1.2-2' }}</span></p>
+          <p class="text-sm mt-2">Duración Mínima: <span class="text-xl font-bold">{{ textCharge?.durationDays || 0 }} días</span></p>
+        </div>
+
+        <!-- Inputs -->
+        <h3 class="text-lg font-bold text-base-content border-b pb-2 mb-3">Modificar Valores</h3>
+        
+        <div class="form-control space-y-4">
+            <label class="label font-semibold">Nueva Duración (Días)</label>
+            <input 
+                type="number" 
+                class="input input-bordered input-md w-full" 
+                [(ngModel)]="textDaysInput" 
+                name="textDays" 
+                placeholder="Mínimo 1 día" 
+                min="1"
+                required
+            />
+
+            <label class="label font-semibold">Nuevo Costo (Q)</label>
+            <label class="input input-bordered flex items-center gap-2 has-[:focus]:input-primary">
+                <span class="font-bold text-lg text-primary">Q</span>
+                <input 
+                    type="number" 
+                    class="grow text-lg font-mono" 
+                    [(ngModel)]="textCostInput" 
+                    name="textCost" 
+                    placeholder="Costo" 
+                    min="0"
+                    step="0.01"
+                    required
+                />
+            </label>
+        </div>
+
+        <!-- Buttons -->
+        <div class="card-actions justify-end mt-6 flex gap-3">
+          <button type="button" class="btn btn-warning btn-sm btn-outline" (click)="resetInput(ADS_TYPES.TEXT)" [disabled]="isSavingText">
+              Cancelar
+          </button>
+          
+          <button type="submit" class="btn btn-success text-success-content btn-sm" [disabled]="isSavingText || !textCostInput || !textDaysInput">
+              @if (isSavingText) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  Guardando...
+              } @else {
+                  Actualizar
+              }
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- VIDEO ADS -->
+    <div class="card bg-base-100 shadow-xl border border-secondary/50">
+      <form class="card-body p-6" (ngSubmit)="saveCharge(ADS_TYPES.VIDEO)">
+        
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="card-title text-2xl text-secondary font-extrabold">Video</h2>
+          <div class="badge badge-lg badge-secondary text-secondary-content font-bold shadow-md">
+              {{ ADS_TYPES.VIDEO }} 
+          </div>
+        </div>
+
+        <!-- Display Actual Cost & Days -->
+        <div class="mt-4 mb-6 text-center bg-secondary text-secondary-content p-4 rounded-xl shadow-lg">
+          <p class="text-sm">Costo Actual (Q): <span class="text-3xl font-black">{{ videoCharge?.cost | number:'1.2-2' }}</span></p>
+          <p class="text-sm mt-2">Duración Mínima: <span class="text-xl font-bold">{{ videoCharge?.durationDays || 0 }} días</span></p>
+        </div>
+
+        <!-- Inputs -->
+        <h3 class="text-lg font-bold text-base-content border-b pb-2 mb-3">Modificar Valores</h3>
+        
+        <div class="form-control space-y-4">
+            <label class="label font-semibold">Nueva Duración (Días)</label>
+            <input 
+                type="number" 
+                class="input input-bordered input-md w-full" 
+                [(ngModel)]="videoDaysInput" 
+                name="videoDays" 
+                placeholder="Mínimo 1 día" 
+                min="1"
+                required
+            />
+
+            <label class="label font-semibold">Nuevo Costo (Q)</label>
+            <label class="input input-bordered flex items-center gap-2 has-[:focus]:input-secondary">
+                <span class="font-bold text-lg text-secondary">Q</span>
+                <input 
+                    type="number" 
+                    class="grow text-lg font-mono" 
+                    [(ngModel)]="videoCostInput" 
+                    name="videoCost" 
+                    placeholder="Costo" 
+                    min="0"
+                    step="0.01"
+                    required
+                />
+            </label>
+        </div>
+
+        <!-- Buttons -->
+        <div class="card-actions justify-end mt-6 flex gap-3">
+          <button type="button" class="btn btn-warning btn-sm btn-outline" (click)="resetInput(ADS_TYPES.VIDEO)" [disabled]="isSavingVideo">
+              Cancelar
+          </button>
+          
+          <button type="submit" class="btn btn-success text-success-content btn-sm" [disabled]="isSavingVideo || !videoCostInput || !videoDaysInput">
+              @if (isSavingVideo) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  Guardando...
+              } @else {
+                  Actualizar
+              }
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- CARD 3: TEXT/IMAGE ADS -->
+    <div class="card bg-base-100 shadow-xl border border-accent/50">
+      <form class="card-body p-6" (ngSubmit)="saveCharge(ADS_TYPES.TEXT_IMAGE)">
+        
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="card-title text-2xl text-accent font-extrabold">Texto con Imagen</h2>
+          <div class="badge badge-lg badge-accent text-accent-content font-bold shadow-md">
+              {{ ADS_TYPES.TEXT_IMAGE }} 
+          </div>
+        </div>
+
+        <div class="mt-4 mb-6 text-center bg-accent text-accent-content p-4 rounded-xl shadow-lg">
+          <p class="text-sm">Costo Actual (Q): <span class="text-3xl font-black">{{ textImageCharge?.cost | number:'1.2-2' }}</span></p>
+          <p class="text-sm mt-2">Duración Mínima: <span class="text-xl font-bold">{{ textImageCharge?.durationDays || 0 }} días</span></p>
+        </div>
+
+        <!-- Inputs -->
+        <h3 class="text-lg font-bold text-base-content border-b pb-2 mb-3">Modificar Valores</h3>
+        
+        <div class="form-control space-y-4">
+            <label class="label font-semibold">Nueva Duración (Días)</label>
+            <input 
+                type="number" 
+                class="input input-bordered input-md w-full" 
+                [(ngModel)]="textImageDaysInput" 
+                name="textImageDays" 
+                placeholder="Mínimo 1 día" 
+                min="1"
+                required
+            />
+
+            <label class="label font-semibold">Nuevo Costo (Q)</label>
+            <label class="input input-bordered flex items-center gap-2 has-[:focus]:input-accent">
+                <span class="font-bold text-lg text-accent">Q</span>
+                <input 
+                    type="number" 
+                    class="grow text-lg font-mono" 
+                    [(ngModel)]="textImageCostInput" 
+                    name="textImageCost" 
+                    placeholder="Costo" 
+                    min="0"
+                    step="0.01"
+                    required
+                />
+            </label>
+        </div>
+
+        <!-- Buttons -->
+        <div class="card-actions justify-end mt-6 flex gap-3">
+          <button type="button" class="btn btn-warning btn-sm btn-outline" (click)="resetInput(ADS_TYPES.TEXT_IMAGE)" [disabled]="isSavingTextImage">
+              Cancelar
+          </button>
+          
+          <button type="submit" class="btn btn-success text-success-content btn-sm" [disabled]="isSavingTextImage || !textImageCostInput || !textImageDaysInput">
+              @if (isSavingTextImage) {
+                  <span class="loading loading-spinner loading-xs"></span>
+                  Guardando...
+              } @else {
+                  Actualizar
+              }
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

@@ -38,7 +38,7 @@ export class ApiConfigService {
 
   // Anuncios
   public readonly API_ADS = `${this.API_BASE_AD}/ads`;
-
+  public readonly API_CHARPE = `${this.API_BASE_AD}/charge-period`;
   // promotions
   public readonly API_PROMOTION = `${this.API_BASE_PROMOTION}/promotions`;
 
