@@ -79,7 +79,7 @@
           <label class="label">
             <span class="label-text opacity-0">.</span>
           </label>
-          <button class="btn btn-ghost btn-sm gap-2">
+          <button class="btn btn-ghost btn-sm gap-2" (click)="clearFilters()">
             <i-lucide [img]="RotateCcw" class="w-4 h-4"></i-lucide>
             Limpiar
           </button>
@@ -168,8 +168,8 @@
           <div class="divider my-2"></div>
 
           <div class="card-actions justify-end gap-2">
-            <button class="btn btn-ghost btn-xs gap-1" title="Ver detalles">
-              <i-lucide [img]="Eye" class="w-4 h-4"></i-lucide>
+            <button class="btn btn-ghost btn-xs gap-1" title="Ver Opiniones" (click)="navigateReviews(snack)">
+              <i-lucide [img]="Reviews" class="w-4 h-4"></i-lucide>
             </button>
             <button
               class="btn btn-ghost btn-xs text-info gap-1"

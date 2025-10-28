@@ -40,14 +40,18 @@
                 'badge-success': room.commentsEnabled,
                 'badge-warning': !room.commentsEnabled
               }"
-              >{{ room.commentsEnabled ? 'Comentarios ON' : 'Comentarios OFF' }}</span>
+              >{{
+                room.commentsEnabled ? "Comentarios ON" : "Comentarios OFF"
+              }}</span
+            >
             <span
               class="badge badge-sm"
               [ngClass]="{
                 'badge-warning': room.blocked,
                 'badge-info': !room.blocked
               }"
-              >{{ room.blocked ? 'Bloqueado' : 'Activo' }}</span>
+              >{{ room.blocked ? "Bloqueado" : "Activo" }}</span
+            >
           </div>
         </figure>
 
@@ -56,7 +60,7 @@
             {{ room.name }}
           </h3>
           <p class="text-sm opacity-80 line-clamp-3">
-            {{ room.description || 'Sin descripción disponible.' }}
+            {{ room.description || "Sin descripción disponible." }}
           </p>
 
           <div class="flex flex-wrap gap-3 mt-2 text-sm">
@@ -74,7 +78,7 @@
             </span>
           </div>
 
-          <div class="card-actions justify-end mt-4">
+          <div class="card-actions justify-end mt-4 flex flex-wrap gap-2">
             <button
               class="btn btn-outline btn-info btn-sm flex items-center gap-1"
               (click)="openModalFormRoom(room)"
@@ -82,12 +86,21 @@
               <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
               Editar
             </button>
+
             <button
               class="btn btn-outline btn-accent btn-sm flex items-center gap-1"
               (click)="openModalSeats(room)"
             >
               <i-lucide [img]="Eye" class="w-4 h-4"></i-lucide>
               Asientos
+            </button>
+
+            <button
+              class="btn btn-outline btn-primary btn-sm flex items-center gap-1"
+              (click)="navigateReviews(room)"
+            >
+              <i-lucide [img]="MessageSquare" class="w-4 h-4"></i-lucide>
+              Opiniones
             </button>
           </div>
         </div>

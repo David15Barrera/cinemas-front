@@ -6,7 +6,19 @@ const clientRoutes: Routes = [
     loadComponent: () => import('./pages/dashboard-client/dashboard-client.component').then(
       (m) => m.DashboardClientComponent
     )
-  }  
+  },
+  {
+    path:'catalog',
+    loadComponent: () => import('./pages/catalog-client/catalog-client.component').then(
+      (m) => m.CatalogClientComponent
+    )
+  },
+    {
+    path:'wallet',
+    loadComponent: () => import('./pages/client-wallet/client-wallet.component').then(
+      (m) => m.ClientWalletComponent
+    )
+  }   
 ];
 
 

@@ -41,6 +41,22 @@ const cinemaAdminRoutes: Routes = [
         (m) => m.SnacksPageComponent
       ),
   },
+  {
+    path: 'reviews/:type/:id',
+    canActivate: [hasCinemaGuard],
+    loadComponent: () =>
+      import('./pages/reviews-target-type/reviews-target-type.component').then(
+        (m) => m.ReviewsTargetTypeComponent
+      ),
+  },
+  {
+    path: 'promotions',
+    canActivate: [hasCinemaGuard],
+    loadComponent: () =>
+      import('./pages/promotions-page/promotions-page.component').then(
+        (m) => m.PromotionsPageComponent
+      ),
+  },
 ];
 
 export const CINEMA_ROUTES: Routes = [

@@ -1,0 +1,279 @@
+<input type="checkbox" id="create-promotion-modal" class="modal-toggle" />
+
+<div class="modal-box max-w-4xl">
+  <!-- Header del modal -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-3">
+      <div class="bg-primary/10 p-3 rounded-lg">
+        <i-lucide [img]="Percent" class="w-6 h-6 text-primary"></i-lucide>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold">
+          {{ promotionUpdate() ? "Editar Promoción" : "Nueva Promoción" }}
+        </h3>
+        <p class="text-sm opacity-70">
+          {{
+            promotionUpdate()
+              ? "Actualiza los datos de la promoción"
+              : "Crea una nueva promoción para tu cine"
+          }}
+        </p>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-sm btn-circle" (click)="closeModal()">
+      <i-lucide [img]="X" class="w-5 h-5"></i-lucide>
+    </button>
+  </div>
+
+  <!-- Formulario -->
+  <div class="space-y-5">
+    <!-- Título -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium flex items-center gap-2">
+          <i-lucide [img]="Tag" class="w-4 h-4"></i-lucide>
+          Título de la promoción
+        </span>
+        <span class="label-text-alt text-error">*Requerido</span>
+      </label>
+      <input
+        [(ngModel)]="newPromotion().title"
+        type="text"
+        placeholder="Ej. 2x1 en boletos de cine"
+        class="input input-bordered w-full focus:input-primary"
+      />
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium flex items-center gap-2">
+          <i-lucide [img]="FileText" class="w-4 h-4"></i-lucide>
+          Descripción
+        </span>
+        <span class="label-text-alt">Detalla los términos de la promoción</span>
+      </label>
+      <textarea
+        [(ngModel)]="newPromotion().description"
+        class="textarea textarea-bordered w-full focus:textarea-primary h-24"
+        placeholder="Describe los detalles, restricciones y beneficios de la promoción..."
+      ></textarea>
+      <label class="label">
+        <span class="label-text-alt opacity-70">
+          {{ newPromotion().description.length || 0 }} caracteres
+        </span>
+      </label>
+    </div>
+
+    <!-- Tipo de promoción y Descuento -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Tipo de promoción -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium flex items-center gap-2">
+            <i-lucide [img]="Tag" class="w-4 h-4"></i-lucide>
+            Tipo de promoción
+          </span>
+          <span class="label-text-alt text-error">*</span>
+        </label>
+        <select
+          [(ngModel)]="newPromotion().targetType"
+          (ngModelChange)="onTypeChange($any($event))"
+          class="select select-bordered w-full focus:select-primary"
+        >
+          <option value="ROOM">Sala</option>
+          <option value="MOVIE">Pelicula</option>
+          <option value="CLIENT">Cliente</option>
+        </select>
+        <label class="label">
+          <span class="label-text-alt flex items-center gap-1">
+            <i-lucide [img]="AlertCircle" class="w-3 h-3"></i-lucide>
+            Al cambiar se limpiará la selección
+          </span>
+        </label>
+      </div>
+
+      <!-- Porcentaje de descuento -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium flex items-center gap-2">
+            <i-lucide [img]="Percent" class="w-4 h-4 text-success"></i-lucide>
+            Descuento (%)
+          </span>
+          <span class="label-text-alt text-error">*</span>
+        </label>
+        <div class="join w-full">
+          <input
+            [(ngModel)]="newPromotion().discountPercentage"
+            type="number"
+            min="1"
+            max="100"
+            step="1"
+            placeholder="0"
+            class="input input-bordered join-item w-full focus:input-primary"
+          />
+          <span class="btn btn-ghost join-item no-animation">%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objetivo de la promoción (catálogo dinámico) -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium flex items-center gap-2">
+          <i-lucide
+            [img]="
+              promotionType() === 'ROOM'
+                ? DoorOpen
+                : promotionType() === 'MOVIE'
+                ? Popcorn
+                : Users
+            "
+            class="w-4 h-4"
+          ></i-lucide>
+          Seleccionar
+          {{
+            promotionType() === "ROOM"
+              ? "Sala"
+              : promotionType() === "MOVIE"
+              ? "Pelicula"
+              : "Cliente"
+          }}
+        </span>
+        <span class="label-text-alt text-error">*Requerido</span>
+      </label>
+      <select
+        [(ngModel)]="newPromotion().targetId"
+        class="select select-bordered w-full focus:select-primary"
+      >
+        <option value="" disabled selected>
+          -- Selecciona un
+          {{
+            promotionType() === "ROOM"
+              ? "sala"
+              : promotionType() === "MOVIE"
+              ? "Pelicula"
+              : "cliente"
+          }}
+          --
+        </option>
+        @for (item of currentCatalog; track item.id) {
+        <option [value]="item.id">
+          @if (promotionType() === 'CLIENT') {
+          {{ $any(item).fullName }} - {{ $any(item).email }}
+          }
+          
+          @if (promotionType() === 'MOVIE') {
+          {{ $any(item).title }}
+          } 
+          
+          @if (promotionType() === 'ROOM') {
+          {{ $any(item).name }}
+          }
+        </option>
+        }
+      </select>
+      @if (currentCatalog.length === 0) {
+      <label class="label">
+        <span class="label-text-alt text-warning flex items-center gap-1">
+          <i-lucide [img]="AlertCircle" class="w-3 h-3"></i-lucide>
+          No hay
+          {{
+            promotionType() === "ROOM"
+              ? "salas"
+              : promotionType() === "MOVIE"
+              ? "productos"
+              : "clientes"
+          }}
+          disponibles
+        </span>
+      </label>
+      }
+    </div>
+
+    <!-- Fechas: Inicio y Fin -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Fecha de inicio -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium flex items-center gap-2">
+            <i-lucide [img]="Calendar" class="w-4 h-4 text-info"></i-lucide>
+            Fecha de inicio
+          </span>
+          <span class="label-text-alt text-error">*</span>
+        </label>
+        <input
+          [(ngModel)]="newPromotion().startDate"
+          type="date"
+          class="input input-bordered w-full focus:input-primary"
+        />
+      </div>
+
+      <!-- Fecha de fin -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium flex items-center gap-2">
+            <i-lucide [img]="Clock" class="w-4 h-4 text-warning"></i-lucide>
+            Fecha de fin
+          </span>
+          <span class="label-text-alt text-error">*</span>
+        </label>
+        <input
+          [(ngModel)]="newPromotion().endDate"
+          type="date"
+          class="input input-bordered w-full focus:input-primary"
+        />
+      </div>
+    </div>
+
+    <!-- Estado activo (solo en modo edición) -->
+    @if (promotionUpdate()) {
+    <div class="form-control">
+      <label class="label cursor-pointer justify-start gap-3">
+        <input
+          [(ngModel)]="$any(newPromotion()).isActive"
+          type="checkbox"
+          class="toggle toggle-success"
+        />
+        <div>
+          <span class="label-text font-medium">Estado de la promoción</span>
+          <p class="text-xs opacity-70">
+            {{ $any(newPromotion()).isActive ? "Activa" : "Inactiva" }}
+          </p>
+        </div>
+      </label>
+    </div>
+    }
+
+    <!-- Preview de la promoción -->
+    <div class="alert alert-info">
+      <i-lucide [img]="AlertCircle" class="w-5 h-5"></i-lucide>
+      <div class="text-sm">
+        <p class="font-semibold">Vista previa:</p>
+        <p>
+          Descuento de
+          <strong>{{ newPromotion().discountPercentage }}%</strong> en
+          <strong>{{
+            promotionType() === "ROOM"
+              ? "sala"
+              : promotionType() === "MOVIE"
+              ? "Pelicula"
+              : "cliente seleccionado"
+          }}</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer con botones -->
+  <div class="modal-action">
+    <button class="btn btn-ghost gap-2" (click)="closeModal()">
+      <i-lucide [img]="X" class="w-4 h-4"></i-lucide>
+      Cancelar
+    </button>
+    <button class="btn btn-primary gap-2" (click)="savePromotion()">
+      <i-lucide [img]="Save" class="w-4 h-4"></i-lucide>
+      {{ promotionUpdate() ? "Actualizar" : "Crear" }} Promoción
+    </button>
+  </div>
+</div>

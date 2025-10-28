@@ -24,6 +24,7 @@ import {
   LucideAngularModule,
   Cookie,
   Pizza,
+  Star,
 } from 'lucide-angular';
 import { FormSnackModal } from '../../components/form-snack-modal/form-snack-modal.component';
 import { LocalStorageService } from '@shared/services/local-storage.service';
@@ -36,6 +37,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FilterSnackActivePipe } from '../../pipes/filterSnackActive.pipe';
 import { FilterSnackNamePipe } from '../../pipes/filterSnackName.pipe';
+import { Router } from '@angular/router';
 
 const ICONS = [DollarSign, TrendingUp, TrendingDown, Coffee, Pizza, Cookie];
 @Component({
@@ -47,7 +49,7 @@ const ICONS = [DollarSign, TrendingUp, TrendingDown, Coffee, Pizza, Cookie];
     ImagePipe,
     FormsModule,
     FilterSnackActivePipe,
-    FilterSnackNamePipe
+    FilterSnackNamePipe,
   ],
   templateUrl: './snacks-page.component.html',
 })
@@ -68,6 +70,7 @@ export class SnacksPageComponent {
   readonly Coffee = Coffee;
   readonly Package = Package;
   readonly Sandwich = Sandwich;
+  readonly Reviews = Star;
 
   // modal
   @ViewChild('modalFormSnack')
@@ -77,6 +80,7 @@ export class SnacksPageComponent {
   private readonly localStorageService = inject(LocalStorageService);
   private readonly snackService = inject(SnackService);
   private readonly cinemaService = inject(CinemaService);
+  private readonly router = inject(Router);
 
   // datos
   snacks = signal<Snack[]>([]);
@@ -125,5 +129,14 @@ export class SnacksPageComponent {
         console.error('Error loading snacks:', error);
       },
     });
+  }
+
+  clearFilters() {
+    this.filterName.set('');
+    this.filterSnackActive.set(undefined);
+  }
+
+  navigateReviews(snack: Snack) {
+    this.router.navigate(['cinema/reviews', 'snack', snack.id]);
   }
 }

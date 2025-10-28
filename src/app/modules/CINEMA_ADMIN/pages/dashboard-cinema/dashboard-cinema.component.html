@@ -136,7 +136,12 @@
             Administra descuentos y promociones por cliente o sala.
           </p>
           <div class="card-actions mt-4">
-            <button class="btn btn-outline btn-sm">Gestionar</button>
+            <button
+              class="btn btn-outline btn-sm"
+              (click)="navigateTo('promotions')"
+            >
+              Gestionar
+            </button>
           </div>
         </div>
       </div>
@@ -174,22 +179,6 @@
           </p>
           <div class="card-actions mt-4">
             <button class="btn btn-outline btn-sm">Revisar</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Opiniones y rankings -->
-      <div class="card bg-base-200 shadow-md hover:shadow-lg transition">
-        <div class="card-body items-center text-center">
-          <h3 class="card-title">
-            <i-lucide [img]="Star" class="w-6 h-6"></i-lucide>
-            Opiniones y Rankings
-          </h3>
-          <p class="text-sm opacity-70">
-            Supervisa las valoraciones y comentarios de los clientes.
-          </p>
-          <div class="card-actions mt-4">
-            <button class="btn btn-outline btn-sm">Ver opiniones</button>
           </div>
         </div>
       </div>

@@ -10,16 +10,21 @@ export class ApiConfigService {
   private readonly API_BASE_AUTH = `${this.API_BASE}/auth-identity/v1`;
   private readonly API_BASE_PROMOTION = `${this.API_BASE}/promotion/v1`;
   public readonly API_IMAGES = `${this.API_IMAGEN}/images/v1`;
+  public readonly API_BASE_AD = `${this.API_BASE}/ads/v1`;
   private readonly API_CINEMA_SERVICE = `${this.API_BASE}/cinema/v1`;
   private readonly API_MOVIE_SERVICE = `${this.API_BASE}/movie/v1`;
   private readonly API_FINANCE_SERVICE = `${this.API_BASE}/wallet-payments/v1`;
   private readonly API_SNACK_TICKETS_SERVICE = `${this.API_BASE}/snacks-tickets/v1`;
+  private readonly API_REVIEWS_SERVICE = `${this.API_BASE}/reviews/v1`;
+  private readonly API_PROMOTION_SERVICE = `${this.API_BASE}/promotion/v1`;
 
   // auth
   public readonly API_AUTH = `${this.API_BASE_AUTH}/auth`;
   public readonly API_ROLES = `${this.API_BASE_AUTH}/roles`;
   public readonly API_USER = `${this.API_BASE_AUTH}/users`;
   
+  public readonly API_USERS = `${this.API_BASE_AUTH}/users`;
+
   // movies, categories, showtimes
   public readonly API_MOVIES = `${this.API_MOVIE_SERVICE}/movies`;
   public readonly API_CATEGORIES = `${this.API_MOVIE_SERVICE}/categories`;
@@ -32,6 +37,7 @@ export class ApiConfigService {
   public readonly API_SHOWTIMES = `${this.API_CINEMA_SERVICE}/show-times`;
 
   // Anuncios
+  public readonly API_ADS = `${this.API_BASE_AD}/ads`;
 
   // promotions
   public readonly API_PROMOTION = `${this.API_BASE_PROMOTION}/promotions`;
@@ -44,4 +50,10 @@ export class ApiConfigService {
 
   // Snacks
   public readonly API_SNACKS = `${this.API_SNACK_TICKETS_SERVICE}/snacks`;
+
+  // Reviews
+  public readonly API_REVIEWS = `${this.API_REVIEWS_SERVICE}/reviews`;
+
+  // promotions
+  public readonly API_PROMOTIONS = `${this.API_PROMOTION_SERVICE}/promotions`;
 }

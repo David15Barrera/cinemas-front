@@ -80,7 +80,6 @@ export default class LoginComponent {
       case 'ADMIN_SIS':
         this.router.navigate(['/admin']);
         break;
-
       case 'ADMIN_CINE':
         this.cinemaService.clearCinema();
         this.router.navigate(['/cinema']);

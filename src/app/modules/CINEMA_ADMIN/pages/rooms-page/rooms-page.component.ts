@@ -5,7 +5,16 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { Armchair, Edit, Plus, Eye, LucideAngularModule, Columns, Rows } from 'lucide-angular';
+import {
+  Armchair,
+  Edit,
+  Plus,
+  Eye,
+  LucideAngularModule,
+  Columns,
+  Rows,
+  MessageSquare,
+} from 'lucide-angular';
 import { FormRoomModalComponent } from '../../components/form-room-modal/form-room-modal.component';
 import { Room } from '../../models/room.interface';
 import { RoomService } from '../../services/Room.service';
@@ -15,6 +24,7 @@ import { CinemaService } from '../../services/cinema.service';
 import { NgClass } from '@angular/common';
 import { SeatsModalComponent } from '../../components/seats-modal/seats-modal.component';
 import { ImagePipe } from '@shared/pipes/image.pipe';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-rooms-page',
@@ -35,6 +45,7 @@ export class RoomsPageComponent {
   readonly Eye = Eye;
   readonly Rows = Rows;
   readonly Columns = Columns;
+  readonly MessageSquare = MessageSquare;
 
   // modal
   @ViewChild('modalFormRoom')
@@ -46,6 +57,7 @@ export class RoomsPageComponent {
   private readonly roomService = inject(RoomService);
   private readonly cinemaService = inject(CinemaService);
   private readonly localStorageService = inject(LocalStorageService);
+  private readonly router = inject(Router);
 
   // datos
   rooms = signal<Room[]>([]);
@@ -97,5 +109,9 @@ export class RoomsPageComponent {
         if (cinema) this.getRoomsByCinemaId(cinema.id);
       },
     });
+  }
+
+  navigateReviews(room: Room) {
+    this.router.navigate(['cinema/reviews', 'room', room.id]);
   }
 }

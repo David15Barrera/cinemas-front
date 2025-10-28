@@ -1,0 +1,293 @@
+<div class="container mx-auto p-6 space-y-6">
+  <!-- Header con estadísticas -->
+  <div
+    class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6"
+  >
+    <div>
+      <h2 class="text-3xl font-bold flex items-center gap-3">
+        <i-lucide [img]="PlusCircle" class="w-8 h-8 text-primary"></i-lucide>
+        Gestión de Promociones
+      </h2>
+      <p class="text-sm opacity-70 mt-1">
+        Administra descuentos y ofertas especiales
+      </p>
+    </div>
+
+    <button
+      class="btn btn-primary btn-outline gap-2 shadow-lg"
+      (click)="openModalFormPromotion()"
+    >
+      <i-lucide [img]="Plus" class="w-5 h-5"></i-lucide>
+      Nueva Promoción
+    </button>
+  </div>
+
+  <!-- Estadísticas rápidas -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="stats shadow border border-base-300">
+      <div class="stat">
+        <div class="stat-title">Total Promociones</div>
+        <div class="stat-value text-primary">{{ promotions().length }}</div>
+        <div class="stat-desc">En el sistema</div>
+      </div>
+    </div>
+
+    <div class="stats shadow border border-base-300">
+      <div class="stat">
+        <div class="stat-title">Promociones Activas</div>
+        <div class="stat-value text-success">
+          {{ getActivePromotionsCount() }}
+        </div>
+        <div class="stat-desc">Vigentes ahora</div>
+      </div>
+    </div>
+
+    <div class="stats shadow border border-base-300">
+      <div class="stat">
+        <div class="stat-title">Salas Disponibles</div>
+        <div class="stat-value text-info">{{ rooms().length }}</div>
+        <div class="stat-desc">Para promociones</div>
+      </div>
+    </div>
+
+    <div class="stats shadow border border-base-300">
+      <div class="stat">
+        <div class="stat-title">Películas</div>
+        <div class="stat-value text-warning">{{ movies().length }}</div>
+        <div class="stat-desc">Películas disponibles</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="card bg-base-100 shadow-md border border-base-300">
+    <div class="card-body">
+      <h3 class="card-title text-lg flex items-center gap-2 mb-4">
+        <i-lucide [img]="Filter" class="w-5 h-5 text-primary"></i-lucide>
+        Filtros de búsqueda
+      </h3>
+
+      <div class="grid md:grid-cols-4 sm:grid-cols-2 gap-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Fecha Inicio</span>
+          </label>
+          <input
+            type="date"
+            class="input input-bordered w-full focus:input-primary"
+            placeholder="Desde"
+          />
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Fecha Fin</span>
+          </label>
+          <input
+            type="date"
+            class="input input-bordered w-full focus:input-primary"
+            placeholder="Hasta"
+          />
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Tipo de Promoción</span>
+          </label>
+          <select class="select select-bordered w-full focus:select-primary">
+            <option value="">Todas</option>
+            <option value="ROOM">Sala</option>
+            <option value="MOVIE">Película</option>
+            <option value="CLIENT">Cliente</option>
+          </select>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Estado</span>
+          </label>
+          <select class="select select-bordered w-full focus:select-primary">
+            <option value="">Todos</option>
+            <option value="true">Activas</option>
+            <option value="false">Inactivas</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <button class="btn btn-ghost btn-sm gap-2">
+          <i-lucide [img]="Trash2" class="w-4 h-4"></i-lucide>
+          Limpiar
+        </button>
+        <button class="btn btn-primary btn-sm gap-2">
+          <i-lucide [img]="Filter" class="w-4 h-4"></i-lucide>
+          Aplicar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de promociones -->
+  <div class="card bg-base-100 shadow-md border border-base-300">
+    <div class="card-body p-0">
+      <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+          <thead class="bg-base-200">
+            <tr>
+              <th class="font-bold">Título</th>
+              <th class="font-bold">Descripción</th>
+              <th class="font-bold">Tipo</th>
+              <th class="font-bold">Descuento</th>
+              <th class="font-bold">Fecha Inicio</th>
+              <th class="font-bold">Fecha Fin</th>
+              <th class="font-bold">Estado</th>
+              <th class="text-right font-bold">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (promotion of promotions(); track promotion.id) {
+            <tr class="hover">
+              <td class="font-semibold">{{ promotion.title }}</td>
+              <td>
+                <div class="max-w-xs truncate" [title]="promotion.description">
+                  {{ promotion.description }}
+                </div>
+              </td>
+              <td>
+                <span
+                  class="badge badge-sm gap-1"
+                  [ngClass]="{
+                    'badge-info': promotion.targetType === 'ROOM',
+                    'badge-warning': promotion.targetType === 'MOVIE',
+                    'badge-secondary': promotion.targetType === 'CLIENT'
+                  }"
+                >
+                  {{
+                    promotion.targetType === "ROOM"
+                      ? "Sala"
+                      : promotion.targetType === "MOVIE"
+                      ? "Pelicula"
+                      : "Cliente"
+                  }}
+                </span>
+              </td>
+              <td>
+                <span class="font-bold text-success">
+                  {{ promotion.discountPercentage }}%
+                </span>
+              </td>
+              <td class="text-sm opacity-70">
+                {{ promotion.startDate | date : "dd/MM/yyyy" }}
+              </td>
+              <td class="text-sm opacity-70">
+                {{ promotion.endDate | date : "dd/MM/yyyy" }}
+              </td>
+              <td>
+                <span
+                  class="badge badge-sm gap-1"
+                  [ngClass]="{
+                    'badge-success': promotion.isActive,
+                    'badge-error': !promotion.isActive
+                  }"
+                >
+                  {{ promotion.isActive ? "Activa" : "Inactiva" }}
+                </span>
+              </td>
+              <td>
+                <div class="flex justify-end gap-2">
+                  <button
+                    class="btn btn-ghost btn-xs text-info gap-1"
+                    title="Ver detalles"
+                    (click)="openModalFormPromotion(promotion)"
+                  >
+                    <i-lucide [img]="Eye" class="w-4 h-4"></i-lucide>
+                  </button>
+                  <button
+                    class="btn btn-ghost btn-xs text-warning gap-1"
+                    title="Editar"
+                    (click)="openModalFormPromotion(promotion)"
+                  >
+                    <i-lucide [img]="Edit" class="w-4 h-4"></i-lucide>
+                  </button>
+                  <button
+                    class="btn btn-ghost btn-xs text-error gap-1"
+                    title="Eliminar"
+                    (click)="openModalDelete(promotion.id)"
+                  >
+                    <i-lucide [img]="Trash2" class="w-4 h-4"></i-lucide>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="8" class="text-center py-12">
+                <div class="flex flex-col items-center justify-center">
+                  <div class="bg-base-200 p-6 rounded-full mb-4">
+                    <i-lucide
+                      [img]="PlusCircle"
+                      class="w-16 h-16 opacity-30"
+                    ></i-lucide>
+                  </div>
+                  <h3 class="text-xl font-semibold mb-2">No hay promociones</h3>
+                  <p class="text-sm opacity-70 mb-4">
+                    Comienza creando tu primera promoción
+                  </p>
+                  <button
+                    class="btn btn-primary btn-sm gap-2"
+                    (click)="openModalFormPromotion()"
+                  >
+                    <i-lucide [img]="Plus" class="w-4 h-4"></i-lucide>
+                    Crear Primera Promoción
+                  </button>
+                </div>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paginación (si es necesaria) -->
+  @if (promotions().length > 0) {
+  <div class="flex items-center justify-between">
+    <div class="text-sm opacity-70">
+      Mostrando
+      <span class="font-semibold">{{ promotions().length }}</span> promoción{{
+        promotions().length !== 1 ? "es" : ""
+      }}
+    </div>
+  </div>
+  }
+</div>
+
+<!-- Modal para crear/editar promociones -->
+<dialog #modalFormPromotion id="create-promotion-modal" class="modal">
+  <app-form-promotion
+    [promotionUpdate]="promotionUpdate()"
+    [cinemaId]="cinemaId()"
+    [rooms]="rooms()"
+    [movies]="movies()"
+    [customers]="customers()"
+    (close)="closeModalFormPromotion()"
+    (saveSucces)="eventOnSaveSucces()"
+  />
+</dialog>
+
+
+<dialog #deleteModal id="my_modal_8" class="modal">
+  <div >
+    <div class="modal-box">
+      <h2 class="font-semibold text-lg">Eliminar opinión</h2>
+      <p class="py-4">¿Estás seguro de que deseas eliminar esta opinión?</p>
+      <div class="modal-action">
+        <button type="button" class="btn" (click)="closeDeleteModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-error" (click)="deletePromotionModal()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</dialog>
