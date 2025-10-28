@@ -1,0 +1,60 @@
+<aside
+  class="shadow-md transition-all duration-300 ease-in-out h-full py-4"
+  [ngClass]="{
+    'w-[60px]': isCollapsed,
+    'w-[250px]': !isCollapsed
+  }"
+>
+  <button
+    class="btn btn-ghost btn-sm mt-1 mx-1 mb-3 text-white"
+    (click)="toggleCollapsed()"
+  >
+    <i-lucide [img]="isCollapsed ? Menu : Close" class="text-white"></i-lucide>
+  </button>
+
+  <!-- Menú Anunciante -->
+  <ul
+    class="px-0 flex flex-col items-stretch space-y-2 h-full pt-2 transition-all duration-300 ease-in-out"
+  >
+    <li [ngClass]="{ 'tooltip tooltip-right': isCollapsed }" data-tip="Mis Anuncios">
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/advertiser/ads"
+      >
+        <i-lucide [img]="Dashboard" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Mis Anuncios</span>
+        }
+      </a>
+
+    <li
+      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
+      data-tip="Crear Nuevo Anuncio"
+    >
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/advertiser/newads"
+      >
+        <i-lucide [img]="Settings" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+          <span class="truncate">Crear Nuevo Anuncio</span>
+        }
+      </a>
+    </li>
+
+    <li
+      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
+      data-tip="Cartera Digital"
+    >
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/advertiser/wallet"
+      >
+        <i-lucide [img]="Wallet" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Cartera Digital</span>
+        }
+      </a>
+    </li>
+  </ul>
+</aside>

@@ -1,0 +1,164 @@
+<div class="max-w-4xl mx-auto p-6">
+  <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+    <i-lucide [img]="BadgePlus" class="w-6 h-6 text-primary"></i-lucide>
+    Crear Nuevo Anuncio
+  </h2>
+
+  <form class="space-y-5">
+    <!-- Tipo de anuncio -->
+    <div class="form-control">
+      <label class="label font-medium flex items-center gap-2">
+        <i-lucide [img]="Tag" class="w-4 h-4"></i-lucide>
+        Tipo de anuncio
+        <span class="text-error">*</span>
+      </label>
+      <select
+        [(ngModel)]="adForm.targetType"
+        name="adType"
+        class="select select-bordered w-full"
+        required
+      >
+        <option [value]="AdsTargetType.TEXT">Solo Texto</option>
+        <option [value]="AdsTargetType.TEXT_IMAGE">Texto + Imagen</option>
+        <option [value]="AdsTargetType.VIDEO">Video</option>
+      </select>
+    </div>
+
+    <!-- Contenido del anuncio (solo para TEXT y TEXT_IMAGE) -->
+    <div class="form-control" *ngIf="adForm.targetType === AdsTargetType.TEXT || adForm.targetType === AdsTargetType.TEXT_IMAGE">
+      <label class="label font-medium flex items-center gap-2">
+        <i-lucide [img]="FileText" class="w-4 h-4"></i-lucide>
+        Contenido del anuncio
+        <span class="text-error">*</span>
+      </label>
+      <textarea
+        [(ngModel)]="adForm.content"
+        name="content"
+        placeholder="Describe tu anuncio"
+        class="textarea textarea-bordered w-full h-24"
+        required
+      ></textarea>
+    </div>
+
+    <!-- Imagen (solo para TEXT_IMAGE) -->
+    <div class="form-control" *ngIf="adForm.targetType === AdsTargetType.TEXT_IMAGE">
+      <label class="label font-medium flex items-center gap-2">
+        <i-lucide [img]="Image" class="w-4 h-4"></i-lucide>
+        Imagen del anuncio
+        <span class="text-error">*</span>
+      </label>
+      <input
+        type="file"
+        accept="image/*"
+        (change)="onImageSelected($event)"
+        class="file-input file-input-bordered w-full"
+        required
+      />
+      <label class="label">
+        <span class="label-text-alt text-gray-500">Selecciona una imagen para tu anuncio</span>
+      </label>
+      
+      <!-- Preview de la imagen seleccionada -->
+      <div *ngIf="imagePreview" class="mt-3">
+        <p class="text-sm font-medium mb-2">Vista previa:</p>
+        <img [src]="imagePreview" alt="Preview" class="max-w-md rounded-lg shadow-md" />
+      </div>
+    </div>
+
+    <!-- Video de YouTube (solo para VIDEO) -->
+    <div class="form-control" *ngIf="adForm.targetType === AdsTargetType.VIDEO">
+      <label class="label font-medium flex items-center gap-2">
+        <i-lucide [img]="Video" class="w-4 h-4"></i-lucide>
+        URL de YouTube
+        <span class="text-error">*</span>
+      </label>
+      <input
+        type="text"
+        placeholder="Ej. https://www.youtube.com/watch?v=an7krXQW4aU"
+        [(ngModel)]="adForm.videoUrl"
+        name="videoUrl"
+        (ngModelChange)="onVideoUrlChange()"
+        class="input input-bordered w-full"
+        required
+      />
+      <label class="label">
+        <span class="label-text-alt text-gray-500">
+          Copia y pega la URL del video de YouTube
+        </span>
+      </label>
+
+      <!-- Preview del video de YouTube -->
+      <div *ngIf="videoPreview" class="mt-3">
+        <p class="text-sm font-medium mb-2">Vista previa:</p>
+        <div class="relative w-full" style="padding-bottom: 56.25%;">
+          <iframe
+            [src]="videoPreview"
+            class="absolute top-0 left-0 w-full h-full rounded-lg shadow-md"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fechas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="form-control">
+        <label class="label font-medium flex items-center gap-2">
+          <i-lucide [img]="Calendar" class="w-4 h-4"></i-lucide>
+          Fecha de inicio
+          <span class="text-error">*</span>
+        </label>
+        <input
+          type="datetime-local"
+          [(ngModel)]="startDateString"
+          name="startDate"
+          class="input input-bordered w-full"
+          required
+        />
+      </div>
+
+      <div class="form-control">
+        <label class="label font-medium flex items-center gap-2">
+          <i-lucide [img]="Calendar" class="w-4 h-4"></i-lucide>
+          Duración del anuncio
+          <span class="text-error">*</span>
+        </label>
+        <select
+          [(ngModel)]="adDuration"
+          name="adDuration"
+          class="select select-bordered w-full"
+          required
+        >
+          <option [value]="1">1 día</option>
+          <option [value]="3">3 días</option>
+          <option [value]="7">1 semana</option>
+          <option [value]="14">2 semanas</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Fecha de fin calculada -->
+    <div *ngIf="startDateString && adDuration" class="alert alert-info">
+      <i-lucide [img]="Calendar" class="w-5 h-5"></i-lucide>
+      <span>
+        Tu anuncio finalizará el: <strong>{{ calculateEndDate() | date:'dd/MM/yyyy HH:mm' }}</strong>
+      </span>
+    </div>
+
+    <!-- Botón de guardar -->
+    <div class="mt-6">
+      <button
+        type="button"
+        (click)="saveAd()"
+        class="btn btn-primary gap-2"
+        [disabled]="isUploading"
+      >
+        <span *ngIf="isUploading" class="loading loading-spinner"></span>
+        <i-lucide *ngIf="!isUploading" [img]="Save" class="w-4 h-4"></i-lucide>
+        {{ isUploading ? 'Guardando...' : 'Crear Anuncio' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -23,7 +23,7 @@ export const routes: Routes = [
       import('./modules/ADMIN/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
   {
-    path: 'adviertiser',
+    path: 'advertiser',
     canActivate: [authGuard],
     data: {
       role: 'ANUNCIADOR',
