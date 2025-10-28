@@ -71,16 +71,15 @@ export class CreateAdsComponent {
   session: Session = this.localStorageService.getState().session;
 
   calculateEndDate(): Date | null {
-    if (!this.startDateString || !this.adDuration) {
-      return null;
-    }
-    
-    const startDate = new Date(this.startDateString);
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + this.adDuration);
-    
-    return endDate;
+      if (!this.startDateString || !this.adDuration) {
+        return null;
+      } 
+      const startDate = new Date(this.startDateString);
+      const endDate = new Date(startDate.getTime() + (this.adDuration * 24 * 60 * 60 * 1000));
+      
+      return endDate;
   }
+
   onVideoUrlChange(): void {
     if (this.adForm.videoUrl && this.adForm.videoUrl.trim() !== '') {
       const videoId = this.extractYouTubeId(this.adForm.videoUrl);
