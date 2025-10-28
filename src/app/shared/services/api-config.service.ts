@@ -41,6 +41,8 @@ export class ApiConfigService {
 
   // Finance
   public readonly API_GLOBAL_CONFIGS = `${this.API_FINANCE_SERVICE}/global-configs`;
+  public readonly API_WALLET = `${this.API_FINANCE_SERVICE}/wallets`;
+  public readonly API_TRANSACTIONS = `${this.API_FINANCE_SERVICE}/transactions`;
 
   // Snacks
   public readonly API_SNACKS = `${this.API_SNACK_TICKETS_SERVICE}/snacks`;

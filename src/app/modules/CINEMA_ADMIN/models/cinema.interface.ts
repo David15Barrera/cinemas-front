@@ -5,6 +5,7 @@ export interface Cinema {
   address: string;
   adminUserId: string;
   dailyCost: number;
+  createdAt?: Date;
 }
 
 export interface CostGlobal {
