@@ -9,6 +9,7 @@ import {
   Transaction,
   Wallet,
 } from '../models/finance.interface';
+import { NewPayCinema, PayCinema } from '../models/payCinema.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,7 @@ export class FinanceService {
   private readonly apiConfig = inject(ApiConfigService);
   private readonly API_WALLET = this.apiConfig.API_WALLET;
   private readonly API_TRANSACTIONS = this.apiConfig.API_TRANSACTIONS;
+  private readonly API_CINEMA_PAYMENTS = this.apiConfig.API_CINEMA_PAYMENTS;
 
   constructor() {}
 
@@ -33,13 +35,25 @@ export class FinanceService {
     return this._http.post<void>(`${this.API_WALLET}/recharge`, recharge);
   }
 
-  debitWallet(debit: DebitWallet): Observable<void> {
-    return this._http.post<void>(`${this.API_WALLET}/debit`, debit);
-  }
+  // debitWallet(debit: DebitWallet): Observable<void> {
+  //   return this._http.post<void>(`${this.API_WALLET}/debit`, debit);
+  // }
 
   getAllTransactionsByWalletId(walletId: string): Observable<Transaction[]> {
     return this._http.get<Transaction[]>(
       `${this.API_TRANSACTIONS}/wallet/${walletId}`
+    );
+  }
+
+  // pago a cestancia cinema y get pagos
+  createCinemaPayment(payCinema: NewPayCinema): Observable<void> {
+    return this._http.post<void>(`${this.API_CINEMA_PAYMENTS}`, payCinema);
+  }
+
+
+  getAllPaymentsByCinemaId(cinemaId: string): Observable<PayCinema[]> {
+    return this._http.get<PayCinema[]>(
+      `${this.API_CINEMA_PAYMENTS}/cinema/${cinemaId}`
     );
   }
 }

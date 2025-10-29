@@ -12,7 +12,6 @@ import {
   Transaction,
   Wallet,
   RechargeWallet,
-  DebitWallet,
 } from '../../models/finance.interface';
 import { LocalStorageService } from '@shared/services/local-storage.service';
 import { Session } from 'app/modules/session/models/auth';
@@ -40,6 +39,7 @@ import {
   LucideAngularModule,
 } from 'lucide-angular';
 import { Cinema } from '../../models/cinema.interface';
+import { NewPayCinema, PayCinema } from '../../models/payCinema.interface';
 
 @Component({
   selector: 'app-finances-page',
@@ -89,6 +89,7 @@ export class FinancesPageComponent {
   payStayStartDate = signal<string>('');
   payStayEndDate = signal<string>('');
   payStayAmount = signal<number>(0);
+  payCinemaList = signal<PayCinema[]>([]);
 
   session: Session = this.localStorageService.getState().session;
 
@@ -115,6 +116,7 @@ export class FinancesPageComponent {
         this.existWallet.set(true);
         this.wallet.set(wallet);
         this.loadTransactions(wallet.id);
+        this.loadCinemaPayments(cinemaId);
       },
       error: (err) => {
         this.alertStore.addAlert({
@@ -132,6 +134,18 @@ export class FinancesPageComponent {
     this.financesService.getAllTransactionsByWalletId(walletId).subscribe({
       next: (transactions) => {
         this.transactions.set(transactions);
+      },
+    });
+  }
+
+  loadCinemaPayments(cinemaId: string) {
+    this.financesService.getAllPaymentsByCinemaId(cinemaId).subscribe({
+      next: (payments) => {
+        this.payCinemaList.set(payments);
+      },
+      error: (err) => {
+        this.payCinemaList.set([]);
+        console.error('Error al obtener los pagos:', err);
       },
     });
   }
@@ -227,12 +241,10 @@ export class FinancesPageComponent {
   }
 
   getPayStayStartDate(): string {
-    // Filtrar transacciones de tipo debit_cinema
-    const cinemaDebits = this.transactions().filter(
-      (t) => t.transactionType === 'debit_cinema'
-    );
+    // Usar la lista de pagos de cine en lugar de transacciones
+    const cinemaPayments = this.payCinemaList();
 
-    if (cinemaDebits.length === 0) {
+    if (cinemaPayments.length === 0) {
       // Primer pago: usar fecha de creación del cine
       if (this.cinema()?.createdAt) {
         const createdDate = new Date(this.cinema()!.createdAt!);
@@ -240,14 +252,12 @@ export class FinancesPageComponent {
       }
       return new Date().toISOString().split('T')[0];
     } else {
-      // Ya hay pagos: usar la última fecha de pago
-      const sortedDebits = cinemaDebits.sort(
-        (a, b) =>
-          new Date(b.transactionDate).getTime() -
-          new Date(a.transactionDate).getTime()
+      // Ya hay pagos: usar la última fecha de pago (endDate)
+      const sortedPayments = cinemaPayments.sort(
+        (a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
       );
-      const lastPaymentDate = new Date(sortedDebits[0].transactionDate);
-      return lastPaymentDate.toISOString().split('T')[0];
+      const lastPaymentEndDate = new Date(sortedPayments[0].endDate);
+      return lastPaymentEndDate.toISOString().split('T')[0];
     }
   }
 
@@ -295,18 +305,22 @@ export class FinancesPageComponent {
     const startDate = new Date(this.payStayStartDate());
     const endDate = new Date(this.payStayEndDate());
 
-    // Filtrar transacciones de tipo debit_cinema
-    const cinemaDebits = this.transactions().filter(
-      (t) => t.transactionType === 'debit_cinema'
-    );
+    // Usar la lista de pagos de cine
+    const cinemaPayments = this.payCinemaList();
 
-    // Verificar si hay traslape con alguna transacción existente
+    // Verificar si hay traslape con algún pago existente
     // (excluyendo la fecha de inicio porque ya está cubierta por el pago anterior)
-    for (const transaction of cinemaDebits) {
-      const transactionDate = new Date(transaction.transactionDate);
+    for (const payment of cinemaPayments) {
+      const paymentStart = new Date(payment.startDate);
+      const paymentEnd = new Date(payment.endDate);
 
-      // Verificar traslape: la fecha de la transacción está entre inicio (exclusivo) y fin (inclusivo)
-      if (transactionDate > startDate && transactionDate <= endDate) {
+      // Verificar traslape: hay overlap si los rangos se intersectan
+      // Excluimos el día de inicio del nuevo pago porque es el día final del último pago
+      if (
+        (paymentStart > startDate && paymentStart <= endDate) ||
+        (paymentEnd > startDate && paymentEnd <= endDate) ||
+        (paymentStart <= startDate && paymentEnd >= endDate)
+      ) {
         return true;
       }
     }
@@ -361,26 +375,34 @@ export class FinancesPageComponent {
     if (this.hasOverlappingPayments()) {
       this.alertStore.addAlert({
         message:
-          'Ya existe un pago en el rango de fechas seleccionado. Por favor, verifique las transacciones.',
+          'Ya existe un pago en el rango de fechas seleccionado. Por favor, verifique los pagos.',
         type: 'error',
       });
       return;
     }
 
-    // Realizar el pago
-    const debitData: DebitWallet = {
-      walletId: this.wallet()!.id,
-      amount: this.payStayAmount(),
-      typeTransaction: 'debit_cinema',
+    // Calcular la fecha de inicio real para el pago
+    // Si NO es el primer pago, sumar un día a la fecha de inicio para evitar cobrar dos veces el mismo día
+    const actualStartDate = new Date(this.payStayStartDate());
+    if (!this.isFirstPayment()) {
+      actualStartDate.setDate(actualStartDate.getDate() + 1);
+    }
+
+    // Crear el pago de estancia
+    const newPayCinema: NewPayCinema = {
+      cinemaId: this.cinemaId(),
+      startDate: actualStartDate.toISOString().split('T')[0],
+      endDate: this.payStayEndDate(),
     };
 
-    this.financesService.debitWallet(debitData).subscribe({
+    this.financesService.createCinemaPayment(newPayCinema).subscribe({
       next: () => {
         this.alertStore.addAlert({
           message: 'Pago de estancia realizado exitosamente.',
           type: 'success',
         });
         this.closeModalPayStay();
+        // Recargar wallet (se actualizará el balance), transacciones y pagos
         this.loadWalletByCinemaId(this.cinemaId());
       },
       error: (err) => {
@@ -437,9 +459,8 @@ export class FinancesPageComponent {
   }
 
   getCinemaDebitsCount(): number {
-    return this.transactions().filter(
-      (t) => t.transactionType === 'debit_cinema'
-    ).length;
+    // Usar la lista de pagos de cine en lugar de transacciones
+    return this.payCinemaList().length;
   }
 
   getOtherDebitsCount(): number {
@@ -450,6 +471,6 @@ export class FinancesPageComponent {
   }
 
   isFirstPayment(): boolean {
-    return this.getCinemaDebitsCount() === 0;
+    return this.payCinemaList().length === 0;
   }
 }
