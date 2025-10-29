@@ -18,7 +18,20 @@ const clientRoutes: Routes = [
     loadComponent: () => import('./pages/client-wallet/client-wallet.component').then(
       (m) => m.ClientWalletComponent
     )
-  }   
+  },
+    {
+    path:'snacks',
+    loadComponent: () => import('./pages/store-snaks/store-snaks.component').then(
+      (m) => m.StoreSnaksComponent
+    )
+  },
+    {
+    path:'showtimes/:id',
+    loadComponent: () => import('./pages/showtime-by-cinema/showtime-by-cinema.component').then(
+      (m) => m.ShowtimeByCinemaComponent
+    )
+  }
+  
 ];
 
 
@@ -26,7 +39,7 @@ export const CLIENT_ROUTES: Routes = [
   {
     path: '',
     redirectTo: 'dashboard',
-    pathMatch: 'prefix',
+    pathMatch: 'full',
   },
   {
     path: '',

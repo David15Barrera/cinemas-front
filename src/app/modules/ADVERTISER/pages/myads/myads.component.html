@@ -10,9 +10,20 @@
     <span>No tienes anuncios creados todavía.</span>
   </div>
 
+  <div class="mb-4 flex items-center gap-2">
+    <label for="statusFilter" class="font-semibold">Filtrar por estado:</label>
+    <select id="statusFilter" [(ngModel)]="selectedStatus" (change)="filterAds()" class="select select-bordered select-sm">
+      <option value="">Todos</option>
+      <option value="PENDING_PAYMENT">Pendiente de Pago</option>
+      <option value="ACTIVE">Activo</option>
+      <option value="REJECTED">Rechazado</option>
+      <option value="EXPIRED">Expirado</option>
+    </select>
+  </div>
+
   <!-- Grid de tarjetas de anuncios -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-    <div *ngFor="let ad of myAds" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+    <div *ngFor="let ad of filteredAds" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
       <div class="card-body p-4">
         <!-- Header con tipo de anuncio -->
         <div class="flex flex-wrap items-center gap-2 mb-3">
@@ -58,15 +69,135 @@
 
         <!-- Acciones -->
         <div class="card-actions justify-end mt-4">
-          <button class="btn btn-sm btn-ghost">Ver detalles</button>
-          <button 
-            *ngIf="ad.adStatus === 'PENDING_PAYMENT'" 
-            class="btn btn-sm btn-primary"
+          <button (click)="openAdDetailsModal(ad)" class="btn btn-sm btn-ghost">Ver detalles</button>
+          
+          <!-- Botón Desactivar (solo si está ACTIVE) -->
+          <button (click)="desactived(ad)"
+            *ngIf="ad.adStatus === 'ACTIVE'" 
+            class="btn btn-sm btn-warning"
           >
-            Pagar Ahora
+            Desactivar
+          </button>
+
+          <!-- Botón Reintentar Pago (solo si está REJECTED) -->
+          <button 
+            *ngIf="ad.adStatus === 'REJECTED'" 
+            class="btn btn-sm btn-error"
+          >
+            Reintentar Pago
           </button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Modal de detalles del anuncio -->
+  <dialog #adDetailsModal class="modal">
+    <div class="modal-box max-w-3xl">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+      
+      <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+        <i-lucide [img]="Tag" class="w-5 h-5 text-primary"></i-lucide>
+        Detalles del Anuncio
+      </h3>
+
+      <div *ngIf="selectedAd" class="space-y-4">
+        <!-- Información general -->
+        <div class="grid grid-cols-2 gap-4 p-4 bg-base-200 rounded-lg">
+          <div>
+            <p class="text-xs text-gray-500">ID del Anuncio</p>
+            <p class="text-sm font-mono">{{ selectedAd.advertiserId }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Tipo</p>
+            <p class="text-sm font-semibold">{{ getAdTypeLabel(selectedAd.targetType) }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Estado</p>
+            <div [class]="'badge gap-2 ' + getStatusBadgeClass(selectedAd.adStatus)">
+              <i-lucide [img]="getStatusIcon(selectedAd.adStatus)" class="w-4 h-4"></i-lucide>
+              {{ getStatusLabel(selectedAd.adStatus) }}
+            </div>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Duración</p>
+            <p class="text-sm">{{ selectedAd.startDate | date:'dd/MM/yyyy' }} - {{ selectedAd.endDate | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">Costo Total</p>
+            <p class="text-sm font-bold text-success">Q {{ selectedAd.totalCost | number:'1.2-2' }}</p>
+          </div>
+        </div>
+
+        <!-- Contenido según el tipo -->
+        <div class="divider">Contenido del Anuncio</div>
+
+        <!-- Tipo: Solo Texto -->
+        <div *ngIf="selectedAd.targetType === 'TEXT'" class="p-4 bg-base-200 rounded-lg">
+          <h4 class="font-semibold mb-2">Texto del Anuncio:</h4>
+          <p class="text-sm whitespace-pre-wrap">{{ selectedAd.content }}</p>
+        </div>
+
+        <!-- Tipo: Texto e Imagen -->
+        <div *ngIf="selectedAd.targetType === 'TEXT_IMAGE'" class="space-y-4">
+          <div class="p-4 bg-base-200 rounded-lg">
+            <h4 class="font-semibold mb-2">Texto del Anuncio:</h4>
+            <p class="text-sm whitespace-pre-wrap">{{ selectedAd.content }}</p>
+          </div>
+          <div class="p-4 bg-base-200 rounded-lg">
+            <h4 class="font-semibold mb-2">Imagen:</h4>
+            <img 
+              [src]="selectedAd.imageUrl | image" 
+              alt="Imagen del anuncio" 
+              class="w-full h-auto rounded-lg shadow-lg max-h-96 object-contain"
+            >
+          </div>
+        </div>
+
+        <!-- Tipo: Video -->
+        <div *ngIf="selectedAd.targetType === 'VIDEO'" class="p-4 bg-base-200 rounded-lg">
+          <h4 class="font-semibold mb-2">Video del Anuncio:</h4>
+          
+          <!-- YouTube Video -->
+          <div *ngIf="isYouTubeUrl(selectedAd.videoUrl)" class="relative w-full" style="padding-bottom: 56.25%;">
+            <iframe 
+              [src]="safeVideoUrl"
+              class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          
+          <!-- Video Regular (MP4, etc.) -->
+          <video 
+            *ngIf="!isYouTubeUrl(selectedAd.videoUrl)"
+            [src]="selectedAd.videoUrl" 
+            controls 
+            class="w-full h-auto rounded-lg shadow-lg max-h-96"
+            (error)="onVideoError($event)"
+          >
+            Tu navegador no soporta la reproducción de videos.
+          </video>
+          
+          <p *ngIf="selectedAd.content" class="text-sm mt-3 whitespace-pre-wrap">
+            <strong>Descripción:</strong> {{ selectedAd.content }}
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-action">
+        <button 
+          type="button"
+          (click)="closeAdDetailsModal()"
+          class="btn"
+        >Cerrar</button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 </div>

@@ -6,6 +6,7 @@ export interface Ad{
     content: string;
     imageUrl: string;
     videoUrl: string;
+    totalCost: number;
     startDate?: Date;
     endDate?: Date;
 }

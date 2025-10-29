@@ -46,8 +46,16 @@ export class CinemaService {
     return this._http.put<Cinema>(`${this.API_CINEMA}/${cinema.id}`, cinema);
   }
 
+  public getAllCinemas(): Observable<Array<Cinema>> {
+    return this._http.get<Array<Cinema>>(`${this.API_CINEMA}`);
+  }
+
   public createCinema(cinema: Cinema): Observable<Cinema> {
     return this._http.post<Cinema>(this.API_CINEMA, cinema);
+  }
+
+  public getCinemaById(id:string): Observable<Cinema[]>{
+    return this._http.get<Cinema[]>(this.API_CINEMA)
   }
 
   public getCostGlobal(): Observable<CostGlobal>{
