@@ -1,5 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AdsService } from '../../services/ads.service';
 import { Session } from 'app/modules/session/models/auth';
 import { LocalStorageService } from '@shared/services/local-storage.service';
@@ -7,17 +8,25 @@ import { Ad } from '../../models/ad.interface';
 import { HandlerError } from '@shared/utils/handlerError';
 import { AlertStore } from 'app/store/alert.store';
 import { LucideAngularModule, Clock, Tag, Calendar, CheckCircle, XCircle, AlertCircle, DollarSign } from 'lucide-angular';
+import { ImagePipe } from '@shared/pipes/image.pipe';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-myads',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, ImagePipe, FormsModule],
   templateUrl: './myads.component.html',
   styleUrl: './myads.component.css'
 })
 export class MyadsComponent implements OnInit {
 
+  @ViewChild('adDetailsModal') adDetailsModal!: ElementRef<HTMLDialogElement>;
+
   myAds: Ad[] = [];
+  filteredAds: Ad[] = [];
+  selectedStatus: string = ''; 
+  selectedAd: Ad | null = null;
+  safeVideoUrl: SafeResourceUrl | null = null;
   
   Clock = Clock;
   Tag = Tag;
@@ -30,6 +39,7 @@ export class MyadsComponent implements OnInit {
   private readonly _adsService = inject(AdsService);
   private readonly localStorageService = inject(LocalStorageService);
   private readonly alertStore = inject(AlertStore);
+  private readonly sanitizer = inject(DomSanitizer);
 
   session: Session = this.localStorageService.getState().session;
 
@@ -45,6 +55,7 @@ export class MyadsComponent implements OnInit {
     this._adsService.getMyAds(this.session.id).subscribe({
       next: (ads) => {
         this.myAds = ads;
+        this.filteredAds = [...ads];
         console.log(this.myAds);
       },
       error: (err) => {
@@ -52,6 +63,46 @@ export class MyadsComponent implements OnInit {
         this.HandlerError.handleError(err, this.alertStore, msgDefault);
       },
     });
+  }
+
+  openAdDetailsModal(ad: Ad) {
+    this.selectedAd = ad;
+    
+    if (ad.targetType === 'VIDEO' && this.isYouTubeUrl(ad.videoUrl)) {
+      const embedUrl = this.convertYouTubeUrl(ad.videoUrl);
+      this.safeVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+    } else {
+      this.safeVideoUrl = null;
+    }
+    
+    this.adDetailsModal.nativeElement.showModal();
+  }
+
+  convertYouTubeUrl(url: string): string {
+    if (!url) return '';
+    
+    let videoId = '';
+    
+    if (url.includes('youtu.be/')) {
+      videoId = url.split('youtu.be/')[1].split('?')[0];
+    }
+    else if (url.includes('youtube.com/watch?v=')) {
+      videoId = url.split('v=')[1].split('&')[0];
+    }
+    else if (url.includes('youtube.com/embed/')) {
+      videoId = url.split('embed/')[1].split('?')[0];
+    }
+    
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+  }
+
+  isYouTubeUrl(url: string): boolean {
+    if (!url) return false;
+    return url.includes('youtube.com') || url.includes('youtu.be');
+  }
+
+  onVideoError(event: Event) {
+    console.error('Error al cargar el video');
   }
 
   getAdTypeLabel(type: string): string {
@@ -91,5 +142,34 @@ export class MyadsComponent implements OnInit {
       'EXPIRED': this.Clock
     };
     return icons[status] || this.AlertCircle;
+  }
+
+  closeAdDetailsModal() {
+    this.adDetailsModal.nativeElement.close();
+    this.selectedAd = null;
+    this.safeVideoUrl = null;
+  }
+
+  desactived(ad:Ad){
+    this._adsService.expiredAd(ad.id).subscribe({
+      next: (response)=>{
+        this.loadMyAds()
+       this.alertStore.addAlert({
+          message: 'Se desactivo el anuncio correctamente.',
+          type: 'success',
+        });
+      },
+      error: (err) => {
+        const msgDefault = `Error al actualizar los anuncios.`;
+        this.HandlerError.handleError(err, this.alertStore, msgDefault);
+      },
+    })
+  }
+  filterAds() {
+    if (!this.selectedStatus) {
+      this.filteredAds = [...this.myAds];
+    } else {
+      this.filteredAds = this.myAds.filter(ad => ad.adStatus === this.selectedStatus);
+    }
   }
 }

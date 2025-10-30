@@ -26,4 +26,8 @@ export class MovieService {
   getAllCategories(): Observable<Category[]> {
     return this._http.get<Category[]>(this.API_CATEGORIES);
   }
+
+  getMovieById(id:string): Observable<Movie>{
+    return this._http.get<Movie>(`${this.API_MOVIES}/${id}`)
+  }
 }
