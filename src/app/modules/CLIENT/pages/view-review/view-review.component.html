@@ -1,0 +1,192 @@
+<div class="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
+  
+  <div class="mb-4">
+    <button (click)="goBack()" class="btn btn-ghost gap-2">
+      <i-lucide [img]="ArrowLeft" class="w-5 h-5"></i-lucide>
+      Regresar
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+                <!-- Información de la Room -->
+        
+       <div *ngIf="targetType === 'room' && isRoom(targetData)">
+  <div class="mb-4">
+    <img 
+      [src]="targetData.imageUrl | image" 
+      alt="{{ targetData.name }}" 
+      class="w-full h-64 object-cover rounded-lg shadow-md"
+    >
+      </div>
+
+      <h2 class="text-2xl font-bold mb-3">{{ targetData.name }}</h2>
+
+      <div class="flex items-center gap-2 mb-2">
+        <i-lucide [name]="Users" class="w-5 h-5 text-gray-500"></i-lucide>
+        <p class="text-base">Capacidad: {{ targetData.capacity }} personas</p>
+      </div>
+
+      <div class="flex items-center gap-2 mb-2">
+        <i-lucide [name]="Grid" class="w-5 h-5 text-gray-500"></i-lucide>
+        <p class="text-base">Filas: {{ targetData.rows }} | Columnas: {{ targetData.columns }}</p>
+      </div>
+
+      <p class="text-base text-gray-700 mt-2">{{ targetData.description }}</p>
+    </div>
+
+        <!-- Información de la Película -->
+        <div *ngIf="targetType === 'movie' && isMovie(targetData)">
+          <div class="mb-4">
+            <img 
+              [src]="targetData.posterUrl | image" 
+              alt="{{ targetData.title }}" 
+              class="w-full h-80 object-cover rounded-lg shadow-md"
+            >
+          </div>
+          <h2 class="text-2xl font-bold mb-3">{{ targetData.title }}</h2>
+          <div class="flex items-center gap-2 mb-2">
+            <i-lucide [img]="Shield" class="w-5 h-5 text-orange-600"></i-lucide>
+            <span class="badge badge-warning">{{ targetData.classification }}</span>
+          </div>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span *ngFor="let category of targetData.categories" 
+                  class="badge badge-outline">
+              {{ category.name }}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <i-lucide [img]="Clock" class="w-5 h-5 text-gray-500"></i-lucide>
+            <p class="text-base">{{ targetData.durationMinutes }} minutos</p>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <i-lucide [img]="User" class="w-5 h-5 text-gray-500"></i-lucide>
+            <p class="text-base">Director: {{ targetData.director }}</p>
+          </div>
+          <p class="text-sm text-gray-600 mt-3">{{ targetData.synopsis }}</p>
+        </div>
+
+        <!-- Información del Snack -->
+        <div *ngIf="targetType === 'snack' && isSnack(targetData)">
+          <div class="mb-4">
+            <img 
+              [src]="targetData.imageUrl | image" 
+              alt="{{ targetData.name }}" 
+              class="w-full h-64 object-cover rounded-lg shadow-md"
+            >
+          </div>
+          <h2 class="text-2xl font-bold mb-3">{{ targetData.name }}</h2>
+          <div class="flex items-center gap-2 mb-3">
+            <p class="text-2xl font-bold text-green-600">Q {{ targetData.price | number:'1.2-2' }}</p>
+          </div>
+          <p class="text-base text-gray-700">{{ targetData.description }}</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: Formulario de Nueva Review -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+          <i-lucide [img]="MessageSquare" class="w-6 h-6 text-primary"></i-lucide>
+          Escribir una Reseña
+        </h3>
+
+        <form (ngSubmit)="submitReview()" #reviewForm="ngForm">
+          
+          <!-- Calificación con Estrellas -->
+          <div class="form-control mb-4">
+            <label class="label">
+              <span class="label-text font-semibold">Calificación</span>
+            </label>
+            <div class="rating rating-lg">
+              <input type="radio" name="rating" class="mask mask-star-2 bg-orange-400" [(ngModel)]="newReview.rating" [value]="1" />
+              <input type="radio" name="rating" class="mask mask-star-2 bg-orange-400" [(ngModel)]="newReview.rating" [value]="2" />
+              <input type="radio" name="rating" class="mask mask-star-2 bg-orange-400" [(ngModel)]="newReview.rating" [value]="3" />
+              <input type="radio" name="rating" class="mask mask-star-2 bg-orange-400" [(ngModel)]="newReview.rating" [value]="4" />
+              <input type="radio" name="rating" class="mask mask-star-2 bg-orange-400" [(ngModel)]="newReview.rating" [value]="5" />
+            </div>
+          </div>
+
+          <!-- Comentario -->
+          <div class="form-control mb-4">
+            <label class="label">
+              <span class="label-text font-semibold">Comentario</span>
+            </label>
+            <textarea 
+              name="comment"
+              [(ngModel)]="newReview.comment"
+              class="textarea textarea-bordered h-32" 
+              placeholder="Escribe tu opinión..."
+              required
+            ></textarea>
+          </div>
+
+          <!-- Botón de Enviar -->
+          <div class="form-control">
+            <button 
+              type="submit" 
+              class="btn btn-primary"
+              [disabled]="!reviewForm.valid || newReview.rating === 0"
+            >
+              <i-lucide [img]="Send" class="w-5 h-5"></i-lucide>
+              Publicar Reseña
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECCIÓN INFERIOR: Listado de Reviews -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <i-lucide [img]="List" class="w-6 h-6 text-primary"></i-lucide>
+        Reseñas ({{ reviews.length }})
+      </h3>
+
+      <!-- Mensaje cuando no hay reviews -->
+      <div *ngIf="reviews.length === 0" class="alert alert-info">
+        <i-lucide [img]="AlertCircle" class="w-5 h-5"></i-lucide>
+        <span>Aún no hay reseñas. ¡Sé el primero en opinar!</span>
+      </div>
+
+      <!-- Listado de Reviews -->
+      <div class="space-y-4">
+        <div *ngFor="let review of reviews" class="card bg-base-200 shadow">
+          <div class="card-body p-4">
+            
+            <!-- Header: Usuario y Fecha -->
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center gap-2">
+                <i-lucide [img]="User" class="w-5 h-5 text-gray-500"></i-lucide>
+                <span class="font-semibold">{{ review.userName }}</span>
+              </div>
+              <span class="text-sm text-gray-500">{{ review.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+            <!-- Calificación -->
+            <div class="rating rating-sm mb-2">
+              <input type="radio" class="mask mask-star-2 bg-orange-400" [checked]="review.rating >= 1" disabled />
+              <input type="radio" class="mask mask-star-2 bg-orange-400" [checked]="review.rating >= 2" disabled />
+              <input type="radio" class="mask mask-star-2 bg-orange-400" [checked]="review.rating >= 3" disabled />
+              <input type="radio" class="mask mask-star-2 bg-orange-400" [checked]="review.rating >= 4" disabled />
+              <input type="radio" class="mask mask-star-2 bg-orange-400" [checked]="review.rating >= 5" disabled />
+            </div>
+
+            <!-- Comentario -->
+            <p class="text-base">{{ review.comment }}</p>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

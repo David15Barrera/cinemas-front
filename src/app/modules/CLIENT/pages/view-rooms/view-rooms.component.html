@@ -1,0 +1,60 @@
+<div class="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
+
+  <!-- Botón de regresar -->
+  <div class="mb-4">
+    <button (click)="goBack()" class="btn btn-outline btn-sm flex items-center gap-2">
+      <i-lucide [name]="ArrowLeft" class="w-4 h-4"></i-lucide>
+      Regresar
+    </button>
+  </div>
+
+  <!-- TÍTULO PRINCIPAL -->
+  <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2 justify-center">
+    Salas Disponibles
+  </h2>
+
+  <!-- Mensaje cuando no hay salas -->
+  <div *ngIf="rooms.length === 0" class="alert alert-info">
+    <i-lucide [name]="AlertCircle" class="w-5 h-5"></i-lucide>
+    <span>No hay salas disponibles.</span>
+  </div>
+
+  <!-- Grid de cards de salas -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+    <div *ngFor="let room of rooms" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+      <div class="card-body p-4">
+
+        <div class="mb-3">
+          <img [src]="room.imageUrl | image" alt="{{ room.name }}" class="w-full h-48 object-cover rounded-lg shadow-md">
+        </div>
+
+        <h3 class="text-lg font-semibold mb-2">{{ room.name }}</h3>
+
+        <!-- Capacidad -->
+        <div class="flex items-center gap-2 mb-2">
+          <i-lucide [name]="Users" class="w-4 h-4 text-gray-500"></i-lucide>
+          <p class="text-sm text-gray-700">Capacidad: {{ room.capacity }} personas</p>
+        </div>
+
+        <!-- Filas y columnas -->
+        <div class="flex items-center gap-2 mb-2">
+          <i-lucide [name]="Grid" class="w-4 h-4 text-gray-500"></i-lucide>
+          <p class="text-sm text-gray-700">Filas: {{ room.rows }} | Columnas: {{ room.columns }}</p>
+        </div>
+
+        <!-- Descripción -->
+        <p class="text-sm text-gray-600 mb-3">{{ room.description }}</p>
+
+        <!-- Botón Hacer Reseña -->
+        <div class="card-actions justify-end">
+          <button (click)="viewReview(room, 'room')" class="btn btn-sm btn-primary flex items-center gap-1">
+            <i-lucide [name]="MessageCircle" class="w-4 h-4"></i-lucide>
+            Hacer Reseña
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

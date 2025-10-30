@@ -21,4 +21,8 @@ export class ReviewsService {
   deleteReviewById(reviewId: string): Observable<void> {
     return this._http.delete<void>(`${this.API_REVIEWS}/${reviewId}`);
   }
+
+  createRevies(review:Review): Observable<Review>{
+    return this._http.post<Review>(`${this.API_REVIEWS}`, review)
+  }
 }

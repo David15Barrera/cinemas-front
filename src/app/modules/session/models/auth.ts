@@ -24,6 +24,7 @@ export interface Session {
   token: string;
   id: string;
   email: string;
+  fullName:string;
   active: boolean;
   roleName: Rol;
 }
