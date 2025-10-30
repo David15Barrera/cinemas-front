@@ -9,6 +9,7 @@ import { ShowtimesService } from 'app/modules/CINEMA_ADMIN/services/showtimes.se
 import { CinemaService } from 'app/modules/CINEMA_ADMIN/services/cinema.service';
 import { Cinema } from 'app/modules/CINEMA_ADMIN/models/cinema.interface';
 import { ImagePipe } from '@shared/pipes/image.pipe';
+import { AlertStore } from 'app/store/alert.store';
 
 interface FilterOptions {
   selectedDate: string;
@@ -34,6 +35,7 @@ export class ShowtimeByCinemaComponent implements OnInit {
   private readonly _showTimeService = inject(ShowtimesService);
   private readonly _movieService = inject(MovieService);
   private readonly _cinemaService = inject(CinemaService);
+  private readonly _alertStore = inject(AlertStore)
 
   Film = Film;
   AlertCircle = AlertCircle;
@@ -82,8 +84,7 @@ export class ShowtimeByCinemaComponent implements OnInit {
   loadCinemaInfo() {
     this._cinemaService.getCinemaById(this.cinemaId).subscribe({
       next: (cinema) => {
-        console.log('Cine cargado:', cinema);
-        this.cinemaName = cinema[0]?.name;
+        this.cinemaName = cinema.name;
       },
       error: (error) => {
         console.error('Error al cargar información del cine:', error);
@@ -98,31 +99,27 @@ export class ShowtimeByCinemaComponent implements OnInit {
         this.showTimes = response;
         this.extractAvailableDates();
         this.applyFilters();
-        
         const uniqueMovieIds = [...new Set(this.showTimes.map(st => st.movieId))];
-        uniqueMovieIds.forEach(movieId => {
-          this.loadMovieData(movieId);
-        });
-      },
-      error: (error) => {
-        console.error('Error al cargar funciones:', error);
-      }
-    });
-  }
+          uniqueMovieIds.forEach(movieId => {
+            this._movieService.getMovieById(movieId).subscribe({
+              next: (movieResponse) => {
+                const movie = Array.isArray(movieResponse) ? movieResponse[0] : movieResponse;
+                this.showTimes
+                  .filter(st => st.movieId === movieId)
+                  .forEach(st => st.movie = movie);
 
-  loadMovieData(movieId: string) {
-    this._movieService.getMovieById(movieId).subscribe({
-      next: (movieResponse) => {
-        const movie = Array.isArray(movieResponse) ? movieResponse[0] : movieResponse;
-        
-        this.showTimes
-          .filter(st => st.movieId === movieId)
-          .forEach(st => st.movie = movie);
-        
-        this.applyFilters();
+                this.applyFilters();
+              },
+              error: (err) => console.error(`Error al cargar película ${movieId}:`, err)
+            });
+          });
+
       },
       error: (error) => {
-        console.error(`Error al cargar película ${movieId}:`, error);
+        this._alertStore.addAlert({
+        message: 'Error al cargar las funciones. Inténtalo de nuevo.',
+        type: 'error',
+      });
       }
     });
   }

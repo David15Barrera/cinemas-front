@@ -69,6 +69,7 @@ filterByName() {
   }
 
   viewCinemaFunctions(cinema: Cinema) {
+    console.log(cinema.id)
     this._router.navigate(['/client/showtimes', cinema.id]);
   }
 

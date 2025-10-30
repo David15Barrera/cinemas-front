@@ -54,8 +54,8 @@ export class CinemaService {
     return this._http.post<Cinema>(this.API_CINEMA, cinema);
   }
 
-  public getCinemaById(id:string): Observable<Cinema[]>{
-    return this._http.get<Cinema[]>(this.API_CINEMA)
+  public getCinemaById(id:string): Observable<Cinema>{
+    return this._http.get<Cinema>(`${this.API_CINEMA}/${id}`)
   }
 
   public getCostGlobal(): Observable<CostGlobal>{

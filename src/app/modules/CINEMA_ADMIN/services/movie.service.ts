@@ -28,6 +28,6 @@ export class MovieService {
   }
 
   getMovieById(id:string): Observable<Movie>{
-    return this._http.get<Movie>(this.API_MOVIES)
+    return this._http.get<Movie>(`${this.API_MOVIES}/${id}`)
   }
 }
