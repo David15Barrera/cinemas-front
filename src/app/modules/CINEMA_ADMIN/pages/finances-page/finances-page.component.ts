@@ -36,10 +36,15 @@ import {
   ArrowDownCircle,
   Filter,
   X,
+  Ban,
+  Eye,
+  History,
   LucideAngularModule,
 } from 'lucide-angular';
 import { Cinema } from '../../models/cinema.interface';
 import { NewPayCinema, PayCinema } from '../../models/payCinema.interface';
+import { BlockAdsService } from '../../services/block-ads.service';
+import { BlockAd, NewBlockAd } from '../../models/block-ads.interface';
 
 @Component({
   selector: 'app-finances-page',
@@ -64,14 +69,25 @@ export class FinancesPageComponent {
   readonly ArrowDownCircle = ArrowDownCircle;
   readonly Filter = Filter;
   readonly X = X;
-  // referencias a modales (pago por bloqueo de anuncios, recarga de saldo, pago por estadia de cine)
+  readonly Ban = Ban;
+  readonly Eye = Eye;
+  readonly History = History;
+
+  // referencias a modales
   @ViewChild('modalRecharge') modalRecharge!: ElementRef<HTMLDialogElement>;
   @ViewChild('modalPayStay') modalPayStay!: ElementRef<HTMLDialogElement>;
+  @ViewChild('modalPayAdBlock')
+  modalPayAdBlock!: ElementRef<HTMLDialogElement>;
+  @ViewChild('modalHistoryStay')
+  modalHistoryStay!: ElementRef<HTMLDialogElement>;
+  @ViewChild('modalHistoryAdBlock')
+  modalHistoryAdBlock!: ElementRef<HTMLDialogElement>;
 
   // injeccion de dependencias
   private readonly cinemaService = inject(CinemaService);
   private readonly financesService = inject(FinanceService);
   private readonly localStorageService = inject(LocalStorageService);
+  private readonly adBlockService = inject(BlockAdsService);
   private readonly alertStore = inject(AlertStore);
   private HandlerError = HandlerError;
 
@@ -81,6 +97,15 @@ export class FinancesPageComponent {
   existWallet = signal<boolean>(false);
   cinemaId = signal<string>('');
   cinema = signal<Cinema | null>(null);
+
+  // datos para pago bloqueo de anuncios
+  adBlocks = signal<BlockAd[]>([]);
+  activeAdBlock = signal<BlockAd | null>(null);
+  hasActiveAdBlock = signal<boolean>(false);
+  adBlockStartDate = signal<string>('');
+  adBlockEndDate = signal<string>('');
+  adBlockAmount = signal<number>(0);
+  adBlockDailyCost = signal<number>(50); // Costo por defecto, se actualiza desde el backend
 
   // datos para recargas
   rechargeAmount = signal<number>(0);
@@ -96,6 +121,7 @@ export class FinancesPageComponent {
   ngOnInit(): void {
     this.cinemaService.clearCinema();
     this.loadCinema();
+    this.loadAdBlockCost();
   }
 
   loadCinema() {
@@ -117,6 +143,8 @@ export class FinancesPageComponent {
         this.wallet.set(wallet);
         this.loadTransactions(wallet.id);
         this.loadCinemaPayments(cinemaId);
+        this.loadAdBlocks(cinemaId);
+        this.checkActiveAdBlock(cinemaId);
       },
       error: (err) => {
         this.alertStore.addAlert({
@@ -146,6 +174,44 @@ export class FinancesPageComponent {
       error: (err) => {
         this.payCinemaList.set([]);
         console.error('Error al obtener los pagos:', err);
+      },
+    });
+  }
+
+  loadAdBlocks(cinemaId: string) {
+    this.adBlockService.getAllAdBlocksByCinemaId(cinemaId).subscribe({
+      next: (adBlocks) => {
+        this.adBlocks.set(adBlocks);
+      },
+      error: (err) => {
+        this.adBlocks.set([]);
+        console.error('Error al obtener los bloqueos de anuncios:', err);
+      },
+    });
+  }
+
+  loadAdBlockCost() {
+    this.adBlockService.getCostGlobal().subscribe({
+      next: (costGlobal) => {
+        this.adBlockDailyCost.set(costGlobal.cost);
+      },
+      error: (err) => {
+        // Mantener valor por defecto en caso de error
+        console.error('Error al obtener el costo de bloqueo de anuncios:', err);
+        this.adBlockDailyCost.set(50);
+      },
+    });
+  }
+
+  checkActiveAdBlock(cinemaId: string) {
+    this.adBlockService.getAdBlockActiveByCinemaId(cinemaId).subscribe({
+      next: (activeBlock) => {
+        this.activeAdBlock.set(activeBlock);
+        this.hasActiveAdBlock.set(true);
+      },
+      error: (err) => {
+        this.activeAdBlock.set(null);
+        this.hasActiveAdBlock.set(false);
       },
     });
   }
@@ -472,5 +538,208 @@ export class FinancesPageComponent {
 
   isFirstPayment(): boolean {
     return this.payCinemaList().length === 0;
+  }
+
+  // ============ MODALES DE HISTORIAL ============
+
+  openModalHistoryStay() {
+    this.modalHistoryStay.nativeElement.showModal();
+  }
+
+  closeModalHistoryStay() {
+    this.modalHistoryStay.nativeElement.close();
+  }
+
+  openModalHistoryAdBlock() {
+    this.modalHistoryAdBlock.nativeElement.showModal();
+  }
+
+  closeModalHistoryAdBlock() {
+    this.modalHistoryAdBlock.nativeElement.close();
+  }
+
+  // ============ BLOQUEO DE ANUNCIOS ============
+
+  openModalPayAdBlock() {
+    const startDate = this.getAdBlockStartDate();
+    this.adBlockStartDate.set(startDate);
+    this.adBlockEndDate.set('');
+    this.adBlockAmount.set(0);
+    this.modalPayAdBlock.nativeElement.showModal();
+  }
+
+  closeModalPayAdBlock() {
+    this.adBlockStartDate.set('');
+    this.adBlockEndDate.set('');
+    this.adBlockAmount.set(0);
+    this.modalPayAdBlock.nativeElement.close();
+  }
+
+  getAdBlockStartDate(): string {
+    const adBlockList = this.adBlocks();
+
+    if (adBlockList.length === 0) {
+      // Primer bloqueo: usar fecha actual
+      return new Date().toISOString().split('T')[0];
+    } else {
+      // Ya hay bloqueos: usar la última fecha de fin
+      const sortedBlocks = adBlockList.sort(
+        (a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
+      );
+      const lastBlockEndDate = new Date(sortedBlocks[0].endDate);
+      return lastBlockEndDate.toISOString().split('T')[0];
+    }
+  }
+
+  getAdBlockMinEndDate(): string {
+    if (!this.adBlockStartDate()) return '';
+
+    const startDate = new Date(this.adBlockStartDate());
+    startDate.setDate(startDate.getDate() + 1);
+    return startDate.toISOString().split('T')[0];
+  }
+
+  calculateAdBlockAmount() {
+    if (!this.adBlockStartDate() || !this.adBlockEndDate()) {
+      this.adBlockAmount.set(0);
+      return;
+    }
+
+    const startDate = new Date(this.adBlockStartDate());
+    const endDate = new Date(this.adBlockEndDate());
+
+    if (endDate <= startDate) {
+      this.alertStore.addAlert({
+        message: 'La fecha fin debe ser mayor a la fecha de inicio.',
+        type: 'error',
+      });
+      this.adBlockAmount.set(0);
+      return;
+    }
+
+    // Calcular días
+    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // Usar el costo dinámico obtenido del backend
+    const dailyCost = this.adBlockDailyCost();
+    this.adBlockAmount.set(diffDays * dailyCost);
+  }
+
+  hasOverlappingAdBlocks(): boolean {
+    if (!this.adBlockStartDate() || !this.adBlockEndDate()) {
+      return false;
+    }
+
+    const startDate = new Date(this.adBlockStartDate());
+    const endDate = new Date(this.adBlockEndDate());
+
+    const adBlockList = this.adBlocks();
+
+    for (const block of adBlockList) {
+      const blockStart = new Date(block.startDate);
+      const blockEnd = new Date(block.endDate);
+
+      if (
+        (blockStart > startDate && blockStart <= endDate) ||
+        (blockEnd > startDate && blockEnd <= endDate) ||
+        (blockStart <= startDate && blockEnd >= endDate)
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  isFirstAdBlock(): boolean {
+    return this.adBlocks().length === 0;
+  }
+
+  payAdBlock() {
+    // Validaciones
+    if (!this.adBlockStartDate() || !this.adBlockEndDate()) {
+      this.alertStore.addAlert({
+        message: 'Debe seleccionar la fecha de fin.',
+        type: 'error',
+      });
+      return;
+    }
+
+    const startDate = new Date(this.adBlockStartDate());
+    const endDate = new Date(this.adBlockEndDate());
+
+    if (endDate <= startDate) {
+      this.alertStore.addAlert({
+        message:
+          'La fecha fin debe ser al menos un día después de la fecha de inicio.',
+        type: 'error',
+      });
+      return;
+    }
+
+    // Calcular monto
+    this.calculateAdBlockAmount();
+
+    if (this.adBlockAmount() <= 0) {
+      this.alertStore.addAlert({
+        message: 'El monto a pagar debe ser mayor a 0.',
+        type: 'error',
+      });
+      return;
+    }
+
+    // Validar saldo suficiente
+    if (this.wallet()!.balance < this.adBlockAmount()) {
+      this.alertStore.addAlert({
+        message: 'No tiene saldo suficiente para realizar el pago.',
+        type: 'error',
+      });
+      return;
+    }
+
+    // Validar traslapes
+    if (this.hasOverlappingAdBlocks()) {
+      this.alertStore.addAlert({
+        message:
+          'Ya existe un bloqueo en el rango de fechas seleccionado. Por favor, verifique los bloqueos.',
+        type: 'error',
+      });
+      return;
+    }
+
+    // Calcular fecha de inicio real
+    // Si NO es el primer bloqueo, sumar un día para evitar cobrar dos veces el mismo día
+    const actualStartDate = new Date(this.adBlockStartDate());
+    if (!this.isFirstAdBlock()) {
+      actualStartDate.setDate(actualStartDate.getDate() + 1);
+    }
+
+    // Crear el bloqueo de anuncios
+    const newAdBlock: NewBlockAd = {
+      cinemaId: this.cinemaId(),
+      startDate: actualStartDate.toISOString().split('T')[0],
+      endDate: this.adBlockEndDate(),
+    };
+
+    this.adBlockService.createAdBlock(newAdBlock).subscribe({
+      next: () => {
+        this.alertStore.addAlert({
+          message: 'Bloqueo de anuncios realizado exitosamente.',
+          type: 'success',
+        });
+        this.closeModalPayAdBlock();
+        // Recargar datos
+        this.loadWalletByCinemaId(this.cinemaId());
+      },
+      error: (err) => {
+        const msgDefault = 'Error al realizar el bloqueo de anuncios.';
+        this.HandlerError.handleError(err, this.alertStore, msgDefault);
+      },
+    });
+  }
+
+  getAdBlocksCount(): number {
+    return this.adBlocks().length;
   }
 }
