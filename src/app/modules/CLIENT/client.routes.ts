@@ -30,6 +30,18 @@ const clientRoutes: Routes = [
     loadComponent: () => import('./pages/showtime-by-cinema/showtime-by-cinema.component').then(
       (m) => m.ShowtimeByCinemaComponent
     )
+  },
+    {
+    path:'review/:id',
+    loadComponent: () => import('./pages/view-review/view-review.component').then(
+      (m) => m.ViewReviewComponent
+    )
+  },
+  {
+    path:'rooms/:id',
+    loadComponent: () => import('./pages/view-rooms/view-rooms.component').then(
+      (m) => m.ViewRoomsComponent
+    )
   }
   
 ];

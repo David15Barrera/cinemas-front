@@ -1,4 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { LucideAngularModule, Building, Film, Popcorn, MapPin, Clock, Shield, DollarSign, AlertCircle } from 'lucide-angular';
 import { HandlerError } from '@shared/utils/handlerError';
 import { Cinema } from 'app/modules/CINEMA_ADMIN/models/cinema.interface';
 import { Movie } from 'app/modules/CINEMA_ADMIN/models/movie.interface';
@@ -7,10 +10,16 @@ import { CinemaService } from 'app/modules/CINEMA_ADMIN/services/cinema.service'
 import { MovieService } from 'app/modules/CINEMA_ADMIN/services/movie.service';
 import { SnackService } from 'app/modules/CINEMA_ADMIN/services/snack.service';
 import { AlertStore } from 'app/store/alert.store';
+import { ImagePipe } from '@shared/pipes/image.pipe';
 
 @Component({
   selector: 'app-dashboard-client',
-  imports: [],
+  standalone: true,
+  imports: [
+    CommonModule,
+    LucideAngularModule,
+    ImagePipe
+  ],
   templateUrl: './dashboard-client.component.html',
   styleUrl: './dashboard-client.component.css'
 })
@@ -20,11 +29,21 @@ export class DashboardClientComponent implements OnInit {
   private readonly _movieService = inject(MovieService)
   private readonly _cinemaService = inject(CinemaService)
   private readonly _alertStore = inject(AlertStore)
+  private readonly _router = inject(Router)
   private HandlerError = HandlerError;
 
-  snacks:Snack[] = []
-  movies:Movie[] = []
-  cinemas:Cinema[] = []
+  readonly Building = Building;
+  readonly Film = Film;
+  readonly Popcorn = Popcorn;
+  readonly MapPin = MapPin;
+  readonly Clock = Clock;
+  readonly Shield = Shield;
+  readonly DollarSign = DollarSign;
+  readonly AlertCircle = AlertCircle;
+
+  snacks: Snack[] = []
+  movies: Movie[] = []
+  cinemas: Cinema[] = []
 
   ngOnInit(): void {
     this.loadSnacks();
@@ -36,7 +55,6 @@ export class DashboardClientComponent implements OnInit {
     this._snaksService.getSnacks().subscribe({
       next: (response) =>{
         this.snacks = response
-        console.log("Snacks", this.snacks)
       },
       error: (err) =>{
         const msgDefault = `Error al obtener los snacks.`;
@@ -49,10 +67,9 @@ export class DashboardClientComponent implements OnInit {
     this._movieService.getAllMovies().subscribe({
       next: (response) => {
         this.movies = response
-        console.log("Movies", this.movies)
       },
       error: (err) =>{
-        const msgDefault = `Error al obtener las peliculas.`;
+        const msgDefault = `Error al obtener las películas.`;
         this.HandlerError.handleError(err, this._alertStore, msgDefault);
       }
     })
@@ -62,7 +79,6 @@ export class DashboardClientComponent implements OnInit {
     this._cinemaService.getAllCinemas().subscribe({
       next: (response) =>{
         this.cinemas = response
-        console.log("Cinemas", this.cinemas)
       },
       error: (err) =>{
         const msgDefault = `Error al obtener los cines.`;
@@ -70,6 +86,14 @@ export class DashboardClientComponent implements OnInit {
       }
     })
   }
-  
 
+  viewReview(target: Cinema | Movie | Snack, type: 'cinema' | 'movie' | 'snack'){
+    
+    this._router.navigate(['/client/review', target.id], {
+      state: { 
+        data: target,
+        type: type
+      }
+    });
+  }
 }
