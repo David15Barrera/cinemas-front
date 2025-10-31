@@ -28,10 +28,6 @@ export class MovieService {
     return this._http.get<Category[]>(this.API_CATEGORIES);
   }
 
-  getMovieById(id: string): Observable<Movie>{
-    return this._http.get<Movie>(`${this.API_MOVIES}/${id}`);
-  }
-
    createMovie(movie: Movie): Observable<Movie> {
     return this._http.post<Movie>(this.API_MOVIES, movie);
   }
@@ -88,4 +84,7 @@ export class MovieService {
   return this._http.post<any>(this.apiConfig.API_UPLOAD, fileData);
 }
 
+  getMovieById(id:string): Observable<Movie>{
+    return this._http.get<Movie>(`${this.API_MOVIES}/${id}`)
+  }
 }

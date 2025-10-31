@@ -1,1 +1,165 @@
-<p>dashboard-client works!</p>
+<div class="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
+  
+  <!-- TÍTULO PRINCIPAL -->
+  <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2 justify-center">
+    Area de Reseñas
+  </h2>
+  
+  <!-- SECCIÓN DE CINES -->
+  <section class="mb-8 sm:mb-12">
+    <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+      <i-lucide [img]="Building" class="w-5 h-5 sm:w-6 sm:h-6 text-primary"></i-lucide>
+      Cines Disponibles
+    </h2>
+
+    <!-- Mensaje cuando no hay cines -->
+    <div *ngIf="cinemas.length === 0" class="alert alert-info">
+      <i-lucide [img]="AlertCircle" class="w-5 h-5"></i-lucide>
+      <span>No hay cines disponibles.</span>
+    </div>
+
+    <!-- Grid de cards de cines -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+      <div *ngFor="let cinema of cinemas" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+        <div class="card-body p-4">
+          
+          <!-- Imagen del cine -->
+          <div class="mb-3">
+            <img 
+              [src]="cinema.imageUrl | image" 
+              alt="{{ cinema.name }}" 
+              class="w-full h-48 object-cover rounded-lg shadow-md"
+            >
+          </div>
+
+          <!-- Nombre -->
+          <h3 class="text-lg font-semibold mb-2">{{ cinema.name }}</h3>
+
+          <!-- Dirección -->
+          <div class="flex items-start gap-2 mb-3">
+            <i-lucide [img]="MapPin" class="w-4 h-4 mt-1 text-gray-500"></i-lucide>
+            <p class="text-sm text-gray-700">{{ cinema.address }}</p>
+          </div>
+
+          <!-- Botón Ver Reviews -->
+          <div class="card-actions justify-end">
+            <button (click)="viewReview(cinema, 'cinema')" class="btn btn-sm btn-primary">
+              Ver Reviews
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE PELÍCULAS -->
+  <section class="mb-8 sm:mb-12">
+    <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+      <i-lucide [img]="Film" class="w-5 h-5 sm:w-6 sm:h-6 text-primary"></i-lucide>
+      Películas en Cartelera
+    </h2>
+
+    <!-- Mensaje cuando no hay películas -->
+    <div *ngIf="movies.length === 0" class="alert alert-info">
+      <i-lucide [img]="AlertCircle" class="w-5 h-5"></i-lucide>
+      <span>No hay películas disponibles.</span>
+    </div>
+
+    <!-- Grid de cards de películas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+      <div *ngFor="let movie of movies" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+        <div class="card-body p-4">
+          
+          <!-- Poster de la película -->
+          <div class="mb-3">
+            <img 
+              [src]="movie.posterUrl | image" 
+              alt="{{ movie.title }}" 
+              class="w-full h-64 object-cover rounded-lg shadow-md"
+            >
+          </div>
+
+          <!-- Título -->
+          <h3 class="text-lg font-semibold mb-2">{{ movie.title }}</h3>
+
+          <!-- Clasificación -->
+          <div class="flex items-center gap-2 mb-2">
+            <i-lucide [img]="Shield" class="w-4 h-4 text-orange-600"></i-lucide>
+            <span class="badge badge-warning badge-sm">{{ movie.classification }}</span>
+          </div>
+
+          <!-- Categorías -->
+          <div class="flex flex-wrap gap-1 mb-2">
+            <span *ngFor="let category of movie.categories" 
+                  class="badge badge-outline badge-sm">
+              {{ category.name }}
+            </span>
+          </div>
+
+          <!-- Duración -->
+          <div class="flex items-center gap-2 mb-3">
+            <i-lucide [img]="Clock" class="w-4 h-4 text-gray-500"></i-lucide>
+            <p class="text-sm text-gray-700">{{ movie.durationMinutes }} min</p>
+          </div>
+
+          <!-- Botón Ver Reviews -->
+          <div class="card-actions justify-end">
+            <button (click)="viewReview(movie, 'movie')" class="btn btn-sm btn-primary">
+              Ver Reviews
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE SNACKS -->
+  <section class="mb-8 sm:mb-12">
+    <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+      <i-lucide [img]="Popcorn" class="w-5 h-5 sm:w-6 sm:h-6 text-primary"></i-lucide>
+      Snacks Disponibles
+    </h2>
+
+    <!-- Mensaje cuando no hay snacks -->
+    <div *ngIf="snacks.length === 0" class="alert alert-info">
+      <i-lucide [img]="AlertCircle" class="w-5 h-5"></i-lucide>
+      <span>No hay snacks disponibles.</span>
+    </div>
+
+    <!-- Grid de cards de snacks -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+      <div *ngFor="let snack of snacks" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+        <div class="card-body p-4">
+          
+          <!-- Imagen del snack -->
+          <div class="mb-3">
+            <img 
+              [src]="snack.imageUrl | image" 
+              alt="{{ snack.name }}" 
+              class="w-full h-48 object-cover rounded-lg shadow-md"
+            >
+          </div>
+
+          <!-- Nombre -->
+          <h3 class="text-lg font-semibold mb-2">{{ snack.name }}</h3>
+
+          <!-- Precio -->
+          <div class="flex items-center gap-2 mb-3">
+            <p class="text-xl font-bold text-green-600">Q {{ snack.price | number:'1.2-2' }}</p>
+          </div>
+
+          <!-- Botón Ver Reviews -->
+          <div class="card-actions justify-end">
+            <button (click)="viewReview(snack, 'snack')" class="btn btn-sm btn-primary">
+              Ver Reviews
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

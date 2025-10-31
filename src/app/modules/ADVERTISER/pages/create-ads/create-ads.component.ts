@@ -50,6 +50,7 @@ export class CreateAdsComponent {
     targetType: AdsTargetType.TEXT,
     adStatus:AdsStatus.PENDING_PAYMENT,
     content: '',
+    totalCost:0,
     imageUrl: '',
     videoUrl: ''
   };
@@ -265,6 +266,7 @@ private resetForm(): void {
     adStatus: AdsStatus.PENDING_PAYMENT,
     targetType: AdsTargetType.TEXT,
     content: '',
+    totalCost:0,
     imageUrl: '',
     videoUrl: '',
   };

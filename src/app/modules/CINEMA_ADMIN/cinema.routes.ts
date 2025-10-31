@@ -57,6 +57,14 @@ const cinemaAdminRoutes: Routes = [
         (m) => m.PromotionsPageComponent
       ),
   },
+  {
+    path: 'finances',
+    canActivate: [hasCinemaGuard],
+    loadComponent: () =>
+      import('./pages/finances-page/finances-page.component').then(
+        (m) => m.FinancesPageComponent
+      ),
+  },
 ];
 
 export const CINEMA_ROUTES: Routes = [

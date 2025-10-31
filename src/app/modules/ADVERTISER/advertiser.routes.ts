@@ -26,7 +26,7 @@ const advertiserRoutes: Routes = [
 export const ADVERTISER_ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'ads',
     pathMatch: 'prefix',
   },
   {

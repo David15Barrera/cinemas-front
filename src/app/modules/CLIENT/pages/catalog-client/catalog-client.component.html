@@ -1,1 +1,67 @@
-<p>catalog-client works!</p>
+<div class="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
+  <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+    <i-lucide [img]="Tag" class="w-5 h-5 sm:w-6 sm:h-6 text-primary"></i-lucide>
+    Catálogo de Cines
+  </h2>
+
+  <!-- Mensaje cuando no hay cines -->
+  <div *ngIf="cinemas.length === 0" class="alert alert-info">
+    <i-lucide [img]="AlertCircle" class="w-5 h-5"></i-lucide>
+    <span>No hay cines disponibles.</span>
+  </div>
+
+  <div class="mb-4 flex items-center gap-2">
+    <label for="nameFilter" class="font-semibold">Buscar por nombre:</label>
+    <input
+        id="nameFilter"
+        type="text"
+        [(ngModel)]="searchName"
+        (input)="filterByName()"
+        placeholder="Ingrese nombre del cine"
+        class="input input-bordered input-sm w-full max-w-xs"
+    >
+    </div>
+
+
+  <!-- Grid de cards de cines -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+    <div *ngFor="let cinema of filteredCinemas" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+      <div class="card-body p-4">
+
+        <!-- Imagen del cine -->
+        <div class="mb-3">
+          <img 
+            [src]="cinema.imageUrl | image" 
+            alt="{{ cinema.name }}" 
+            class="w-full h-48 object-cover rounded-lg shadow-md"
+          >
+        </div>
+
+        <!-- Nombre -->
+        <h3 class="text-lg font-semibold mb-2">{{ cinema.name }}</h3>
+
+        <!-- Dirección -->
+        <div class="flex items-start gap-2 mb-2">
+          <i-lucide [img]="MapPin" class="w-4 h-4 mt-1 text-gray-500"></i-lucide>
+          <p class="text-sm text-gray-700">{{ cinema.address }}</p>
+        </div>
+
+        <!-- Fecha de creación -->
+        <div class="flex items-start gap-2 mb-3">
+          <i-lucide [img]="Calendar" class="w-4 h-4 mt-1 text-green-600"></i-lucide>
+          <p class="text-sm text-gray-700">
+            {{ cinema.createdAt ? (cinema.createdAt | date:'dd/MM/yyyy') : '-' }}
+          </p>
+        </div>
+
+        <!-- Botón Ver Funciones -->
+        <div class="card-actions justify-end">
+            <button (click)="viewCinemaFunctions(cinema)" class="btn btn-sm btn-primary">
+                Ver Funciones
+            </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -39,6 +39,8 @@ export class ApiConfigService {
   // Anuncios
   public readonly API_ADS = `${this.API_BASE_AD}/ads`;
   public readonly API_CHARPE = `${this.API_BASE_AD}/charge-period`;
+  public readonly API_BLOCK_ADS = `${this.API_BASE_AD}/ad-blocks`;
+
   // promotions
   public readonly API_PROMOTION = `${this.API_BASE_PROMOTION}/promotions`;
 
@@ -47,6 +49,9 @@ export class ApiConfigService {
 
   // Finance
   public readonly API_GLOBAL_CONFIGS = `${this.API_FINANCE_SERVICE}/global-configs`;
+  public readonly API_WALLET = `${this.API_FINANCE_SERVICE}/wallets`;
+  public readonly API_TRANSACTIONS = `${this.API_FINANCE_SERVICE}/transactions`;
+  public readonly API_CINEMA_PAYMENTS = `${this.API_FINANCE_SERVICE}/cinema-payments`;
 
   // Snacks
   public readonly API_SNACKS = `${this.API_SNACK_TICKETS_SERVICE}/snacks`;
