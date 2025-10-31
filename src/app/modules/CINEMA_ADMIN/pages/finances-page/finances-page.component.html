@@ -712,29 +712,47 @@
       <div class="card-body p-4">
         <h4 class="font-bold text-sm mb-2 flex items-center gap-2">
           <i-lucide [img]="History" class="w-4 h-4 text-primary"></i-lucide>
-          Último Bloqueo Registrado
+          @if (activeAdBlock()) { Bloqueo Activo Actual } @else { Último Bloqueo
+          Registrado }
         </h4>
         <div class="text-xs p-2 bg-base-200 rounded">
           <div class="flex items-center gap-1 mb-1">
             <i-lucide [img]="Calendar" class="w-3 h-3 opacity-70"></i-lucide>
             <span class="font-medium">
+              @if (activeAdBlock()) {
+              {{ activeAdBlock()!.startDate | date : "dd/MM/yyyy" }} -
+              {{ activeAdBlock()!.endDate | date : "dd/MM/yyyy" }} } @else {
               {{ adBlocks()[0].startDate | date : "dd/MM/yyyy" }} -
-              {{ adBlocks()[0].endDate | date : "dd/MM/yyyy" }}
+              {{ adBlocks()[0].endDate | date : "dd/MM/yyyy" }} }
             </span>
           </div>
           <div class="opacity-70 flex items-center gap-2">
-            <span>{{ adBlocks()[0].durationDays }} día(s)</span>
+            <span
+              >@if (activeAdBlock()) { {{ activeAdBlock()!.durationDays }} }
+              @else { {{ adBlocks()[0].durationDays }} } día(s)</span
+            >
             <span
               class="badge badge-sm"
               [ngClass]="{
-                'badge-success': adBlocks()[0].adStatus === 'ACTIVE',
-                'badge-warning': adBlocks()[0].adStatus === 'PENDING_PAYMENT',
+                'badge-success':
+                  (activeAdBlock()
+                    ? activeAdBlock()!.adStatus
+                    : adBlocks()[0].adStatus) === 'ACTIVE',
+                'badge-warning':
+                  (activeAdBlock()
+                    ? activeAdBlock()!.adStatus
+                    : adBlocks()[0].adStatus) === 'PENDING_PAYMENT',
                 'badge-error':
-                  adBlocks()[0].adStatus === 'EXPIRED' ||
-                  adBlocks()[0].adStatus === 'REJECTED'
+                  (activeAdBlock()
+                    ? activeAdBlock()!.adStatus
+                    : adBlocks()[0].adStatus) === 'EXPIRED' ||
+                  (activeAdBlock()
+                    ? activeAdBlock()!.adStatus
+                    : adBlocks()[0].adStatus) === 'REJECTED'
               }"
             >
-              {{ adBlocks()[0].adStatus }}
+              @if (activeAdBlock()) { {{ activeAdBlock()!.adStatus }} } @else {
+              {{ adBlocks()[0].adStatus }} }
             </span>
           </div>
         </div>
@@ -761,8 +779,8 @@
         />
         <label class="label">
           <span class="label-text-alt opacity-70">
-            @if (isFirstAdBlock()) { Esta es la fecha actual } @else { Esta es
-            la fecha de tu último bloqueo }
+            @if (isFirstAdBlock()) { Primera vez - Comienza desde hoy } @else {
+            Basado en el último bloqueo válido (activo o expirado) }
           </span>
         </label>
       </div>

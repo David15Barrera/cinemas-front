@@ -10,6 +10,7 @@ export interface BlockAd {
 
 export interface NewBlockAd {
   cinemaId: string;
+  walletId: string;
   startDate: string;
   endDate: string;
 }

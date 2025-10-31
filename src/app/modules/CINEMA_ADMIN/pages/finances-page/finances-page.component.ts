@@ -582,8 +582,19 @@ export class FinancesPageComponent {
       // Primer bloqueo: usar fecha actual
       return new Date().toISOString().split('T')[0];
     } else {
-      // Ya hay bloqueos: usar la última fecha de fin
-      const sortedBlocks = adBlockList.sort(
+      // Filtrar solo bloqueos ACTIVOS o EXPIRADOS (bloques válidos que fueron/están activos)
+      // Excluir: REJECTED y PENDING_PAYMENT
+      const validBlocks = adBlockList.filter(
+        (block) => block.adStatus === 'ACTIVE' || block.adStatus === 'EXPIRED'
+      );
+
+      if (validBlocks.length === 0) {
+        // Si no hay bloqueos válidos, usar fecha actual
+        return new Date().toISOString().split('T')[0];
+      }
+
+      // Ya hay bloqueos válidos: usar la última fecha de fin del bloqueo más reciente
+      const sortedBlocks = validBlocks.sort(
         (a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime()
       );
       const lastBlockEndDate = new Date(sortedBlocks[0].endDate);
@@ -634,9 +645,13 @@ export class FinancesPageComponent {
     const startDate = new Date(this.adBlockStartDate());
     const endDate = new Date(this.adBlockEndDate());
 
-    const adBlockList = this.adBlocks();
+    // Filtrar solo bloqueos ACTIVOS o EXPIRADOS para verificar traslapes
+    // Excluir: REJECTED y PENDING_PAYMENT
+    const validBlocks = this.adBlocks().filter(
+      (block) => block.adStatus === 'ACTIVE' || block.adStatus === 'EXPIRED'
+    );
 
-    for (const block of adBlockList) {
+    for (const block of validBlocks) {
       const blockStart = new Date(block.startDate);
       const blockEnd = new Date(block.endDate);
 
@@ -653,7 +668,12 @@ export class FinancesPageComponent {
   }
 
   isFirstAdBlock(): boolean {
-    return this.adBlocks().length === 0;
+    // Verificar si hay algún bloqueo ACTIVO o EXPIRADO (bloques válidos)
+    // Excluir: REJECTED y PENDING_PAYMENT
+    const validBlocks = this.adBlocks().filter(
+      (block) => block.adStatus === 'ACTIVE' || block.adStatus === 'EXPIRED'
+    );
+    return validBlocks.length === 0;
   }
 
   payAdBlock() {
@@ -720,17 +740,30 @@ export class FinancesPageComponent {
       cinemaId: this.cinemaId(),
       startDate: actualStartDate.toISOString().split('T')[0],
       endDate: this.adBlockEndDate(),
+      walletId: this.wallet()!.id,
     };
 
     this.adBlockService.createAdBlock(newAdBlock).subscribe({
       next: () => {
         this.alertStore.addAlert({
-          message: 'Bloqueo de anuncios realizado exitosamente.',
+          message:
+            'Bloqueo de anuncios solicitado exitosamente. Actualizando datos...',
           type: 'success',
         });
         this.closeModalPayAdBlock();
-        // Recargar datos
-        this.loadWalletByCinemaId(this.cinemaId());
+
+        // Recargar bloqueos inmediatamente para mostrar el nuevo registro
+        this.loadAdBlocks(this.cinemaId());
+
+        // Esperar 3 segundos para que el evento del backend procese el cobro
+        // y actualice el wallet y las transacciones
+        setTimeout(() => {
+          this.loadWalletByCinemaId(this.cinemaId());
+          this.alertStore.addAlert({
+            message: 'Datos actualizados correctamente.',
+            type: 'info',
+          });
+        }, 3000);
       },
       error: (err) => {
         const msgDefault = 'Error al realizar el bloqueo de anuncios.';
