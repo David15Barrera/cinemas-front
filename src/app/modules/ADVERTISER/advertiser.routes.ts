@@ -12,8 +12,8 @@ const advertiserRoutes: Routes = [
     )
   },
   {
-    path:'wallet', loadComponent: () => import('./pages/advertiser-wallet/advertiser-wallet.component').then(
-      (m) => m.AdvertiserWalletComponent
+    path:'wallet', loadComponent: () => import('../CLIENT/pages/client-wallet/client-wallet.component').then(
+      (m) => m.ClientWalletComponent
     )
   },
   {

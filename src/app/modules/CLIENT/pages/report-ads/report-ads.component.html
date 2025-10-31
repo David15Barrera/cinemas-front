@@ -1,0 +1,214 @@
+<div class="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
+  <!-- Título y Botón de Exportar -->
+  <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2" 
+        style="color: var(--fallback-bc, oklch(var(--bc)));">
+      <i-lucide [img]="FileText" class="w-5 h-5 sm:w-6 sm:h-6 text-primary"></i-lucide>
+      Reporte de Anuncios Comprados
+    </h2>
+    
+    <!-- Botón Exportar a PDF -->
+    <button 
+      (click)="exportToPDF()" 
+      class="btn btn-primary gap-2"
+      [disabled]="filteredAds.length === 0">
+      <i-lucide [img]="Download" class="w-4 h-4"></i-lucide>
+      Exportar a PDF
+    </button>
+  </div>
+
+  <!-- Sección de Filtros -->
+  <div class="mb-6">
+    <!-- Botón para mostrar/ocultar filtros -->
+    <div class="flex items-center justify-between mb-4">
+      <button (click)="toggleFilters()" class="btn btn-outline btn-sm gap-2">
+        <i-lucide [img]="Filter" class="w-4 h-4"></i-lucide>
+        {{ showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros' }}
+      </button>
+      <button *ngIf="hasActiveFilters()" 
+              (click)="clearFilters()" 
+              class="btn btn-ghost btn-sm gap-2 text-error">
+        <i-lucide [img]="X" class="w-4 h-4"></i-lucide>
+        Limpiar Filtros
+      </button>
+    </div>
+
+    <!-- Panel de Filtros -->
+    <div *ngIf="showFilters" class="card bg-base-200 shadow-lg mb-6">
+      <div class="card-body p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Filtro por Tipo de Anuncio -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">
+                <i-lucide [img]="FileText" class="w-4 h-4 inline mr-2"></i-lucide>
+                Tipo de Anuncio
+              </span>
+            </label>
+            <select [(ngModel)]="filters.adType" 
+                    (change)="applyFilters()" 
+                    class="select select-bordered w-full">
+              <option value="">Todos los tipos</option>
+              <option *ngFor="let type of adTypes" [value]="type.value">
+                {{ type.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Filtro por Estado -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">
+                <i-lucide [img]="AlertCircle" class="w-4 h-4 inline mr-2"></i-lucide>
+                Estado
+              </span>
+            </label>
+            <select [(ngModel)]="filters.status" 
+                    (change)="applyFilters()" 
+                    class="select select-bordered w-full">
+              <option value="">Todos los estados</option>
+              <option *ngFor="let status of statusOptions" [value]="status.value">
+                {{ status.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Filtro por Fecha Inicio -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">
+                <i-lucide [img]="Calendar" class="w-4 h-4 inline mr-2"></i-lucide>
+                Desde
+              </span>
+            </label>
+            <input type="date" 
+                   [(ngModel)]="filters.startDate" 
+                   (change)="applyFilters()" 
+                   class="input input-bordered w-full">
+          </div>
+
+          <!-- Filtro por Fecha Fin -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">
+                <i-lucide [img]="Calendar" class="w-4 h-4 inline mr-2"></i-lucide>
+                Hasta
+              </span>
+            </label>
+            <input type="date" 
+                   [(ngModel)]="filters.endDate" 
+                   (change)="applyFilters()" 
+                   class="input input-bordered w-full">
+          </div>
+        </div>
+
+        <!-- Indicador de resultados -->
+        <div class="mt-4 text-sm opacity-70">
+          Mostrando {{ filteredAds.length }} de {{ ads.length }} anuncios
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen estadístico -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="stats shadow">
+      <div class="stat">
+        <div class="stat-figure text-primary">
+          <i-lucide [img]="FileText" class="w-8 h-8"></i-lucide>
+        </div>
+        <div class="stat-title">Total de Anuncios</div>
+        <div class="stat-value text-primary">{{ getAdsCount() }}</div>
+      </div>
+    </div>
+
+    <div class="stats shadow">
+      <div class="stat">
+        <div class="stat-figure text-success">
+        </div>
+        <div class="stat-title">Costo Total</div>
+        <div class="stat-value text-success">Q {{ getTotalCost() | number:'1.2-2' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje cuando no hay anuncios -->
+  <div *ngIf="filteredAds.length === 0" class="alert alert-info">
+    <i-lucide [img]="AlertCircle" class="w-5 h-5"></i-lucide>
+    <span>
+      {{ hasActiveFilters() ? 'No hay anuncios que coincidan con los filtros seleccionados.' : 'No hay anuncios disponibles.' }}
+    </span>
+  </div>
+
+  <!-- Tabla de Anuncios -->
+  <div *ngIf="filteredAds.length > 0" class="overflow-x-auto bg-base-100 shadow-xl rounded-lg">
+    <table class="table table-zebra w-full">
+      <!-- Encabezado -->
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Contenido</th>
+          <th>Estado</th>
+          <th>Fecha Inicio</th>
+          <th>Fecha Fin</th>
+          <th class="text-right">Costo Total</th>
+        </tr>
+      </thead>
+      <!-- Cuerpo -->
+      <tbody>
+        <tr *ngFor="let ad of filteredAds">
+          <!-- Tipo de Anuncio -->
+          <td>
+            <div class="flex items-center gap-2">
+              <i-lucide *ngIf="ad.adType === 'TEXT'" [img]="FileText" class="w-4 h-4 text-primary"></i-lucide>
+              <i-lucide *ngIf="ad.adType === 'TEXT_IMAGE'" [img]="Image" class="w-4 h-4 text-secondary"></i-lucide>
+              <i-lucide *ngIf="ad.adType === 'VIDEO'" [img]="Video" class="w-4 h-4 text-accent"></i-lucide>
+              <span class="font-medium">{{ getAdTypeLabel(ad.adType) }}</span>
+            </div>
+          </td>
+          
+          <!-- Contenido -->
+          <td>
+            <div class="max-w-xs">
+              <p class="line-clamp-2 text-sm">{{ ad.content || 'Sin contenido de texto' }}</p>
+              <div class="text-xs opacity-60 mt-1" *ngIf="ad.imageUrl">
+                <i-lucide [img]="Image" class="w-3 h-3 inline"></i-lucide> Con imagen
+              </div>
+              <div class="text-xs opacity-60 mt-1" *ngIf="ad.videoUrl">
+                <i-lucide [img]="Video" class="w-3 h-3 inline"></i-lucide> Con video
+              </div>
+            </div>
+          </td>
+          
+          <!-- Estado -->
+          <td>
+            <span class="badge badge-sm" [ngClass]="getStatusClass(ad.status)">
+              {{ getStatusLabel(ad.status) }}
+            </span>
+          </td>
+          
+          <!-- Fecha Inicio -->
+          <td>
+            <div class="flex items-center gap-2">
+              <i-lucide [img]="Calendar" class="w-4 h-4 opacity-60"></i-lucide>
+              <span>{{ ad.startDate | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </td>
+          
+          <!-- Fecha Fin -->
+          <td>
+            <div class="flex items-center gap-2">
+              <i-lucide [img]="Clock" class="w-4 h-4 opacity-60"></i-lucide>
+              <span>{{ ad.endDate | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </td>
+          
+          <!-- Costo Total -->
+          <td class="text-right">
+            <span class="font-bold text-success">Q {{ ad.totalCost | number:'1.2-2' }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

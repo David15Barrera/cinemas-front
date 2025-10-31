@@ -10,6 +10,18 @@ export interface Ad{
     startDate?: Date;
     endDate?: Date;
 }
+export interface AdReport{
+    id: string;
+    advertiserId: string;
+    adType: AdsTargetType;
+    status: AdsStatus;
+    content: string;
+    imageUrl: string;
+    videoUrl: string;
+    totalCost: number;
+    startDate?: Date;
+    endDate?: Date;
+}
 
 export enum AdsTargetType {
   TEXT = 'TEXT',
