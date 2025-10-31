@@ -38,6 +38,16 @@ const adminRoutes: Routes = [
     path:'setting-general', loadComponent: () => import('./pages/setting-general/setting-general.component').then(
       (m) => m.SettingGeneralComponent
     )
+  },
+  {
+    path:'reports-menu', loadComponent: () => import('./pages/reports/dash-report/dash-report.component').then(
+      (m) => m.DashReportComponent
+    )
+  },
+  {
+    path:'report-ads', loadComponent: () => import('../CLIENT/pages/report-ads/report-ads.component').then(
+      (m) => m.ReportAdsComponent
+    )
   }
 
 ];

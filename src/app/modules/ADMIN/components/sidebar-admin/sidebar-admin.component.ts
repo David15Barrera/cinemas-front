@@ -11,7 +11,8 @@ import {
   Menu,
   X,
   Settings,
-  Star
+  Star,
+  ClipboardList
 } from 'lucide-angular';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -29,6 +30,7 @@ export class SidebarAdminComponent {
   public readonly Dashboard = LayoutDashboard;
   public readonly Users = Users; 
   public readonly Settings = Settings;
+  public readonly ClipboardList = ClipboardList;
 
   // --- MIs iconos ---
   public readonly Video = Video;

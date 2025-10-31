@@ -1,0 +1,49 @@
+<div class="p-4 sm:p-8">
+
+    <!-- Encabezado del Dashboard -->
+    <h1 class="text-3xl sm:text-4xl font-extrabold mb-4 text-gray-800 dark:text-gray-100">
+        Panel de Reportes
+    </h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-10">
+        Selecciona un reporte para generar información detallada.
+    </p>
+
+    <!-- Contenedor de las Tarjetas (Grid Responsivo) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+        @for (reporte of reportes; track reporte.routerLink) {
+            <a 
+                [routerLink]="reporte.routerLink" 
+                class="card w-full shadow-xl transform transition duration-300 ease-in-out hover:shadow-2xl hover:scale-[1.02] cursor-pointer bg-white dark:bg-gray-700"
+            >
+                <div class="card-body p-6">
+                    
+                    <!-- Icono Circular de la Tarjeta -->
+                    <div class="mb-4 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg"
+                         [ngClass]="reporte.colorClass">
+                         <i-lucide [img]="reporte.icon" class="w-6 h-6"></i-lucide>
+                    </div>
+
+                    <!-- Título -->
+                    <h2 class="card-title text-xl font-bold text-gray-900 dark:text-white">
+                        {{ reporte.title }}
+                    </h2>
+
+                    <!-- Descripción -->
+                    <p class="text-sm text-gray-500 dark:text-gray-300 mt-2 min-h-12">
+                        {{ reporte.description }}
+                    </p>
+
+                    <!-- Enlace de Acceso -->
+                    <div class="card-actions justify-end mt-4">
+                        <button class="btn btn-sm btn-ghost text-primary-focus dark:text-primary-content hover:underline">
+                            Ver Reporte
+                            <i-lucide [img]="TrendingUp" class="w-4 h-4"></i-lucide>
+                        </button>
+                    </div>
+
+                </div>
+            </a>
+        }        
+    </div>
+</div>

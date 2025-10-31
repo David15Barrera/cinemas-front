@@ -78,6 +78,22 @@
       </a>
     </li>
 
+     <li
+      [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
+      data-tip="Reportes Generales"
+    >
+      <a
+        class="btn btn-ghost px-4 justify-start w-full text-white hover:bg-blue-800"
+        routerLink="/admin/reports-menu"
+      >
+        <i-lucide [img]="ClipboardList" class="text-blue-200"></i-lucide>
+        @if (!isCollapsed) {
+        <span class="truncate">Reportes Generales</span>
+        }
+      </a>
+    </li>
+
+
     <li
       [ngClass]="{ 'tooltip tooltip-right': isCollapsed }"
       data-tip="Configuración del Sistema"
