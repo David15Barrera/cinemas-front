@@ -175,6 +175,9 @@ export class MoviesAdminComponent implements OnInit{
     this.router.navigate(['/admin/movie-detail', movieId]);
   }
 
+  reviewsMovie(movieId: string): void{
+    this.router.navigate(['/admin/reviews-movie', movieId])
+  }
   // --- Categorías ---
   loadCategories() {
     this.movieService.getAllCategories().subscribe(data => {
