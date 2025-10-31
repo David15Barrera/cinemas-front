@@ -1,0 +1,124 @@
+<div class="p-4 sm:p-8 max-w-6xl mx-auto">
+   
+  <h1 class="text-3xl font-bold mb-4 text-base-content text-center">
+    Configuración de Costos Globales
+  </h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="card bg-base-100 shadow-2xl border border-base-300">
+      <form class="card-body p-6 sm:p-8" (ngSubmit)="saveCostCinema()">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="card-title text-2xl text-primary font-extrabold">Costo Operativo Diario</h2>
+          <div class="badge badge-lg badge-accent text-accent-content font-bold shadow-md">
+            {{ COST_TYPE_CINEMA | uppercase }}
+          </div>
+        </div>
+        <p class="text-sm text-base-content opacity-70">
+          Este valor se utiliza para calcular la rentabilidad global de la cadena de cines.
+        </p>
+
+        <div class="mt-6 mb-8 text-center bg-primary text-primary-content p-6 rounded-xl shadow-lg">
+          <p class="text-lg">Monto Registrado:</p>
+          <span class="text-5xl font-black tracking-wider">
+            Q {{ globalCostCinema?.cost }}
+          </span>
+        </div>
+
+        <h3 class="text-xl font-bold text-base-content border-b pb-3 mb-4">Modificar Costo</h3>
+
+        <div class="form-control space-y-4">
+          <label class="label font-semibold text-lg">Nuevo Costo en Quetzales (Q)</label>
+
+          <label class="input input-bordered input-lg flex items-center gap-2 has-[:focus]:input-primary">
+            <span class="font-bold text-xl text-primary">Q</span>
+            <input
+              type="number"
+              class="grow text-xl font-mono"
+              [(ngModel)]="costInputCinema"
+              name="costValueCinema"
+              placeholder="00.00"
+              min="0"
+              step="0.01"
+              required
+            />
+          </label>
+        </div>
+
+        <div class="card-actions justify-end mt-6 flex flex-col sm:flex-row gap-3">
+          <button type="button" class="btn btn-warning btn-outline w-full sm:w-auto" (click)="resetInputCinema()" [disabled]="isSavingCinema">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            Cancelar
+          </button>
+
+          <button type="submit" class="btn btn-success text-success-content btn-wide w-full sm:w-auto" [disabled]="isSavingCinema || !costInputCinema">
+            @if (isSavingCinema) {
+              <span class="loading loading-spinner"></span>
+              Guardando...
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              {{ globalCostCinema ? 'Actualizar Costo' : 'Crear Costo Inicial' }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card bg-base-100 shadow-2xl border border-base-300">
+      <form class="card-body p-6 sm:p-8" (ngSubmit)="saveCostAds()">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="card-title text-2xl text-secondary font-extrabold">Costo de Bloqueo de ADS</h2>
+          <div class="badge badge-lg badge-secondary text-secondary-content font-bold shadow-md">
+            {{ COST_TYPE_ADS | uppercase }}
+          </div>
+        </div>
+        <p class="text-sm text-base-content opacity-70">
+          Este valor representa el costo unitario por cada usuario que bloquea anuncios.
+        </p>
+
+        <div class="mt-6 mb-8 text-center bg-secondary text-secondary-content p-6 rounded-xl shadow-lg">
+          <p class="text-lg">Monto Registrado:</p>
+          <span class="text-5xl font-black tracking-wider">
+            Q {{ globalCostAds?.cost }}
+          </span>
+        </div>
+
+        <h3 class="text-xl font-bold text-base-content border-b pb-3 mb-4">Modificar Costo</h3>
+
+        <div class="form-control space-y-4">
+          <label class="label font-semibold text-lg">Nuevo Costo en Quetzales (Q)</label>
+
+          <label class="input input-bordered input-lg flex items-center gap-2 has-[:focus]:input-secondary">
+            <span class="font-bold text-xl text-secondary">Q</span>
+            <input
+              type="number"
+              class="grow text-xl font-mono"
+              [(ngModel)]="costInputAds"
+              name="costValueAds"
+              placeholder="00.00"
+              min="0"
+              step="0.01"
+              required
+            />
+          </label>
+        </div>
+
+        <div class="card-actions justify-end mt-6 flex flex-col sm:flex-row gap-3">
+          <button type="button" class="btn btn-warning btn-outline w-full sm:w-auto" (click)="resetInputAds()" [disabled]="isSavingAds">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            Cancelar
+          </button>
+
+          <button type="submit" class="btn btn-success text-success-content btn-wide w-full sm:w-auto" [disabled]="isSavingAds || !costInputAds">
+            @if (isSavingAds) {
+              <span class="loading loading-spinner"></span>
+              Guardando...
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              {{ globalCostAds ? 'Actualizar Costo' : 'Crear Costo Inicial' }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

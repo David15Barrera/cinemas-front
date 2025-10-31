@@ -20,3 +20,9 @@ export interface Classification {
     name: string;
     description: string;
 }
+
+export interface MovieCategory{
+    id?:string,
+    movieId:string,
+    categoryId:string
+}

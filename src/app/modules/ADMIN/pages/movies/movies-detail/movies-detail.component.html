@@ -1,0 +1,140 @@
+@if (isLoading) {
+  <div class="p-8 text-center bg-base-100 min-h-screen">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+    <p class="mt-2 text-base-content">Cargando detalles de la película...</p>
+  </div>
+} @else {
+  <div class="max-w-6xl mx-auto p-4 sm:p-8">
+    
+    <div class="bg-primary text-primary-content p-6 rounded-t-xl shadow-md flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold">{{ movieData.title || 'Cargando...' }}</h1>
+            <p class="text-sm opacity-90 mt-1">Administración de Contenido: {{ movieData.director }} ({{ movieData.releaseDate }})</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" (click)="goBack()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Volver a Películas
+        </button>
+    </div>
+
+    <div class="bg-base-100 p-6 sm:p-8 rounded-b-xl shadow-lg border border-t-0 border-base-200">
+        <form class="grid lg:grid-cols-4 gap-8" (ngSubmit)="saveMovie()">
+            <div class="lg:col-span-1 space-y-6">
+                
+                <h2 class="text-xl font-bold text-base-content">Portada y Estado</h2>
+
+                <figure class="rounded-lg overflow-hidden shadow-2xl w-full aspect-[2/3] bg-base-200">
+                    <img 
+                        [src]="movieData.posterUrl | image" 
+                        alt="Portada de la película" 
+                        class="w-full h-full object-cover"
+                        onerror="this.onerror=null;this.src='https://via.placeholder.com/300x450?text=Sin+Portada';" />
+                </figure>
+
+                <div class="form-control">
+                    <label class="label">Reemplazar Portada</label>
+                    <input type="file" class="file-input file-input-bordered w-full file-input-primary" (change)="onFileSelected($event)" />
+                    @if (isSaving && selectedFile) {
+                      <div role="alert" class="alert alert-info mt-2 p-2 text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Subiendo imagen...</span>
+                      </div>
+                    }
+                </div>
+
+                <div class="form-control bg-base-200 p-4 rounded-lg shadow-inner">
+                    <label class="label cursor-pointer p-0">
+                        <span class="label-text font-bold text-base-content text-lg">Activar Película</span> 
+                        <input type="checkbox" class="toggle toggle-lg toggle-success" [(ngModel)]="movieData.active" name="active"/>
+                    </label>
+                    <small class="text-gray-500 mt-1">Controla si la película es visible al público.</small>
+                </div>
+
+            </div>
+
+            <div class="lg:col-span-3 space-y-6">                
+                <h2 class="text-xl font-bold text-base-content border-b pb-2">Información Detallada</h2>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="label font-medium">Título</label>
+                        <input class="input input-bordered w-full" placeholder="Título de la película" [(ngModel)]="movieData.title" name="title" required>
+                    </div>
+                    <div>
+                        <label class="label font-medium">Director</label>
+                        <input class="input input-bordered w-full" placeholder="Director principal" [(ngModel)]="movieData.director" name="director" required>
+                    </div>
+                </div>
+
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="label font-medium">Duración (minutos)</label>
+                        <input type="number" class="input input-bordered w-full" placeholder="Ej: 120" [(ngModel)]="movieData.durationMinutes" name="durationMinutes" required>
+                    </div>
+                    <div>
+                        <label class="label font-medium">Fecha de Estreno</label>
+                        <input
+                            type="date"
+                            class="input input-bordered w-full"
+                            [(ngModel)]="movieData.releaseDate"
+                            name="releaseDate"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label class="label font-medium">Clasificación</label>
+                        <select class="select select-bordered w-full" [(ngModel)]="movieData.classification" name="classification" required>
+                            <option value="A">A (Todo público)</option>
+                            <option value="B">B (Mayores de 12)</option>
+                            <option value="B15">B15 (Mayores de 15)</option>
+                            <option value="C">C (Adultos)</option>
+                            <option value="D">D (Especializada)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="label font-medium">Sinopsis</label>
+                    <textarea class="textarea textarea-bordered w-full h-40" placeholder="Descripción completa de la trama" [(ngModel)]="movieData.synopsis" name="synopsis"></textarea>
+                </div>
+
+                <div>
+                    <label class="label font-medium">Categorías Asignadas</label>
+                    <select multiple class="select select-bordered w-full h-36" [(ngModel)]="movieData.selectedCategories" name="categories">
+                        @for (cat of allCategories; track cat.id) {
+                            <option [value]="cat.id">{{ cat.name }}</option>
+                        } @empty {
+                            <option disabled>No hay categorías disponibles</option>
+                        }
+                    </select>
+                    <small class="text-gray-500">Mantenga presionada la tecla Ctrl (o Cmd en Mac) para seleccionar varias categorías.</small>
+                </div>
+
+
+                <div class="pt-8 flex justify-between items-center border-t mt-8 border-base-200">
+                    <button type="button" class="btn btn-error text-error-content btn-outline hover:!text-error-content" (click)="deleteMovie()" [disabled]="isSaving">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Eliminar Película
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-lg min-w-[200px]" [disabled]="isSaving">
+                        @if (isSaving) {
+                            <span class="loading loading-spinner"></span>
+                            Guardando...
+                        } @else {
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Guardar Cambios
+                        }
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+  </div>
+}

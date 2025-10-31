@@ -6,10 +6,11 @@ import { environment } from '@environment/environment';
 })
 export class ApiConfigService {
   private readonly API_BASE = environment.API_ROOT;
+  private readonly API_IMAGEN = environment.API_URLUP;
   private readonly API_BASE_AUTH = `${this.API_BASE}/auth-identity/v1`;
   private readonly API_BASE_PROMOTION = `${this.API_BASE}/promotion/v1`;
+  public readonly API_IMAGES = `${this.API_IMAGEN}/images/v1`;
   public readonly API_BASE_AD = `${this.API_BASE}/ads/v1`;
-  public readonly API_IMAGES = `${this.API_BASE}/images/v1`;
   private readonly API_CINEMA_SERVICE = `${this.API_BASE}/cinema/v1`;
   private readonly API_MOVIE_SERVICE = `${this.API_BASE}/movie/v1`;
   private readonly API_FINANCE_SERVICE = `${this.API_BASE}/wallet-payments/v1`;
@@ -20,11 +21,14 @@ export class ApiConfigService {
   // auth
   public readonly API_AUTH = `${this.API_BASE_AUTH}/auth`;
   public readonly API_ROLES = `${this.API_BASE_AUTH}/roles`;
+  public readonly API_USER = `${this.API_BASE_AUTH}/users`;
+  
   public readonly API_USERS = `${this.API_BASE_AUTH}/users`;
 
   // movies, categories, showtimes
   public readonly API_MOVIES = `${this.API_MOVIE_SERVICE}/movies`;
   public readonly API_CATEGORIES = `${this.API_MOVIE_SERVICE}/categories`;
+  public readonly API_MOVIES_CATEGORY = `${this.API_MOVIE_SERVICE}/movie-categories`;
 
   // cines, rooms, seats
   public readonly API_CINEMA = `${this.API_CINEMA_SERVICE}/cinemas`;
@@ -34,6 +38,7 @@ export class ApiConfigService {
 
   // Anuncios
   public readonly API_ADS = `${this.API_BASE_AD}/ads`;
+  public readonly API_CHARPE = `${this.API_BASE_AD}/charge-period`;
   public readonly API_BLOCK_ADS = `${this.API_BASE_AD}/ad-blocks`;
 
   // promotions

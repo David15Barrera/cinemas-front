@@ -1,4 +1,5 @@
 export const environment = {
-  API_ROOT: 'http://localhost:8080/api',
+  API_ROOT: 'http://localhost:8081/api',
   BUCKET_URL: 'https://storage.googleapis.com/sa_bucket_p2',
+  API_URLUP: 'http://localhost:8091/api',
 };

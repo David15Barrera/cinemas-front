@@ -1,0 +1,83 @@
+<div class="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-2xl border-t-4 border-primary mt-12">
+  
+  <h2 class="text-3xl font-bold mb-6 text-gray-800 text-center">
+    Configuración de Usuario
+  </h2>
+
+  @if (loading) {
+    <div class="text-center py-10">
+      <span class="loading loading-spinner loading-lg text-primary"></span>
+      <p class="text-gray-600 mt-3">Cargando datos...</p>
+    </div>
+  } 
+
+  @if (!loading && userData) {
+    <form (ngSubmit)="updateUser()" class="space-y-6">
+      
+      <label class="form-control w-full">
+        <div class="label"><span class="label-text font-semibold text-gray-700">Correo electrónico</span></div>
+        <input
+          type="email"
+          [(ngModel)]="userData.email"
+          name="email"
+          class="input input-bordered w-full"
+          placeholder="tu.correo@dominio.com"
+          required
+        />
+      </label>
+
+      <label class="form-control w-full">
+        <div class="label"><span class="label-text font-semibold text-gray-700">Nombre completo</span></div>
+        <input
+          type="text"
+          [(ngModel)]="userData.fullName"
+          name="fullName"
+          class="input input-bordered w-full"
+          placeholder="Tu nombre completo"
+          required
+        />
+      </label>
+
+      <label class="form-control w-full">
+        <div class="label"><span class="label-text font-semibold text-gray-700">Nueva contraseña (opcional)</span></div>
+        <input
+            type="password"
+            [(ngModel)]="userData.password"
+            name="password"
+            placeholder="••••••••"
+            class="input input-bordered w-full"
+        />
+      </label>
+
+      <label class="form-control w-full">
+        <div class="label"><span class="label-text font-semibold text-gray-700">Confirmar nueva contraseña</span></div>
+        <input
+            type="password"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            placeholder="Repite la contraseña"
+            class="input input-bordered w-full"
+        />
+      </label>
+
+      @if (userData.password && confirmPassword && userData.password !== confirmPassword) {
+        <div class="text-error text-sm font-medium">
+          Las contraseñas no coinciden.
+        </div>
+      }
+
+      <button
+        type="submit"
+        [disabled]="updating || (userData.password && confirmPassword && userData.password !== confirmPassword)"
+        class="btn btn-primary btn-lg w-full mt-8 shadow-md"
+      >
+        @if (updating) {
+          <span class="loading loading-spinner"></span>
+          Guardando...
+        } @else {
+          Guardar cambios
+        }
+      </button>
+    </form>
+  }
+</div>

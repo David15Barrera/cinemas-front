@@ -1,0 +1,237 @@
+<div class="p-8">
+  <h1 class="text-3xl font-bold mb-8 text-gray-800">
+    Administración de Contenido de Películas
+  </h1>
+
+  <div role="tablist" class="tabs tabs-boxed mb-6 bg-base-200">
+    <a role="tab" 
+       class="tab font-semibold" 
+       [class.tab-active]="activeTab === 'movies'" 
+       (click)="activeTab = 'movies'">Películas</a>
+
+    <a role="tab" 
+       class="tab font-semibold" 
+       [class.tab-active]="activeTab === 'categories'" 
+       (click)="activeTab = 'categories'">Categorías</a>
+
+    </div>
+
+  @if (activeTab === 'movies') {
+    <div>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-primary">Listado de Películas</h2>
+        <button class="btn btn-success text-white" (click)="showMovieModal = true">
+          + Nueva Película
+        </button>
+      </div>
+
+      <div class="overflow-x-auto shadow-lg rounded-lg">
+        <table class="table w-full table-zebra">
+        <thead class="bg-primary text-white">
+        <tr>
+            <th class="py-3 px-4">Imagen</th>
+            <th class="py-3 px-4">Título</th>
+            <th class="py-3 px-4">Director</th>
+            <th class="py-3 px-4">Estreno </th>
+            <th class="py-3 px-4">Duración (min)</th>
+            <th class="py-3 px-4">Categorías</th>
+            <th class="py-3 px-4 text-center">Activo</th>
+            <th class="py-3 px-4 text-center">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (movie of moviesWithCategories; track movie.id) {
+            <tr class="hover:bg-gray-50">
+            <td class="py-3 px-4">
+              <img 
+                [src]="movie.posterUrl | image" 
+                alt="poster" 
+                class="w-16 h-20 object-cover rounded-lg shadow-sm" 
+                onerror="this.onerror=null;this.src='https://via.placeholder.com/80x120?text=No+Image';" />
+            </td>
+            <td class="py-3 px-4 font-medium">{{ movie.title }}</td>
+            <td class="py-3 px-4">{{ movie.director }}</td>
+            <td class="py-3 px-4">{{ movie.releaseDate }}</td>
+            <td class="py-3 px-4">{{ movie.durationMinutes }}</td>
+            
+            <!-- Mostrar Categorías Asignadas -->
+            <td class="py-3 px-4 max-w-xs">
+                @for (catName of movie.categoryNames; track $index) {
+                    <span class="badge badge-info badge-outline mr-1 mb-1">{{ catName }}</span>
+                } @empty {
+                    <span class="text-gray-400">Sin asignar</span>
+                }
+            </td>
+            
+            <td class="py-3 px-4 text-center">
+                <span 
+                class="badge font-semibold" 
+                [ngClass]="movie.active ? 'badge-success text-white' : 'badge-error text-white'">
+                {{ movie.active ? 'Activo' : 'Inactivo' }}
+                </span>
+            </td>
+            <td class="py-3 px-4 text-center">
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                    
+                    <button 
+                        class="btn btn-info btn-sm text-white w-full sm:w-auto" 
+                        (click)="reviewsMovie(movie.id)">
+                        Opiniones
+                    </button>
+
+                    <button 
+                        class="btn btn-info btn-sm text-white w-full sm:w-auto" 
+                        (click)="editMovie(movie.id)">
+                        Editar
+                    </button>
+
+                    <button 
+                        class="btn btn-error btn-sm text-white w-full sm:w-auto" 
+                        (click)="deleteMovie(movie.id)">
+                        Eliminar
+                    </button>
+                </div>
+            </td>
+            </tr>
+        } @empty {
+            <tr>
+            <td colspan="8" class="text-center py-4 text-gray-500">No hay películas registradas.</td>
+            </tr>
+        }
+        </tbody>
+
+        </table>
+      </div>
+    </div>
+  }
+
+  @if (activeTab === 'categories') {
+
+    <div>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-primary">Listado de Categorías</h2>
+        <button class="btn btn-success text-white" (click)="showCategoryModal = true">
+          + Nueva Categoría
+        </button>
+      </div>
+
+      <div class="overflow-x-auto shadow-lg rounded-lg">
+        <table class="table w-full table-zebra">
+          <thead class="bg-primary text-white">
+            <tr>
+              <th class="py-3 px-4">Nombre</th>
+              <th class="py-3 px-4 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cat of categories; track cat.id) {
+              <tr class="hover:bg-gray-50">
+                <td class="py-3 px-4 font-medium">{{ cat.name }}</td>
+                <td class="py-3 px-4 text-center">
+                  <button class="btn btn-error btn-sm text-white" (click)="deleteCategory(cat.id)">
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="2" class="text-center py-4 text-gray-500">No hay categorías registradas.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  @if (showMovieModal) {
+    <div class="modal modal-open">
+      <div class="modal-box p-8">
+        <h3 class="text-xl font-bold mb-6 text-gray-800">{{ newMovie.id ? 'Editar Película' : 'Nueva Película'}}</h3>
+
+        <form class="space-y-4">
+          <input class="input input-bordered w-full" placeholder="Título" [(ngModel)]="newMovie.title" name="title" required>
+          <input class="input input-bordered w-full" placeholder="Director" [(ngModel)]="newMovie.director" name="director" required>
+          <input type="number" class="input input-bordered w-full" placeholder="Duración (min)" [(ngModel)]="newMovie.durationMinutes" name="durationMinutes" required>
+          <textarea class="textarea textarea-bordered w-full" placeholder="Sinopsis" [(ngModel)]="newMovie.synopsis" name="synopsis"></textarea>
+
+          <div>
+            <label class="label">Clasificación</label>
+            <select class="select select-bordered w-full" [(ngModel)]="newMovie.classification" name="classification" required>
+              <option value="" disabled selected>Selecciona una clasificación</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="B15">B15</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="label">Fecha de estreno</label>
+            <input
+              type="date"
+              class="input input-bordered w-full"
+              [(ngModel)]="newMovie.releaseDate"
+              name="releaseDate"
+              placeholder="YYYY-MM-DD"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="label">Portada</label>
+            <input type="file" class="file-input file-input-bordered w-full" (change)="onFileSelected($event)" />
+            @if (newMovie.posterUrl) {
+              <img 
+                [src]="newMovie.posterUrl | image" 
+                class="w-32 h-40 mt-2 object-cover rounded-lg" 
+                alt="Vista previa de la portada" />
+            }
+          </div>
+
+          <div>
+              <label class="label">Categorías Asignadas</label>
+              <select multiple class="select select-bordered w-full h-32" [(ngModel)]="newMovie.selectedCategories" name="categories">
+                  @for (cat of categories; track cat.id) {
+                      <option [value]="cat.id">{{ cat.name }}</option>
+                  } @empty {
+                      <option disabled>No hay categorías disponibles</option>
+                  }
+              </select>
+              <small class="text-gray-500">Ctrl/Cmd para seleccionar varias</small>
+          </div>
+
+          <div class="form-control">
+              <label class="label cursor-pointer">
+              <span class="label-text">Activar Película</span> 
+              <input type="checkbox" class="toggle toggle-success" [(ngModel)]="newMovie.active" name="active"/>
+              </label>
+          </div>
+        </form>
+
+        <div class="modal-action mt-6">
+          <button class="btn btn-primary" (click)="createMovie()">
+            {{ newMovie.id ? 'Guardar Cambios' : 'Crear Película' }}
+          </button>
+          <button class="btn btn-warning" (click)="showMovieModal = false">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showCategoryModal) {
+    <div class="modal modal-open">
+      <div class="modal-box p-8 w-80">
+        <h3 class="text-xl font-bold mb-6 text-gray-800">Nueva Categoría</h3>
+
+        <input class="input input-bordered w-full mb-4" placeholder="Nombre de Categoría" [(ngModel)]="newCategory.name" name="categoryName">
+        
+        <div class="modal-action">
+          <button class="btn btn-primary" (click)="createCategory()">Guardar</button>
+          <button class="btn btn-warning" (click)="showCategoryModal = false">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  }
+  </div>

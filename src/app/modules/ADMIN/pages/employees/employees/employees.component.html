@@ -1,0 +1,164 @@
+<div class="p-6">
+  <h2 class="text-3xl font-bold mb-6 text-yellow-800">
+    Gestión de Empleados
+  </h2>
+
+  @if (!selectedUser) {
+    <div>
+      
+      <div class="flex justify-end mb-4">
+        <button class="btn btn-success" (click)="startCreate()">
+          Nuevo Empleado
+        </button>
+      </div>
+
+      <div class="overflow-x-auto shadow-lg rounded-lg">
+        <table class="table w-full table-striped">
+          <thead>
+            <tr class="bg-primary text-white uppercase text-sm leading-normal">
+              <th class="py-3 px-6 text-left">Nombre Completo</th>
+              <th class="py-3 px-6 text-left">Correo Electrónico</th>
+              <th class="py-3 px-6 text-center">Rol</th>
+              <th class="py-3 px-6 text-center">Estado</th>
+              <th class="py-3 px-6 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users; track user.id) {
+              <tr class="hover:bg-gray-100">
+                <td class="py-3 px-6 text-left whitespace-nowrap">{{ user.fullName }}</td>
+                <td class="py-3 px-6 text-left">{{ user.email }}</td>
+                <td class="py-3 px-6 text-center">{{ user.roleName }}</td>
+                <td class="py-3 px-6 text-center">
+                  <span 
+                    class="badge text-xs font-semibold" 
+                    [ngClass]="user.status ? 'bg-green-500 text-white' : 'bg-red-500 text-white'">
+                    {{ user.status ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="py-3 px-6 text-center">
+                  <div class="flex item-center justify-center space-x-2">
+                    
+                    <button 
+                      class="btn btn-info btn-xs text-white" 
+                      (click)="editUser(user)">
+                      Editar
+                    </button>
+                    @if (user.id) {
+                        <button 
+                        class="btn btn-error btn-xs text-white" 
+                        (click)="deleteUser(user.id!)">
+                        Eliminar
+                        </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  @if (selectedUser) {
+    <div class="bg-white shadow-xl rounded-lg p-8 mt-6 max-w-lg mx-auto border-t-4 border-primary">
+      
+      <h3 class="text-2xl font-semibold mb-6 text-gray-800">
+        {{ isCreating ? 'Crear Nuevo Empleado' : 'Editar Empleado' }}
+      </h3>
+
+      <form class="space-y-5">
+        
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Nombre Completo</span></div>
+          <input 
+            type="text" 
+            placeholder="nombre completo" 
+            class="input input-bordered w-full" 
+            required 
+            [(ngModel)]="selectedUser.fullName" 
+            name="fullName">
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Correo Electrónico</span></div>
+          <input 
+            type="email" 
+            placeholder="correo electronico" 
+            class="input input-bordered w-full" 
+            required 
+            [(ngModel)]="selectedUser.email" 
+            name="email">
+        </label>
+
+        @if (isCreating) {
+          <label class="form-control w-full">
+            <div class="label"><span class="label-text">Contraseña</span></div>
+            <input 
+              type="password" 
+              placeholder="******" 
+              class="input input-bordered w-full" 
+              required 
+              [(ngModel)]="selectedUser.password" 
+              name="password">
+          </label>
+        }
+
+        <label class="form-control w-full">
+          <div class="label"><span class="label-text">Rol del Sistema</span></div>
+            <label class="form-control w-full">
+            <div class="label"><span class="label-text">Rol del Sistema</span></div>
+            <select class="select select-bordered w-full"
+                    required
+                    [(ngModel)]="selectedUser.roleName"
+                    name="roleName">
+                <option value="" disabled>Seleccione un Rol</option>
+                @for (role of roles; track role.id) {
+                <option [value]="role.name">{{ role.name }}</option>
+                }
+            </select>
+            </label>
+
+        </label>
+
+        <div class="form-control">
+        <label class="label cursor-pointer">
+            <span 
+                class="label-text font-semibold"
+                [ngClass]="{
+                    'text-green-600': selectedUser.status,
+                    'text-red-600': !selectedUser.status
+                }">
+                Estado: {{ selectedUser.status ? 'Activo' : 'Inactivo' }}
+            </span>
+            <input 
+            type="checkbox" 
+            class="toggle toggle-primary" 
+            [(ngModel)]="selectedUser.status" 
+            name="status"
+            />
+        </label>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4">
+        <button
+            type="button"
+            class="btn btn-warning" 
+            (click)="cancelEdit()"
+        >
+            Cancelar
+        </button>
+
+          <button
+            type="button"
+            class="btn btn-success"
+            (click)="saveUser()"
+          >
+            {{ isCreating ? 'Crear Empleado' : 'Guardar Cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</div>
