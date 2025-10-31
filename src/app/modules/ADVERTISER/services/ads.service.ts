@@ -45,4 +45,9 @@ export class AdsService {
   getAllAds(): Observable<AdReport[]>{
     return this._http.get<AdReport[]>(`${this.API_ADS}`)
   }
+
+  public retryPayment(adId: string, walletId: string): Observable<Ad> {
+    const body = { walletId };
+    return this._http.put<Ad>(`${this.API_ADS}/${adId}/retry-payment`, body);
+  }
 }

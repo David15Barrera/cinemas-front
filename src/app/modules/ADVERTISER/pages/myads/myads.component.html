@@ -80,7 +80,7 @@
           </button>
 
           <!-- Botón Reintentar Pago (solo si está REJECTED) -->
-          <button 
+          <button (click)="retryAdPayment(ad.id)"
             *ngIf="ad.adStatus === 'REJECTED'" 
             class="btn btn-sm btn-error"
           >

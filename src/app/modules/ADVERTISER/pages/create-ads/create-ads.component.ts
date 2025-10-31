@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { 
   BadgePlus, 
@@ -19,6 +19,8 @@ import { LocalStorageService } from '@shared/services/local-storage.service';
 import { Session } from 'app/modules/session/models/auth';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AdsService } from '../../services/ads.service';
+import { FinanceService } from 'app/modules/CINEMA_ADMIN/services/finance.service';
+import { CreateWallet, Wallet } from 'app/modules/CINEMA_ADMIN/models/finance.interface';
 
 @Component({
   selector: 'app-create-ads',
@@ -31,7 +33,7 @@ import { AdsService } from '../../services/ads.service';
   templateUrl: './create-ads.component.html',
   styleUrls: ['./create-ads.component.css']
 })
-export class CreateAdsComponent {
+export class CreateAdsComponent implements OnInit {
   readonly BadgePlus = BadgePlus;
   readonly Calendar = Calendar;
   readonly FileText = FileText;
@@ -52,9 +54,13 @@ export class CreateAdsComponent {
     content: '',
     totalCost:0,
     imageUrl: '',
-    videoUrl: ''
+    videoUrl: '',
+    walletId:''
   };
 
+  ngOnInit(): void {
+      this.loadWallet()
+  }
   startDateString = '';
   adDuration: number = 1;
 
@@ -63,11 +69,13 @@ export class CreateAdsComponent {
   videoPreview: SafeResourceUrl | null = null;
   isUploading = false;
 
+  wallet!:Wallet
   private readonly _uploadService = inject(UploadImgService);
-  private readonly alertStore = inject(AlertStore);
+  private readonly _alertStore = inject(AlertStore);
   private readonly localStorageService = inject(LocalStorageService);
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly _adsService = inject(AdsService)
+  private readonly _adsService = inject(AdsService);
+  private readonly _walletService = inject(FinanceService)
 
   session: Session = this.localStorageService.getState().session;
 
@@ -80,6 +88,44 @@ export class CreateAdsComponent {
       
       return endDate;
   }
+  
+  loadWallet(): void {
+      this._walletService.findWalletByOwnerId(this.session.id).subscribe({
+        next: (response) => {
+          this.wallet = response;
+        },
+        error: (err) => {
+          console.log('Error al consultar wallet:', err);
+          if (err.status === 404) {
+            this.createWallet();
+          } else {
+            this.createWallet();
+          }
+        },
+      });
+    }
+  
+    createWallet(): void {
+      const newWallet: CreateWallet = { ownerType: 'user', ownerId: this.session.id };
+  
+      this._walletService.createWallet(newWallet).subscribe({
+        next: (res) => {
+          console.log('Wallet creada con éxito:', res);
+          this.loadWallet();
+          this._alertStore.addAlert({
+            message: 'Wallet creada correctamente',
+            type: 'success',
+          });
+        },
+        error: (err) => {
+          console.log('Error al crear wallet:', err);
+          this._alertStore.addAlert({
+            message: err.error?.message || err.error?.mensaje || 'Error al crear la wallet',
+            type: 'error',
+          });
+        },
+      });
+    }
 
   onVideoUrlChange(): void {
     if (this.adForm.videoUrl && this.adForm.videoUrl.trim() !== '') {
@@ -89,7 +135,7 @@ export class CreateAdsComponent {
         this.videoPreview = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
       } else {
         this.videoPreview = null;
-        this.alertStore.addAlert({
+        this._alertStore.addAlert({
           message: 'URL de YouTube no válida. Usa el formato: https://www.youtube.com/watch?v=VIDEO_ID',
           type: 'warning',
         });
@@ -121,134 +167,108 @@ export class CreateAdsComponent {
     }
   }
 
-async saveAd() {
-  this.isUploading = true;
-  this.adForm.advertiserId = this.session.id
+  async saveAd() {
+    this.isUploading = true;
+    this.adForm.advertiserId = this.session.id;
 
-  try {
-    if (!this.startDateString) {
-      this.alertStore.addAlert({
-        message: 'La fecha de inicio es obligatoria.',
-        type: 'error',
-      });
-      return;
-    }
-
-    const endDate = this.calculateEndDate();
-    
-    if (!endDate) {
-      this.alertStore.addAlert({
-        message: 'No se pudo calcular la fecha de fin.',
-        type: 'error',
-      });
-      return;
-    }
-
-    if (!this.adForm.advertiserId || this.adForm.advertiserId.trim() === '') {
-      this.alertStore.addAlert({
-        message: 'El ID del anunciante es obligatorio.',
-        type: 'error',
-      });
-      return;
-    }
-
-    if (this.adForm.targetType === AdsTargetType.TEXT) {
-      if (!this.adForm.content || this.adForm.content.trim() === '') {
-        this.alertStore.addAlert({
-          message: 'El contenido del anuncio es obligatorio.',
-          type: 'error',
-        });
+    try {
+      if (!this.startDateString) {
+        this._alertStore.addAlert({ message: 'La fecha de inicio es obligatoria.', type: 'error' });
         return;
       }
-    } else if (this.adForm.targetType === AdsTargetType.TEXT_IMAGE) {
-      if (!this.adForm.content || this.adForm.content.trim() === '') {
-        this.alertStore.addAlert({
-          message: 'El contenido del anuncio es obligatorio.',
-          type: 'error',
-        });
-        return;
-      }
-      if (!this.selectedImageFile) {
-        this.alertStore.addAlert({
-          message: 'Debes seleccionar una imagen para el anuncio.',
-          type: 'error',
-        });
-        return;
-      }
-    } else if (this.adForm.targetType === AdsTargetType.VIDEO) {
-      if (!this.adForm.videoUrl || this.adForm.videoUrl.trim() === '') {
-        this.alertStore.addAlert({
-          message: 'La URL del video es obligatoria.',
-          type: 'error',
-        });
-        return;
-      }
-      if (!this.isValidUrl(this.adForm.videoUrl)) {
-        this.alertStore.addAlert({
-          message: 'La URL del video no es válida.',
-          type: 'error',
-        });
-        return;
-      }
-    }
 
-    const adToSave: Partial<Ad> = {
-    advertiserId: this.adForm.advertiserId,
-    targetType: this.adForm.targetType,
-    startDate: new Date(this.startDateString),
-    endDate: endDate
-  };
+      const endDate = this.calculateEndDate();
+      if (!endDate) {
+        this._alertStore.addAlert({ message: 'No se pudo calcular la fecha de fin.', type: 'error' });
+        return;
+      }
 
-    if (this.adForm.targetType === AdsTargetType.TEXT) {
-      adToSave.content = this.adForm.content;
-      adToSave.imageUrl = '';
-      adToSave.videoUrl = '';
-    } else if (this.adForm.targetType === AdsTargetType.TEXT_IMAGE) {
-      adToSave.content = this.adForm.content;
-      adToSave.videoUrl = '';
-      
-      if (this.selectedImageFile) {
-        const formData = new FormData();
-        formData.append('file', this.selectedImageFile);
-        
-        await this.uploadImag(formData);
-        
-        if (!this.adForm.imageUrl || this.adForm.imageUrl.trim() === '') {
-          this.alertStore.addAlert({
-            message: 'Error al subir la imagen. Inténtalo de nuevo.',
-            type: 'error',
-          });
+      if (!this.adForm.advertiserId || this.adForm.advertiserId.trim() === '') {
+        this._alertStore.addAlert({ message: 'El ID del anunciante es obligatorio.', type: 'error' });
+        return;
+      }
+
+      if (this.adForm.targetType === AdsTargetType.TEXT && !this.adForm.content?.trim()) {
+        this._alertStore.addAlert({ message: 'El contenido del anuncio es obligatorio.', type: 'error' });
+        return;
+      }
+
+      if (this.adForm.targetType === AdsTargetType.TEXT_IMAGE) {
+        if (!this.adForm.content?.trim()) {
+          this._alertStore.addAlert({ message: 'El contenido del anuncio es obligatorio.', type: 'error' });
           return;
         }
-        
-        adToSave.imageUrl = this.adForm.imageUrl;      
+        if (!this.selectedImageFile) {
+          this._alertStore.addAlert({ message: 'Debes seleccionar una imagen para el anuncio.', type: 'error' });
+          return;
+        }
       }
-    } else if (this.adForm.targetType === AdsTargetType.VIDEO) {
-      adToSave.content = '';
-      adToSave.imageUrl = '';
-      adToSave.videoUrl = this.adForm.videoUrl;
-    }
 
-    console.log('Datos del anuncio a guardar:', adToSave);
-    
-    await this._adsService.createAd(adToSave as Ad).toPromise();
-    
-    this.alertStore.addAlert({
-      message: 'Anuncio creado correctamente.',
-      type: 'success',
-    });
-    this.resetForm();
-    
-  } catch (error) {
-    console.error('Error al guardar el anuncio:', error);
-    this.alertStore.addAlert({
-      message: 'Error al guardar el anuncio. Inténtalo de nuevo.',
-      type: 'error',
-    });
-  } finally {
-    this.isUploading = false;
+      if (this.adForm.targetType === AdsTargetType.VIDEO) {
+        if (!this.adForm.videoUrl?.trim()) {
+          this._alertStore.addAlert({ message: 'La URL del video es obligatoria.', type: 'error' });
+          return;
+        }
+        if (!this.isValidUrl(this.adForm.videoUrl)) {
+          this._alertStore.addAlert({ message: 'La URL del video no es válida.', type: 'error' });
+          return;
+        }
+      }
+
+      const adToSave: Partial<Ad> = {
+        advertiserId: this.adForm.advertiserId,
+        targetType: this.adForm.targetType,
+        startDate: new Date(this.startDateString),
+        endDate: endDate,
+        walletId: this.wallet.id
+      };
+
+      if (this.adForm.targetType === AdsTargetType.TEXT) {
+        adToSave.content = this.adForm.content;
+        adToSave.imageUrl = '';
+        adToSave.videoUrl = '';
+      }
+
+      if (this.adForm.targetType === AdsTargetType.TEXT_IMAGE) {
+        adToSave.content = this.adForm.content;
+        adToSave.videoUrl = '';
+
+        if (this.selectedImageFile) {
+          const formData = new FormData();
+          formData.append('file', this.selectedImageFile);
+          await this.uploadImag(formData);
+
+          if (!this.adForm.imageUrl?.trim()) {
+            this._alertStore.addAlert({ message: 'Error al subir la imagen. Inténtalo de nuevo.', type: 'error' });
+            return;
+          }
+          adToSave.imageUrl = this.adForm.imageUrl;
+        }
+      }
+
+      if (this.adForm.targetType === AdsTargetType.VIDEO) {
+        adToSave.content = '';
+        adToSave.imageUrl = '';
+        adToSave.videoUrl = this.adForm.videoUrl;
+      }
+
+      const savedAd = await this._adsService.createAd(adToSave as Ad).toPromise();
+
+      if (savedAd?.id) {
+        this.adForm.id = savedAd.id;
+      }
+
+      this._alertStore.addAlert({ message: 'Anuncio creado correctamente.', type: 'success' });
+
+      this.resetForm();
+
+    } catch (error) {
+      console.error('Error al guardar el anuncio:', error);
+      this._alertStore.addAlert({ message: 'Error al guardar el anuncio. Inténtalo de nuevo.', type: 'error' });
+    } finally {
+      this.isUploading = false;
+    }
   }
-}
 
 private isValidUrl(url: string): boolean {
   try {
@@ -269,6 +289,7 @@ private resetForm(): void {
     totalCost:0,
     imageUrl: '',
     videoUrl: '',
+    walletId:''
   };
   this.startDateString = '';
   this.adDuration = 1;
@@ -284,7 +305,7 @@ private resetForm(): void {
           .toPromise();
           this.adForm.imageUrl = value.image
       } catch (err) {
-        this.alertStore.addAlert({
+        this._alertStore.addAlert({
             message: 'Error al subir la imagen. Inténtalo de nuevo.',
             type: 'error',
           });

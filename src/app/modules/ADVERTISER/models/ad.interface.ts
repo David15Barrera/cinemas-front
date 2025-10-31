@@ -9,6 +9,7 @@ export interface Ad{
     totalCost: number;
     startDate?: Date;
     endDate?: Date;
+    walletId?:string;
 }
 export interface AdReport{
     id: string;

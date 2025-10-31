@@ -10,6 +10,8 @@ import { AlertStore } from 'app/store/alert.store';
 import { LucideAngularModule, Clock, Tag, Calendar, CheckCircle, XCircle, AlertCircle, DollarSign } from 'lucide-angular';
 import { ImagePipe } from '@shared/pipes/image.pipe';
 import { FormsModule } from '@angular/forms';
+import { CreateWallet, Wallet } from 'app/modules/CINEMA_ADMIN/models/finance.interface';
+import { FinanceService } from 'app/modules/CINEMA_ADMIN/services/finance.service';
 
 @Component({
   selector: 'app-myads',
@@ -37,11 +39,14 @@ export class MyadsComponent implements OnInit {
   DollarSign = DollarSign;
 
   private readonly _adsService = inject(AdsService);
+  private readonly _walletService = inject(FinanceService)
   private readonly localStorageService = inject(LocalStorageService);
   private readonly alertStore = inject(AlertStore);
   private readonly sanitizer = inject(DomSanitizer);
 
   session: Session = this.localStorageService.getState().session;
+
+  wallet!:Wallet
 
   private HandlerError = HandlerError;
   
@@ -49,14 +54,50 @@ export class MyadsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMyAds();
+    this.loadWallet();
   }
+
+  loadWallet(): void {
+        this._walletService.findWalletByOwnerId(this.session.id).subscribe({
+          next: (response) => {
+            this.wallet = response;
+          },
+          error: (err) => {
+            console.log('Error al consultar wallet:', err);
+            if (err.status === 404) {
+              this.createWallet();
+            } else {
+              this.createWallet();
+            }
+          },
+        });
+      }
+    
+      createWallet(): void {
+        const newWallet: CreateWallet = { ownerType: 'user', ownerId: this.session.id };
+    
+        this._walletService.createWallet(newWallet).subscribe({
+          next: (res) => {
+            this.loadWallet();
+            this.alertStore.addAlert({
+              message: 'Wallet creada correctamente',
+              type: 'success',
+            });
+          },
+          error: (err) => {
+            this.alertStore.addAlert({
+              message: err.error?.message || err.error?.mensaje || 'Error al crear la wallet',
+              type: 'error',
+            });
+          },
+        });
+      }
 
   loadMyAds() {
     this._adsService.getMyAds(this.session.id).subscribe({
       next: (ads) => {
         this.myAds = ads;
         this.filteredAds = [...ads];
-        console.log(this.myAds);
       },
       error: (err) => {
         const msgDefault = `Error al obtener los anuncios.`;
@@ -153,7 +194,7 @@ export class MyadsComponent implements OnInit {
   desactived(ad:Ad){
     this._adsService.expiredAd(ad.id).subscribe({
       next: (response)=>{
-        this.loadMyAds()
+       this.loadMyAds()
        this.alertStore.addAlert({
           message: 'Se desactivo el anuncio correctamente.',
           type: 'success',
@@ -171,5 +212,23 @@ export class MyadsComponent implements OnInit {
     } else {
       this.filteredAds = this.myAds.filter(ad => ad.adStatus === this.selectedStatus);
     }
+  }
+
+  retryAdPayment(adId: string): void {
+    this._adsService.retryPayment(adId, this.wallet.id).subscribe({
+      next: (ad) => {
+        this.alertStore.addAlert({
+          message: 'Pago procesado. El anuncio será activado si los fondos son suficientes.',
+          type: 'success',
+        });
+       this.loadMyAds()
+      },
+      error: (err) => {
+        this.alertStore.addAlert({
+          message: err.error?.message || 'Error al procesar el pago. Inténtalo de nuevo.',
+          type: 'error',
+        });
+      }
+    });
   }
 }
