@@ -25,6 +25,12 @@ const clientRoutes: Routes = [
       (m) => m.StoreSnaksComponent
     )
   },
+    {
+    path:'snacks-buy/:id',
+    loadComponent: () => import('./pages/buy-snacks/buy-snacks.component').then(
+      (m) => m.BuySnacksComponent
+    )
+  },
 /*     {
     path:'snacks',
     loadComponent: () => import('./pages/report-ads/report-ads.component').then(

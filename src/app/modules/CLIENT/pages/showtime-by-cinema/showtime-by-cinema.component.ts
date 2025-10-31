@@ -88,7 +88,10 @@ export class ShowtimeByCinemaComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar información del cine:', error);
-        this.cinemaName = 'Cine';
+        this._alertStore.addAlert({
+          message: "No se a podido cargar la informacion del cine",
+          type: 'error'
+        })
       }
     });
   }
@@ -110,7 +113,10 @@ export class ShowtimeByCinemaComponent implements OnInit {
 
                 this.applyFilters();
               },
-              error: (err) => console.error(`Error al cargar película ${movieId}:`, err)
+              error: (err) => this._alertStore.addAlert({
+                message: "No se han podido cargar las funciones",
+                type: 'error'
+              })
             });
           });
 

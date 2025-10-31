@@ -1,0 +1,232 @@
+<div class="max-w-7xl mx-auto p-3 sm:p-4 md:p-6">
+  <!-- Botón de regresar y Título -->
+  <div class="mb-6">
+    <button 
+      (click)="_router.navigate(['/client/snacks'])" 
+      class="btn btn-ghost btn-sm gap-2 mb-4"
+    >
+      <i-lucide [img]="ArrowLeft" class="w-4 h-4"></i-lucide>
+      Regresar a Cines
+    </button>
+    
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2" style="color: var(--fallback-bc, oklch(var(--bc)));">
+        <i-lucide [img]="Package" class="w-5 h-5 sm:w-6 sm:h-6 text-primary"></i-lucide>
+        Snacks en <span class="text-primary ml-2">{{ cinemaName || 'Cine no especificado' }}</span>
+      </h2>
+
+      <!-- Botón del carrito -->
+      <div class="indicator">
+        <span *ngIf="cart.length > 0" class="indicator-item badge badge-primary">
+          {{ getCartItemsCount() }}
+        </span>
+        <button 
+        class="btn btn-primary gap-2"
+        [disabled]="cart.length === 0"
+        >
+        <i-lucide [img]="ShoppingCart" class="w-5 h-5"></i-lucide>
+        Carrito (Q {{ getCartTotal() | number:'1.2-2' }})
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Columna de Snacks -->
+    <div class="lg:col-span-2">
+      <!-- Sección de Filtros -->
+      <div class="mb-6">
+        <!-- Botón para mostrar/ocultar filtros -->
+        <div class="flex items-center justify-between mb-4">
+          <button 
+            (click)="toggleFilters()" 
+            class="btn btn-outline btn-sm gap-2"
+          >
+            <i-lucide [img]="Filter" class="w-4 h-4"></i-lucide>
+            {{ showFilters ? 'Ocultar Búsqueda' : 'Mostrar Búsqueda' }}
+          </button>
+          
+          <button 
+            *ngIf="hasActiveFilters()" 
+            (click)="clearFilters()"
+            class="btn btn-ghost btn-sm gap-2 text-error"
+          >
+            <i-lucide [img]="X" class="w-4 h-4"></i-lucide>
+            Limpiar
+          </button>
+        </div>
+
+        <!-- Panel de Búsqueda -->
+        <div *ngIf="showFilters" class="card bg-base-200 shadow-lg mb-6">
+          <div class="card-body p-4">
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-semibold">
+                  <i-lucide [img]="Search" class="w-4 h-4 inline mr-2"></i-lucide>
+                  Buscar snack
+                </span>
+              </label>
+              <input 
+                type="text"
+                [(ngModel)]="searchText"
+                (input)="applyFilters()"
+                placeholder="Buscar por nombre o descripción..."
+                class="input input-bordered w-full"
+              >
+            </div>
+
+            <!-- Indicador de resultados -->
+            <div class="mt-4 text-sm opacity-70">
+              Mostrando {{ filteredSnacks.length }} de {{ snacks.length }} snacks
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensaje cuando no hay snacks -->
+      <div *ngIf="filteredSnacks.length === 0" class="alert alert-info">
+        <i-lucide [img]="AlertCircle" class="w-5 h-5"></i-lucide>
+        <span>
+          {{ hasActiveFilters() 
+            ? 'No hay snacks que coincidan con tu búsqueda.' 
+            : 'No hay snacks disponibles en este momento.' 
+          }}
+        </span>
+      </div>
+
+      <!-- Grid de snacks -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+        <div *ngFor="let snack of filteredSnacks" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+          <!-- Imagen del snack -->
+          <figure class="px-0 pt-0 h-48 overflow-hidden bg-gray-200">
+            <img 
+              [src]="snack.imageUrl | image" 
+              [alt]="snack.name"
+              class="w-full h-full object-cover"
+            >
+          </figure>
+
+          <div class="card-body p-4">
+            <!-- Nombre del snack -->
+            <h3 class="card-title text-base sm:text-lg line-clamp-1">
+              {{ snack.name }}
+            </h3>
+
+            <!-- Descripción -->
+            <p class="text-xs sm:text-sm opacity-70 line-clamp-2 mb-3 min-h-[2.4rem]">
+              {{ snack.description }}
+            </p>
+
+            <!-- Precio -->
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <p class="text-xs opacity-60">Precio</p>
+                <p class="text-lg font-bold text-success">Q {{ snack.price | number:'1.2-2' }}</p>
+              </div>
+
+              <!-- Badge si está en el carrito -->
+              <div *ngIf="isInCart(snack)" class="badge badge-primary badge-lg">
+                En carrito: {{ getCartItemQuantity(snack) }}
+              </div>
+            </div>
+
+            <!-- Botón de agregar -->
+            <div class="card-actions justify-end">
+              <button 
+                (click)="addToCart(snack)" 
+                class="btn btn-primary btn-sm w-full gap-2"
+              >
+                <i-lucide [img]="Plus" class="w-4 h-4"></i-lucide>
+                Agregar al carrito
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna del Carrito -->
+    <div class="lg:col-span-1">
+      <div class="card bg-base-100 shadow-xl sticky top-4">
+        <div class="card-body p-4">
+          <h3 class="card-title text-lg flex items-center gap-2">
+            <i-lucide [img]="ShoppingCart" class="w-5 h-5 text-primary"></i-lucide>
+            Tu Carrito
+          </h3>
+
+          <!-- Carrito vacío -->
+          <div *ngIf="cart.length === 0" class="text-center py-8 opacity-60">
+            <i-lucide [img]="ShoppingCart" class="w-12 h-12 mx-auto mb-2"></i-lucide>
+            <p class="text-sm">Tu carrito está vacío</p>
+          </div>
+
+          <!-- Items del carrito -->
+          <div *ngIf="cart.length > 0" class="space-y-3 max-h-96 overflow-y-auto">
+            <div *ngFor="let item of cart" class="border border-base-300 rounded-lg p-3">
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex-1">
+                  <p class="font-semibold text-sm">{{ item.name }}</p>
+                  <p class="text-xs opacity-60">Q {{ item.price | number:'1.2-2' }} c/u</p>
+                </div>
+                <button 
+                  (click)="removeFromCart(item)"
+                  class="btn btn-ghost btn-xs text-error"
+                >
+                  <i-lucide [img]="Trash2" class="w-4 h-4"></i-lucide>
+                </button>
+              </div>
+
+              <!-- Controles de cantidad -->
+              <div class="flex items-center justify-between">
+                <div class="join">
+                  <button 
+                    (click)="decreaseQuantity(item)"
+                    class="btn btn-sm join-item"
+                  >
+                    <i-lucide [img]="Minus" class="w-3 h-3"></i-lucide>
+                  </button>
+                  <button class="btn btn-sm join-item">
+                    {{ item.quantity }}
+                  </button>
+                  <button 
+                    (click)="increaseQuantity(item)"
+                    class="btn btn-sm join-item"
+                  >
+                    <i-lucide [img]="Plus" class="w-3 h-3"></i-lucide>
+                  </button>
+                </div>
+                <p class="font-bold text-success">Q {{ item.subtotal | number:'1.2-2' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Totales y acciones -->
+          <div *ngIf="cart.length > 0" class="mt-4 pt-4 border-t border-base-300">
+            <div class="flex justify-between items-center mb-4">
+              <span class="font-bold">Total:</span>
+              <span class="text-xl font-bold text-success">Q {{ getCartTotal() | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="space-y-2">
+              <button 
+                (click)="proceedToCheckout()"
+                class="btn btn-primary w-full gap-2"
+              >
+                <i-lucide [img]="ShoppingCart" class="w-4 h-4"></i-lucide>
+                Proceder al pago
+              </button>
+              
+              <button 
+                (click)="clearCart()"
+                class="btn btn-ghost btn-sm w-full text-error gap-2"
+              >
+                <i-lucide [img]="Trash2" class="w-4 h-4"></i-lucide>
+                Vaciar carrito
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
