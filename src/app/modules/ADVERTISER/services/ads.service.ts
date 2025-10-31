@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiConfigService } from '@shared/services/api-config.service';
-import { Ad, AdsStatus, AdsTargetType } from '../models/ad.interface';
+import { Ad, AdReport, AdsStatus, AdsTargetType } from '../models/ad.interface';
 import { map, Observable } from 'rxjs';
 
 @Injectable({
@@ -40,5 +40,9 @@ export class AdsService {
 
   expiredAd(id: string): Observable<Ad> {
     return this._http.put<Ad>(`${this.API_ADS}/expired/${id}`, null);
+  }
+
+  getAllAds(): Observable<AdReport[]>{
+    return this._http.get<AdReport[]>(`${this.API_ADS}`)
   }
 }

@@ -47,14 +47,18 @@
 
         <!-- Botón Hacer Reseña -->
         <div class="card-actions justify-end">
-          <button (click)="viewReview(room, 'room')" class="btn btn-sm btn-primary flex items-center gap-1">
+          <button *ngIf="room.commentsEnabled" (click)="viewReview(room, 'room')" class="btn btn-sm btn-primary flex items-center gap-1">
             <i-lucide [name]="MessageCircle" class="w-4 h-4"></i-lucide>
             Hacer Reseña
           </button>
+          <span *ngIf="!room.commentsEnabled" class="text-sm text-gray-500 italic">
+            No acepta reseñas
+          </span>
         </div>
 
       </div>
     </div>
   </div>
+
 
 </div>
