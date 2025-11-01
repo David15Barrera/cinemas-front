@@ -1,0 +1,13 @@
+.max-h-64 {
+    max-height: 16rem;
+}
+
+/*Para esconder la barra*/
+.overflow-y-auto::-webkit-scrollbar {
+    display: none;
+}
+
+.overflow-y-auto {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

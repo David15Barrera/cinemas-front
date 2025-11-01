@@ -48,6 +48,11 @@ const adminRoutes: Routes = [
     path:'report-ads', loadComponent: () => import('../CLIENT/pages/report-ads/report-ads.component').then(
       (m) => m.ReportAdsComponent
     )
+  },
+  {
+    path:'report-rooms-coment', loadComponent: () => import('./pages/reports/report-reviews-room-coment/report-reviews-room-coment.component').then(
+      (m) => m.ReportReviewsRoomComentComponent
+    )
   }
 
 ];

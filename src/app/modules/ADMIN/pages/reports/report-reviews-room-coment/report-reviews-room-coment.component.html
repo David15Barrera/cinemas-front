@@ -1,0 +1,149 @@
+<div class="p-4 md:p-8 bg-base-200 min-h-screen">
+  <div class="max-w-7xl mx-auto bg-base-100 shadow-xl rounded-xl p-4 md:p-6">
+
+    <!-- Encabezado del Reporte -->
+    <header class="mb-6 border-b pb-4">
+      <h1 class="text-3xl font-extrabold text-base-content flex items-center justify-center">
+        <i-lucide [img]="Film" class="w-8 h-8 mr-2 text-primary"></i-lucide>
+        Reporte: Top 5 Salas Más Comentadas
+      </h1>
+      <p class="text-center text-sm text-base-content opacity-70 mt-1">
+        Analizando {{ getTotalRooms() }} salas (Total de Comentarios: {{ getTotalReviews() }})
+      </p>
+    </header>
+
+    <!-- Barra de Herramientas y Filtros -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+      
+      <!-- Controles de Filtro -->
+      <div class="flex gap-2 w-full md:w-auto">
+        <button (click)="toggleFilters()" class="btn btn-sm text-sm"
+          [class.btn-primary]="showFilters" [class.btn-outline]="!showFilters">
+          <i-lucide [img]="Filter" class="w-4 h-4"></i-lucide>
+          Filtros
+          @if (hasActiveFilters()) {
+            <span class="badge badge-error badge-sm ml-1">Aplicados</span>
+          }
+        </button>
+        
+        @if (hasActiveFilters()) {
+          <button (click)="clearFilters()" class="btn btn-sm btn-outline btn-error text-sm">
+            <i-lucide [img]="X" class="w-4 h-4"></i-lucide>
+            Limpiar
+          </button>
+        }
+      </div>
+
+      <button 
+        (click)="exportToPDF()" 
+        class="btn btn-sm btn-success text-success-content text-sm w-full md:w-auto"
+        [disabled]="loading || filteredRooms.length === 0">
+        <i-lucide [img]="Download" class="w-4 h-4"></i-lucide>
+        Exportar PDF
+      </button>
+    </div>
+
+    @if (showFilters) {
+      <div class="mb-6 p-4 bg-primary/10 border border-primary/30 rounded-lg shadow-inner transition-all duration-300">
+        <h3 class="text-lg font-semibold mb-3 text-primary">Opciones de Filtrado</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          
+          <div>
+            <label class="label"><span class="label-text text-sm">Filtrar por Cine</span></label>
+            <select 
+              [(ngModel)]="filters.cinemaId" 
+              (change)="applyFilters()" 
+              class="select select-bordered select-sm w-full">
+              <option value="">Todos los Cines</option>
+              @for (cinema of allCinemas; track cinema.id) {
+                <option [value]="cinema.id">
+                  {{ cinema.name }}
+                </option>
+              }
+            </select>
+          </div>
+          
+          <div>
+            <label class="label"><span class="label-text text-sm">Fecha de Inicio</span></label>
+            <input type="date" [(ngModel)]="filters.startDate" (change)="applyFilters()" class="input input-bordered input-sm w-full" />
+          </div>
+          
+          <div>
+            <label class="label"><span class="label-text text-sm">Fecha de Fin</span></label>
+            <input type="date" [(ngModel)]="filters.endDate" (change)="applyFilters()" class="input input-bordered input-sm w-full" />
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (loading) {
+      <div class="text-center p-12">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+        <p class="text-base-content opacity-70 mt-2">Cargando salas y comentarios...</p>
+      </div>
+    }
+
+    @if (!loading && filteredRooms.length > 0) {
+      <div class="space-y-6">
+          <div *ngFor="let room of filteredRooms; let i = index" class="card bg-base-100 border border-base-300 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div class="card-body p-4 md:p-6">
+              <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-3 mb-3">
+                
+                <div class="flex items-center mb-2 md:mb-0">
+                  <div class="text-3xl font-extrabold text-primary mr-4 w-12 text-center">{{ i + 1 }}</div>
+                  <div>
+                    <h2 class="text-xl font-bold text-base-content">{{ room.name }}</h2>
+                    <p class="text-sm text-base-content opacity-70 flex items-center">
+                      <i-lucide [img]="Film" class="w-3 h-3 mr-1"></i-lucide>
+                      Cine: <span class="font-semibold ml-1 text-base-content">{{ room.cinemaName }}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="badge text-lg p-3 badge-secondary font-bold text-secondary-content">
+                  <i-lucide [img]="Users" class="w-4 h-4 mr-1"></i-lucide>
+                  {{ room.reviews.length }} Comentarios
+                </div>
+              </div>
+              
+              <div class="max-h-64 overflow-y-auto border border-base-300 p-3 rounded-lg bg-base-200">
+                <h3 class="text-sm font-semibold mb-2 text-base-content sticky top-0 bg-base-200 py-1">Listado de Comentarios:</h3>
+                
+                @if (room.reviews.length > 0) {
+                  <div class="space-y-3">
+                    @for (review of room.reviews; track $index) {
+                      <div class="p-3 bg-base-100 border border-base-200 rounded-md shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <p class="font-semibold text-base-content">{{ review.title }}</p>
+                            <p class="text-xs text-info font-medium">Rating: {{ review.rating }} / 5</p>
+                        </div>
+                        <p class="text-sm text-base-content opacity-80 mt-1">{{ review.comment }}</p>
+                        <p class="text-xs text-base-content opacity-60 mt-1">
+                          Por: {{ review.userName || 'Usuario Anónimo' }} | 
+                          Fecha: {{ review.createdAt | date: 'short' }}
+                        </p>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="text-center text-base-content opacity-50 p-4">
+                      <i-lucide [img]="AlertCircle" class="w-5 h-5 mx-auto mb-1"></i-lucide>
+                      <p class="text-sm">No hay comentarios en el rango de fechas seleccionado.</p>
+                  </div>
+                }
+              </div>
+
+            </div>
+          </div>
+        
+      </div>
+    }
+
+    @if (!loading && filteredRooms.length === 0) {
+      <div class="text-center text-base-content opacity-70 p-12 bg-base-100 rounded-lg border-2 border-dashed border-base-300">
+        <i-lucide [img]="Calendar" class="w-8 h-8 mx-auto mb-3 text-info"></i-lucide>
+        <p class="text-lg">No se encontraron salas en el Top 5 con comentarios en el intervalo o filtro seleccionado.</p>
+      </div>
+    }
+  </div>
+</div>

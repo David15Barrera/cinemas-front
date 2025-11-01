@@ -69,7 +69,7 @@ export class DashReportComponent implements OnInit {
       {
         title: 'Top 5 Salas por Comentarios',
         description: 'Reporte de las 5 salas que han generado la mayor cantidad de comentarios o reseñas.',
-        routerLink: '/admin/report5',
+        routerLink: '/admin/report-rooms-coment',
         icon: this.MessageSquare,
         colorClass: 'bg-red-500 hover:bg-red-600',
       },

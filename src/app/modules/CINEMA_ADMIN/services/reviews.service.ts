@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiConfigService } from '@shared/services/api-config.service';
-import { Review } from '../models/review.interface';
+import { Review, TargetTypeReview } from '../models/review.interface';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -25,4 +25,9 @@ export class ReviewsService {
   createRevies(review:Review): Observable<Review>{
     return this._http.post<Review>(`${this.API_REVIEWS}`, review)
   }
+
+getRoomsReviewsByCinemaId(cinemaId: string): Observable<TargetTypeReview[]> {
+  return this._http.get<TargetTypeReview[]>(`${this.API_REVIEWS}/cinema/${cinemaId}/rooms`);
+}
+
 }
